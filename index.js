@@ -1,5 +1,6 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
+const path = require('path');
 
 async function run() {
   try {
@@ -17,9 +18,11 @@ async function run() {
       pull_number
     });
     
-    for (const file of files) {
-      console.log(file.filename)
-    }
+    const orders = files
+      .filter(f => path.basename(f.filename).toLowerCase() === "orders")
+      .map(f => f.filename);
+
+    console.log(orders);
 
   } catch (error) {
     core.setFailed(error.message);
