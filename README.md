@@ -22,5 +22,5 @@ jobs:
 
 ## Adding Checks
 
-- Create a new file in `./checks`. It should export an `async function` that accepts an `orders` object like `{path: string, contents: Array<string>}` and returns an array of results like `[{title: string, problems: Array<string>, line: number, fail: boolean}]`
+- Create a new file in `./checks`. It should export an `async function` that accepts an `orders` object like `{path: string, contents: Array<string>}` and returns an array of results like `[{title: string, problems: Array<string>, line: number, fail: boolean}]`. You can start by copying the template check in `./checks/template.js`.
 - Add your new check to the export array in `./checks/index.js`, following the established pattern.
