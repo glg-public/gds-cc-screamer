@@ -2,6 +2,7 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const path = require('path');
 const fs = require('fs').promises;
+const checks = require('./checks');
 
 async function getContents(filePath) {
   const contents = await fs.readFile(filePath, 'utf8');
@@ -17,6 +18,7 @@ async function run() {
     const owner = pr.base.repo.owner.login;
     const repo = pr.base.repo.name;
     const pull_number = pr.number;
+    const sha = pr.head.sha;
 
     const { data: files } = await octokit.pulls.listFiles({
       owner,
@@ -30,7 +32,27 @@ async function run() {
       .map(fn => getContents(fn))
     );
 
-    console.log(orders)
+    for (const order of orders) {
+      for (const check of checks) {
+        const outcome = await(check(order));
+
+        if (outcome.problems.length > 0) {
+          let comment = `## ${outcome.check}\n`;
+          for (const problem of outcome.problems) {
+            comment += `- ${problem}\n`
+          }
+
+          await octokit.pulls.createReviewComment({
+            owner,
+            repo,
+            pull_number,
+            commit_id: sha,
+            path: order.name,
+            body: comment
+          });
+        }
+      }
+    }
 
   } catch (error) {
     core.setFailed(error.message);
