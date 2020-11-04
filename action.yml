@@ -1,0 +1,5 @@
+name: 'GDS Cluster Config Screamer'
+description: 'Provides validation for GDS Cluster Configs'
+runs:
+  using: 'node12'
+  main: 'index.js'
