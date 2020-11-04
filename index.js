@@ -5,7 +5,7 @@ const fs = require('fs').promises;
 
 async function getContents(filePath) {
   const contents = await fs.readFile(filePath, 'utf8');
-  return { path: filePath, contents };
+  return { path: filePath, contents: contents.split('\n') };
 }
 
 async function run() {
