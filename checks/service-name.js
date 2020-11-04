@@ -26,7 +26,7 @@ async function validateServiceName(orders) {
   return [{
     check: 'Valid Service Name',
     problems,
-    line: 0
+    line: 1
   }]
 }
 
