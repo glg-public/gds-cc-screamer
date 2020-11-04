@@ -20,6 +20,8 @@ async function validateHealthcheck(orders) {
       if (healthcheck === "/" || healthcheck === '"/"' || healthcheck === "'/'") {
         problems.push(`**${healthcheck}** - Your healthcheck cannot be at root.`);
       }
+
+      break;
     }
   }
 
