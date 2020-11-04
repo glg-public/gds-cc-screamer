@@ -26,13 +26,15 @@ async function run() {
     
     const orders = files
       .filter(f => path.basename(f.filename).toLowerCase() === "orders")
-      .map(f => f.filename);
+      .map(f => f.filename)
+      .map(fn => { 
+        return { 
+          name: fn, 
+          contents: await getContents(fn)
+        }
+      });
 
-    for (const filename of orders) {
-      console.log(filename);
-      const contents = await getContents(filename);
-      console.log(contents);
-    }
+    console.log(orders)
 
   } catch (error) {
     core.setFailed(error.message);
