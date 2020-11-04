@@ -68,7 +68,7 @@ async function validateRepoName(orders) {
       problems.push(`**${deployment.branch}** - Branch name must be only lowercase alphanumeric characters and hyphens.`);
     }
   } else {
-    problems.push(`**${orders.path}** - Missing deployment. Must include either an autodeploy line or a dockerdeploy line.`);
+    problems.push(`**${orders.path}** - Missing deployment. Must include either an \`autodeploy\` line or a \`dockerdeploy\` line.`);
     lineNumber = 0;
   }
 
