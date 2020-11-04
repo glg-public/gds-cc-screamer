@@ -3,18 +3,15 @@
  * @param {{path: string, contents: Array<string>}} orders 
  */
 async function templateCheck(orders) {
+  const problems = [];
+  let lineNumber = 0;
 
-  return [
-    {
-      title: 'Failing Check',
-      problems: [
-        'first problem',
-        'second problem'
-      ],
-      line: 4,
-      fail: true
-    }
-  ]
+  return [{
+    title: 'Failing Check',
+    problems,
+    line: lineNumber,
+    fail: true
+  }];
 }
 
 module.exports = templateCheck;
