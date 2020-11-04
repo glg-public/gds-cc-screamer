@@ -47,7 +47,7 @@ async function run() {
             repo,
             pull_number,
             commit_id: sha,
-            path: order.name,
+            path: order.path,
             body: comment
           });
         }

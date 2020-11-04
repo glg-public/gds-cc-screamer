@@ -2,8 +2,12 @@ const path = require('path');
 
 const validCharacters = RegExp('^[a-z][a-z0-9\-]*');
 
-async function validateServiceName(file) {
-  const serviceName = path.dirname(file.name);
+/**
+ * Accepts an orders object, and validates the name of the service
+ * @param {{path: string, contents: Array<string>}} orders 
+ */
+async function validateServiceName(orders) {
+  const serviceName = path.dirname(orders.path);
 
   const problems = [];
 
