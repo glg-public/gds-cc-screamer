@@ -8,7 +8,7 @@ async function run() {
 
     const payload = JSON.stringify(github.context.payload, undefined, 2);
     console.log(payload.pull_request._links.commits.href);
-  } catch (e) {
+  } catch (error) {
     core.setFailed(error.message);
   }
 }
