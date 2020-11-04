@@ -26,7 +26,7 @@ function getDeployment(match) {
  * Accepts an orders object, and validates the name of the repo and branch
  * @param {{path: string, contents: Array<string>}} orders 
  */
-async function validateRepoName(orders) {
+async function validateDeploymentLine(orders) {
   const problems = [];
   let lineNumber = 0;
 
@@ -86,4 +86,4 @@ async function validateRepoName(orders) {
   }]
 }
 
-module.exports = validateRepoName;
+module.exports = validateDeploymentLine;
