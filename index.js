@@ -32,16 +32,20 @@ async function run() {
       .map(fn => getContents(fn))
     );
 
+    // Run every check against each orders object. Each check can have
+    // multiple results.
     for (const order of orders) {
       for (const check of checks) {
         const results = await(check(order));
         for (const result of results) {
           if (result.problems.length > 0) {
-            let comment = `## ${result.check}\n`;
+            // Build a markdown comment to post
+            let comment = `## ${result.title}\n`;
             for (const problem of result.problems) {
               comment += `- ${problem}\n`
             }
 
+            // Line 0 means a general comment, not a line-specific comment
             if (result.line === 0) {
               await octokit.issues.createComment({
                 owner,
@@ -49,7 +53,10 @@ async function run() {
                 issue_number: pull_number,
                 body: comment,
               });
-            } else {
+            } 
+            
+            // If line number is anything but 0, we make a line-specific comment
+            else {
               await octokit.issues.createReviewComment({
                 owner,
                 repo,
@@ -61,12 +68,9 @@ async function run() {
                 line: result.line
               });
             }
-  
-            
           }
         }
-        }
-        
+      }
     }
 
   } catch (error) {
