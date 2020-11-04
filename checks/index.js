@@ -4,5 +4,6 @@
  */
 module.exports = [
   require('./service-name'),
-  require('./deployment-line')
+  require('./deployment-line'),
+  require('./healthcheck')
 ];
