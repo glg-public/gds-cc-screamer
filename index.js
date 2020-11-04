@@ -49,7 +49,7 @@ async function run() {
             commit_id: sha,
             path: order.path,
             body: comment,
-            side: 'right'
+            side: 'RIGHT'
           });
         }
       }
