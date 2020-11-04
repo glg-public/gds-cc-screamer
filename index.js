@@ -1,7 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs').promises;
 
 async function getContents(filePath) {
   const contents = await fs.readFile(filePath, 'utf8');
