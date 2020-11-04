@@ -5,7 +5,7 @@ const fs = require('fs').promises;
 
 async function getContents(filePath) {
   const contents = await fs.readFile(filePath, 'utf8');
-  return contents;
+  return { path: filePath, contents };
 }
 
 async function run() {
@@ -24,15 +24,11 @@ async function run() {
       pull_number
     });
     
-    const orders = files
+    const orders = await Promise.all(files
       .filter(f => path.basename(f.filename).toLowerCase() === "orders")
       .map(f => f.filename)
-      .map(fn => { 
-        return { 
-          name: fn, 
-          contents: await getContents(fn)
-        }
-      });
+      .map(fn => getContents(fn))
+    );
 
     console.log(orders)
 
