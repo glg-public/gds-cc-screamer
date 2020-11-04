@@ -10,13 +10,17 @@ async function run() {
     const owner = pr.base.repo.owner.login;
     const repo = pr.base.repo.name;
     const pull_number = pr.number;
-    const files = await octokit.pulls.listFiles({
+
+    const { data: files } = await octokit.pulls.listFiles({
       owner,
       repo,
       pull_number
     });
-    console.log(owner, repo, pull_number);
-    console.log(JSON.stringify(files, undefined, 2));
+    
+    for (const file of files) {
+      console.log(file.filename)
+    }
+
   } catch (error) {
     core.setFailed(error.message);
   }
