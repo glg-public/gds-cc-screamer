@@ -41,17 +41,28 @@ async function run() {
             for (const problem of result.problems) {
               comment += `- ${problem}\n`
             }
+
+            if (result.line === 0) {
+              await octokit.issues.createComment({
+                owner,
+                repo,
+                issue_number: pull_number,
+                body: comment,
+              });
+            } else {
+              await octokit.issues.createReviewComment({
+                owner,
+                repo,
+                pull_number,
+                commit_id: sha,
+                path: order.path,
+                body: comment,
+                side: 'RIGHT',
+                line: result.line
+              });
+            }
   
-            await octokit.pulls.createReviewComment({
-              owner,
-              repo,
-              pull_number,
-              commit_id: sha,
-              path: order.path,
-              body: comment,
-              side: 'RIGHT',
-              line: result.line
-            });
+            
           }
         }
         }

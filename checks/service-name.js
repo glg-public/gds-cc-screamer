@@ -12,21 +12,21 @@ async function validateServiceName(orders) {
   const problems = [];
 
   if (serviceName.length > 28) {
-    problems.push('Name of service cannot exceed 28 characters.');
+    problems.push(`${serviceName} - Name of service cannot exceed 28 characters.`);
   }
 
   if (!validCharacters.test(serviceName)) {
-    problems.push('Service name must only contain lowercase alphanumeric characters and hyphens.');
+    problems.push(`${serviceName} - Service name must only contain lowercase alphanumeric characters and hyphens.`);
   }
 
   if (serviceName.includes('--')) {
-    problems.push('Service name cannot include "--".');
+    problems.push(`${serviceName} - Service name cannot include "--".`);
   }
 
   return [{
     check: 'Valid Service Name',
     problems,
-    line: 1
+    line: 0
   }]
 }
 
