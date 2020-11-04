@@ -64,7 +64,7 @@ async function run() {
             
             // If line number is anything but 0, we make a line-specific comment
             else {
-              await octokit.issues.createReviewComment({
+              await octokit.pulls.createReviewComment({
                 owner,
                 repo,
                 pull_number,
