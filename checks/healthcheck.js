@@ -26,7 +26,7 @@ async function validateHealthcheck(orders) {
   }
 
   if (lineNumber === 0) {
-    problems.push('You must set a healthcheck, and it cannot be at `/`');
+    problems.push(`**${orders.path}** - You must set a healthcheck, and it cannot be at \`/\``);
   }
 
   return [{
