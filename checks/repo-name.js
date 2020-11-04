@@ -39,7 +39,7 @@ async function validateRepoName(orders) {
       const match = dockerdeploy.exec(line);
       
       if (!match) {
-        problems.push('- Incorrect Formatting: must be `dockerdeploy github/<org>/<repo>/<branch>:<tag>`');
+        problems.push('Incorrect Formatting: must be `dockerdeploy github/<org>/<repo>/<branch>:<tag>`');
         break;
       }
       
@@ -51,7 +51,7 @@ async function validateRepoName(orders) {
        const match = autodeploy.exec(line);
 
        if (!match) {
-         problems.push('- Incorrect Formatting: must be `autodeploy git@github.com:<org>/<repo>[.git]:<branch>`');
+         problems.push('Incorrect Formatting: must be `autodeploy git@github.com:<org>/<repo>[.git]:<branch>`');
          break;
        }
 
@@ -61,14 +61,14 @@ async function validateRepoName(orders) {
 
   if (deployment) {
     if (!validCharacters.test(deployment.repo)) {
-      problems.push(`- **${deployment.repo}** - Repository name must be only lowercase alphanumeric characters and hyphens.`);
+      problems.push(`**${deployment.repo}** - Repository name must be only lowercase alphanumeric characters and hyphens.`);
     }
 
     if (!validCharacters.test(deployment.branch)) {
-      problems.push(`- **${deployment.branch}** - Branch name must be only lowercase alphanumeric characters and hyphens.`);
+      problems.push(`**${deployment.branch}** - Branch name must be only lowercase alphanumeric characters and hyphens.`);
     }
   } else {
-    problems.push('- Missing deployment. Must include either an autodeploy line or a dockerdeploy line.');
+    problems.push(`**${orders.path}** - Missing deployment. Must include either an autodeploy line or a dockerdeploy line.`);
     lineNumber = 0;
   }
 
