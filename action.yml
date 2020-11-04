@@ -1,5 +1,9 @@
 name: 'GDS Cluster Config Screamer'
 description: 'Provides validation for GDS Cluster Configs'
+inputs:
+  token:
+    description: Should be ${{ secrets.GITHUB_TOKEN }}
+    required: true
 runs:
   using: 'node12'
   main: 'index.js'
