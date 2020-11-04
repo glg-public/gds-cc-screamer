@@ -1,6 +1,12 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const path = require('path');
+const fs = require('fs');
+
+async function getContents(filePath) {
+  const contents = await fs.readFile(filePath, 'utf8');
+  return contents;
+}
 
 async function run() {
   try {
@@ -22,7 +28,11 @@ async function run() {
       .filter(f => path.basename(f.filename).toLowerCase() === "orders")
       .map(f => f.filename);
 
-    console.log(orders);
+    for (const filename of orders) {
+      console.log(filename);
+      const contents = await getContents(filename);
+      console.log(contents);
+    }
 
   } catch (error) {
     core.setFailed(error.message);
