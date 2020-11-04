@@ -48,7 +48,8 @@ async function run() {
             pull_number,
             commit_id: sha,
             path: order.path,
-            body: comment
+            body: comment,
+            side: 'right'
           });
         }
       }
