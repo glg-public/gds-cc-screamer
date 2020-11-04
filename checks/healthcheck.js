@@ -9,7 +9,7 @@ async function validateHealthcheck(orders) {
   for (let i = 0; i < orders.contents.length; i++) {
     const line = orders.contents[i];
 
-    if (line.startsWith('exports HEALTHCHECK')) {
+    if (line.startsWith('export HEALTHCHECK')) {
       const [_, healthcheck] = line.split('=');
       lineNumber = i+1;
 
