@@ -7,7 +7,7 @@ async function run() {
     const octokit = github.getOctokit(token);
 
     const payload = JSON.stringify(github.context.payload, undefined, 2);
-    console.log(payload.pull_request._links.commits.href);
+    console.log(payload.pull_request);
   } catch (error) {
     core.setFailed(error.message);
   }
