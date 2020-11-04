@@ -32,6 +32,8 @@ async function run() {
       .map(fn => getContents(fn))
     );
 
+    let fail = false;
+
     // Run every check against each orders object. Each check can have
     // multiple results.
     for (const order of orders) {
@@ -39,6 +41,11 @@ async function run() {
         const results = await(check(order));
         for (const result of results) {
           if (result.problems.length > 0) {
+            // If any result specifies fail: true, the action will be marked as failed
+            if (result.fail) {
+              fail = result.fail;
+            }
+
             // Build a markdown comment to post
             let comment = `## ${result.title}\n`;
             for (const problem of result.problems) {
@@ -71,6 +78,10 @@ async function run() {
           }
         }
       }
+    }
+
+    if (fail) {
+      core.setFailed('One or more checks has failed. See comments in PR.');
     }
 
   } catch (error) {
