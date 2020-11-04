@@ -20,7 +20,7 @@ async function validateServiceName(orders) {
   }
 
   if (serviceName.includes('--')) {
-    problems.push(`**${serviceName}** - Service name cannot include "--".`);
+    problems.push(`**${serviceName}** - Service name cannot include \`--\`.`);
   }
 
   return [{

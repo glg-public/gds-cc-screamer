@@ -67,6 +67,10 @@ async function validateRepoName(orders) {
     if (!validCharacters.test(deployment.branch)) {
       problems.push(`**${deployment.branch}** - Branch name must be only lowercase alphanumeric characters and hyphens.`);
     }
+
+    if (deployment.branch.includes('--')) {
+      problems.push(`**${deployment.branch}** - Branch name cannot contain \`--\``)
+    }
   } 
   
   else if (!deployment && problems.length === 0) {
