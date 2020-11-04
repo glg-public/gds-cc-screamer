@@ -1,5 +1,5 @@
 /**
- * Accepts an orders object, and does some kind of check
+ * Accepts an orders object, and validates the healthcheck
  * @param {{path: string, contents: Array<string>}} orders 
  */
 async function validateHealthcheck(orders) {
