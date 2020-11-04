@@ -23,10 +23,11 @@ async function validateServiceName(orders) {
     problems.push('Service name cannot include "--".');
   }
 
-  return {
+  return [{
     check: 'Valid Service Name',
-    problems
-  }
+    problems,
+    line: 0
+  }]
 }
 
 module.exports = validateServiceName;

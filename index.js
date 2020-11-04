@@ -34,25 +34,28 @@ async function run() {
 
     for (const order of orders) {
       for (const check of checks) {
-        const outcome = await(check(order));
-
-        if (outcome.problems.length > 0) {
-          let comment = `## ${outcome.check}\n`;
-          for (const problem of outcome.problems) {
-            comment += `- ${problem}\n`
+        const results = await(check(order));
+        for (const result of results) {
+          if (result.problems.length > 0) {
+            let comment = `## ${result.check}\n`;
+            for (const problem of result.problems) {
+              comment += `- ${problem}\n`
+            }
+  
+            await octokit.pulls.createReviewComment({
+              owner,
+              repo,
+              pull_number,
+              commit_id: sha,
+              path: order.path,
+              body: comment,
+              side: 'RIGHT',
+              line: result.line
+            });
           }
-
-          await octokit.pulls.createReviewComment({
-            owner,
-            repo,
-            pull_number,
-            commit_id: sha,
-            path: order.path,
-            body: comment,
-            side: 'RIGHT'
-          });
         }
-      }
+        }
+        
     }
 
   } catch (error) {
