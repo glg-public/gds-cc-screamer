@@ -8,7 +8,7 @@ const singleQuoteSubsitution = RegExp("export \\w+='\.*\\$({|)\\w+(}|)\.*'");
  */
 async function validBashSubsitutions(orders) {
   core.info(`Valid Bash Substitution - ${orders.path}`);
-  const results = []
+  const results = [];
 
   for (let i = 0; i < orders.contents.length; i++) {
     const line = orders.contents[i];
