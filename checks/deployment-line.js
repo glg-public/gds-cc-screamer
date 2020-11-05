@@ -81,7 +81,7 @@ async function validateDeploymentLine(orders) {
     title: 'Invalid Deployment',
     problems,
     line: lineNumber,
-    fail: true
+    level: 'failure'
   }]
 }
 

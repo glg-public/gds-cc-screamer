@@ -32,7 +32,18 @@ async function run() {
       .map(fn => getContents(fn))
     );
 
-    let fail = false;
+    const counts = {
+      success: 0,
+      failure: 0,
+      warning: 0,
+      notice: 0
+    };
+
+    const icons = {
+      failure: '💀',
+      warning: '⚠️',
+      notice: '👉'
+    }
 
     // Run every check against each orders object. Each check can have
     // multiple results.
@@ -41,13 +52,10 @@ async function run() {
         const results = await(check(order));
         for (const result of results) {
           if (result.problems.length > 0) {
-            // If any result specifies fail: true, the action will be marked as failed
-            if (result.fail) {
-              fail = result.fail;
-            }
+            counts[result.level] += 1;
 
             // Build a markdown comment to post
-            let comment = `## ${result.title}\n`;
+            let comment = `## ${icons[result.level]}${result.title}\n`;
             for (const problem of result.problems) {
               comment += `- ${problem}\n`
               core.error(`${result.title} - ${problem}`);
@@ -77,13 +85,14 @@ async function run() {
               });
             }
           } else {
+            counts.success += 1;
             core.info(`${result.title} - Passed`);
           }
         }
       }
     }
 
-    if (fail) {
+    if (counts.failure > 0) {
       core.setFailed('One or more checks has failed. See comments in PR.');
     }
 

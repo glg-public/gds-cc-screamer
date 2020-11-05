@@ -33,7 +33,7 @@ async function validateHealthcheck(orders) {
     title: 'Invalid Healthcheck',
     problems,
     line: lineNumber,
-    fail: true
+    level: 'failure'
   }];
 }
 

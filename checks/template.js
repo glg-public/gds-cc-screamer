@@ -10,7 +10,7 @@ async function templateCheck(orders) {
     title: 'Failing Check',
     problems,
     line: lineNumber,
-    fail: true
+    level: 'failure' // must be "failure", "warning", "notice", or "success"
   }];
 }
 
