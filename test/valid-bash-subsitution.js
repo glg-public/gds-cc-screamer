@@ -28,13 +28,13 @@ describe('Valid Bash Substitution Checker', async () => {
 
     expect(results.length).to.equal(2);
     expect(results[0].problems[0]).to.equal(
-`\`\`\`suggestion
+`You must use double quotes for bash subsitutions.\n\`\`\`suggestion
 export SOME_VAR="first-\$\{SOME_OTHER_VALUE\}-and-more-text"
 \`\`\``
     )
 
     expect(results[1].problems[0]).to.equal(
-`\`\`\`suggestion
+`You must use double quotes for bash subsitutions.\n\`\`\`suggestion
 export SOME_VAR="first-$SOME_OTHER_VALUE-and-more-text"
 \`\`\``
     )
