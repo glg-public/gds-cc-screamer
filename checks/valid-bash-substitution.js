@@ -17,7 +17,7 @@ async function validBashSubsitutions(orders) {
       results.push({
         title: 'Bad Substitution',
         problems: [
-`\n\`\`\`suggestion
+`You must use double quotes for bash subsitutions.\n\`\`\`suggestion
 ${line.replace(/'/g, '"')}
 \`\`\``
         ],
