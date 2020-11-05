@@ -55,7 +55,7 @@ async function run() {
             counts[result.level] += 1;
 
             // Build a markdown comment to post
-            let comment = `## ${icons[result.level]}${result.title}\n`;
+            let comment = `## ${icons[result.level]} ${result.title}\n`;
             for (const problem of result.problems) {
               comment += `- ${problem}\n`
               core.error(`${result.title} - ${problem}`);
