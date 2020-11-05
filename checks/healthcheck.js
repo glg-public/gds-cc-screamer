@@ -13,7 +13,7 @@ async function validateHealthcheck(orders) {
       const [_, healthcheck] = line.split('=');
       lineNumber = i+1;
 
-      if (healthcheck.length === 0) {
+      if (healthcheck.length === 0 || healthcheck === '""' || healthcheck === "''") {
         problems.push('You must set a healthcheck, and it cannot be at `/`');
       }
 
