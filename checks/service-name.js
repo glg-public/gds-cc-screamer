@@ -1,4 +1,5 @@
 const path = require('path');
+const core = require('@actions/core');
 
 const validCharacters = RegExp('^[a-z][a-z0-9\-]*');
 
@@ -7,6 +8,8 @@ const validCharacters = RegExp('^[a-z][a-z0-9\-]*');
  * @param {{path: string, contents: Array<string>}} orders 
  */
 async function validateServiceName(orders) {
+  core.info(`Valid Service Name - ${orders.path}`);
+
   const serviceName = path.dirname(orders.path);
 
   const problems = [];

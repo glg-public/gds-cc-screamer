@@ -1,3 +1,5 @@
+const core = require('@actions/core');
+
 const dockerdeploy = RegExp('^dockerdeploy (?<source>\\w+)\/(?<org>[\\w\-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\\w+)');
 const autodeploy = RegExp('^autodeploy git@github.com:(?<org>[\\w\-]+)\/(?<repo>.+?)(\.git|)#(?<branch>.+)');
 const validCharacters = RegExp('^[a-z][a-z0-9\-]*');
@@ -26,6 +28,8 @@ function getDeployment(match) {
  * @param {{path: string, contents: Array<string>}} orders 
  */
 async function validateDeploymentLine(orders) {
+  core.info(`Valid Deployment Line - ${orders.path}`);
+
   const problems = [];
   let lineNumber = 0;
 

@@ -1,3 +1,5 @@
+const core = require('@actions/core');
+
 const singleQuoteSubsitution = RegExp("export \\w+='\.*\\$({|)\\w+(}|)\.*'");
 
 /**
@@ -5,6 +7,7 @@ const singleQuoteSubsitution = RegExp("export \\w+='\.*\\$({|)\\w+(}|)\.*'");
  * @param {{path: string, contents: Array<string>}} orders 
  */
 async function validBashSubsitutions(orders) {
+  core.info(`Valid Bash Substitution - ${orders.path}`);
   const results = []
 
   for (let i = 0; i < orders.contents.length; i++) {

@@ -50,6 +50,9 @@ async function run() {
     for (const order of orders) {
       for (const check of checks) {
         const results = await(check(order));
+        if (results.length === 0) {
+          core.info('...Passed');
+        }
         for (const result of results) {
           if (result.problems.length > 0) {
             counts[result.level] += 1;
@@ -86,7 +89,7 @@ async function run() {
             }
           } else {
             counts.success += 1;
-            core.info(`${result.title} - Passed`);
+            core.info('...Passed');
           }
         }
       }
