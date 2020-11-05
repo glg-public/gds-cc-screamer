@@ -54,7 +54,7 @@ async function validateDeploymentLine(orders) {
        const match = autodeploy.exec(line);
 
        if (!match) {
-         problems.push('Incorrect Formatting: must be `autodeploy git@github.com:<org>/<repo>[.git]:<branch>`');
+         problems.push('Incorrect Formatting: must be `autodeploy git@github.com:<org>/<repo>[.git]#<branch>`');
          break;
        }
 

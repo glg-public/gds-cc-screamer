@@ -53,7 +53,7 @@ describe('Deployment Line Check', () => {
     const results = await deploymentLineCheck(orders);
 
     expect(results[0].problems.length).to.equal(1);
-    expect(results[0].problems[0]).to.equal('Incorrect Formatting: must be `autodeploy git@github.com:<org>/<repo>[.git]:<branch>`');
+    expect(results[0].problems[0]).to.equal('Incorrect Formatting: must be `autodeploy git@github.com:<org>/<repo>[.git]#<branch>`');
   });
 
   it('requires either a dockerdeploy or an autodeploy line', async () => {
