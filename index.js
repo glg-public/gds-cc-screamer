@@ -50,6 +50,7 @@ async function run() {
             let comment = `## ${result.title}\n`;
             for (const problem of result.problems) {
               comment += `- ${problem}\n`
+              core.error(`${result.title} - ${problem}`);
             }
 
             // Line 0 means a general comment, not a line-specific comment
@@ -75,6 +76,8 @@ async function run() {
                 line: result.line
               });
             }
+          } else {
+            core.info(`${result.title} - Passed`);
           }
         }
       }
