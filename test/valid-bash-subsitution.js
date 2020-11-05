@@ -15,6 +15,7 @@ describe('Valid Bash Substitution Checker', async () => {
 
     expect(results.length).to.equal(0);
   });
+
   it('rejects bash subsitutions contained in single quotes', async () => {
     let orders = {
       path: 'streamliner/orders',
@@ -38,5 +39,5 @@ export SOME_VAR="first-\$\{SOME_OTHER_VALUE\}-and-more-text"
 export SOME_VAR="first-$SOME_OTHER_VALUE-and-more-text"
 \`\`\``
     )
-  })
+  });
 })
