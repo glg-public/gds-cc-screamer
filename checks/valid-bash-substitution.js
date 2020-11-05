@@ -14,7 +14,7 @@ async function validBashSubsitutions(orders) {
       results.push({
         title: 'Bad Substitution',
         problems: [
-`\`\`\`suggestion
+`\n\`\`\`suggestion
 ${line.replace(/'/g, '"')}
 \`\`\``
         ],
