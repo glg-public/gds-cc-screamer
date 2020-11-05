@@ -5,5 +5,6 @@
 module.exports = [
   require('./service-name'),
   require('./deployment-line'),
-  require('./healthcheck')
+  require('./healthcheck'),
+  require('./valid-bash-substitution')
 ];
