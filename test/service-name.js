@@ -2,6 +2,18 @@ const { expect } = require('chai');
 const serviceNameCheck = require('../checks/service-name');
 
 describe('Service Name Check', () => {
+  it('works with a valid service name', async () => {
+    const serviceName = 'streamliner'
+    const orders = {
+      path: `${serviceName}/orders`,
+      contents: []
+    };
+
+    const results = await serviceNameCheck(orders);
+
+    expect(results[0].problems.length).to.equal(0);
+  })
+
   it('rejects service names longer than 28 characters', async () => {
     const serviceName = 'thisservicenameismuchtoolongwayovertwentyeightcharacters'
     const orders = {

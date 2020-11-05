@@ -2,6 +2,32 @@ const { expect } = require('chai');
 const deploymentLineCheck = require('../checks/deployment-line');
 
 describe('Deployment Line Check', () => {
+  it('works with a valid deployment line', async () => {
+    // works with autodeploy
+    let orders = {
+      path: 'streamliner/orders',
+      contents: [
+        'autodeploy git@github.com:glg/price-service.git#main'
+      ]
+    }
+
+    let results = await deploymentLineCheck(orders);
+
+    expect(results[0].problems.length).to.equal(0);
+
+    // works with dockerdeploy
+    orders = {
+      path: 'streamliner/orders',
+      contents: [
+        'dockerdeploy github/glg/price-service/main:latest'
+      ]
+    }
+
+    results = await deploymentLineCheck(orders);
+
+    expect(results[0].problems.length).to.equal(0);
+  });
+
   it('rejects an improperly formatted dockerdeploy line', async () => {
     const orders = {
       path: 'streamliner/orders',
