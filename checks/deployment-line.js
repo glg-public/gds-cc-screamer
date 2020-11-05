@@ -1,5 +1,5 @@
-const dockerdeploy = RegExp('^dockerdeploy (?<source>\\w+)\/(?<org>[\\w\-]+)\/(?<repo>[\\w\-_]+)\/(?<branch>[\\w\-_]+):(?<tag>\\w+)');
-const autodeploy = RegExp('^autodeploy git@github.com:(?<org>[\\w\-]+)\/(?<repo>[\\w\-_]+)(\.git|)#(?<branch>[\\w\-_]+)');
+const dockerdeploy = RegExp('^dockerdeploy (?<source>\\w+)\/(?<org>[\\w\-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\\w+)');
+const autodeploy = RegExp('^autodeploy git@github.com:(?<org>[\\w\-]+)\/(?<repo>.+?)(\.git|)#(?<branch>.+)');
 const validCharacters = RegExp('^[a-z][a-z0-9\-]*');
 
 function getDeployment(match) {
