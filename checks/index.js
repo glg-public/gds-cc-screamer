@@ -11,5 +11,6 @@ module.exports = [
   require('./no-duplicate-exports'),
   require('./security-mode'),
   require('./no-sourcing'),
-  require('./jwt-access-flags')
+  require('./jwt-access-flags'),
+  require('./no-spaces-in-exports')
 ];

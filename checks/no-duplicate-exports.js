@@ -20,7 +20,7 @@ async function noDuplicateExports(orders) {
     const match = exportedVariable.exec(line);
     if(!match) {
       continue;
-    };
+    }
 
     const { variable } = match.groups;
     if(!counts[variable]) {
