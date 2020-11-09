@@ -5,6 +5,10 @@ This is a github action for validating PRs to GDS Cluster Configs
 
 Github actions run directly from the repository without a build step, so no opportunity to do `npm install` at runtime.
 
+## Why review comments and not checks api?
+
+Review comments allow you to use github's "suggestion" comments, which allow the PR author to click-to-commit the fix.
+
 ## Example Usage:
 
 ```yml
