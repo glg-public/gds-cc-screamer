@@ -9,5 +9,6 @@ module.exports = [
   require('./valid-bash-substitution'),
   require('./https-only'),
   require('./no-duplicate-exports'),
-  require('./security-mode')
+  require('./security-mode'),
+  require('./no-sourcing')
 ];
