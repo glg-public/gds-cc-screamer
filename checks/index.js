@@ -10,5 +10,6 @@ module.exports = [
   require('./https-only'),
   require('./no-duplicate-exports'),
   require('./security-mode'),
-  require('./no-sourcing')
+  require('./no-sourcing'),
+  require('./jwt-access-flags')
 ];
