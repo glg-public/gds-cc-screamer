@@ -2,9 +2,10 @@ const core = require('@actions/core');
 
 /**
  * Accepts an orders object, and does some kind of check
- * @param {{path: string, contents: Array<string>}} orders 
+ * @param {{path: string, contents: Array<string>}} orders
+ * @param {Object} context The context object provided by github 
  */
-async function templateCheck(orders) {
+async function templateCheck(orders, context) {
   core.info(`Template Check - ${orders.path}`);
   const problems = [];
   let lineNumber = 0;

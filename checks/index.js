@@ -7,5 +7,7 @@ module.exports = [
   require('./deployment-line'),
   require('./healthcheck'),
   require('./valid-bash-substitution'),
-  require('./https-only')
+  require('./https-only'),
+  require('./no-duplicate-exports'),
+  require('./security-mode')
 ];

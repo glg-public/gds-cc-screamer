@@ -49,7 +49,7 @@ async function run() {
     // multiple results.
     for (const order of orders) {
       for (const check of checks) {
-        const results = await(check(order));
+        const results = await(check(order, github.context));
         if (results.length === 0) {
           core.info('...Passed');
         }
