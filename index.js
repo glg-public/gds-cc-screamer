@@ -28,6 +28,7 @@ async function run() {
     
     const orders = await Promise.all(files
       .filter(f => path.basename(f.filename).toLowerCase() === "orders")
+      .filter(f => f.status !== 'removed')
       .map(f => f.filename)
       .map(fn => getContents(fn))
     );
