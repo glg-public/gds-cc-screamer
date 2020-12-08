@@ -46,7 +46,7 @@ function getExportValue(text, varName) {
 
   const value = match[1].replace(/['|"]/gm, '');
   return value && value.length > 0 ? value : null;
-};
+}
 
 function getExpectedModes(context) {
   const repo = context.payload.pull_request.base.repo.name;
@@ -55,7 +55,7 @@ function getExpectedModes(context) {
 
   const modes = {
     i: ['public'], // this is for internal-only clusters
-    s: ['jwt', 'verifiedSession'], // this is for secured clusters
+    s: ['jwt', 'verifiedSession', 'htpasswd'], // this is for secured clusters
     p: ['public'], // this is for 
   }
 
