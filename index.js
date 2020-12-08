@@ -6,7 +6,16 @@ const checks = require('./checks');
 
 async function getContents(filePath) {
   const contents = await fs.readFile(filePath, 'utf8');
-  return { path: filePath, contents: contents.split('\n') };
+  const result = { path: filePath, contents: contents.split('\n') };
+  const secretsJsonPath = path.join(path.dirname(filePath), 'secrets.json');
+
+  // secrets.json is not required
+  if (fs.existsSync(secretsJsonPath)) {
+    const secretsJson = await fs.readFile(secretsJsonPath, 'utf8');
+    results.secretsContents = secretsJson.split('\n');
+    results.secretsPath = secretsJsonPath;
+  }
+  return result;
 }
 
 async function run() {
@@ -74,15 +83,30 @@ async function run() {
                 body: comment,
               });
             } 
+
+            // If result.line is a range object, make a multi-line comment
+            else if (isNaN(result.line) && result.line.hasOwnProperty("name") && result.line.hasOwnProperty()) {
+              await octokit.pulls.createReviewComment({
+                owner,
+                repo,
+                pull_number,
+                commit_id: sha,
+                path: result.path || order.path,
+                body: comment,
+                side: 'RIGHT',
+                start_line: result.line.start,
+                line: result.line.end
+              });
+            }
             
-            // If line number is anything but 0, we make a line-specific comment
+            // If line number is anything but 0, or a range object, we make a line-specific comment
             else {
               await octokit.pulls.createReviewComment({
                 owner,
                 repo,
                 pull_number,
                 commit_id: sha,
-                path: order.path,
+                path: result.path || order.path,
                 body: comment,
                 side: 'RIGHT',
                 line: result.line
