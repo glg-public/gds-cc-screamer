@@ -121,8 +121,12 @@ function getLinesForJSON(fileLines, jsonObj) {
     start = i+1;
 
     if (regex.test(text)) {
-      end = i+1;
+      end = start;
       break;
+    }
+
+    if (/},*/.test(text)) {
+      continue;
     }
 
     for (let j = i+1; j < fileLines.length; j++) {

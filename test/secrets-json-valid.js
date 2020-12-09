@@ -59,6 +59,18 @@ describe('getLinesForJSON', () => {
     let lines = getLinesForJSON(fileLines, jsonObj);
     expect(lines.start).to.equal(6);
     expect(lines.end).to.equal(9);
+
+    fileLines = [
+      '[',
+      '  {"name":"WRONG"","valueFrom":"arn"},',
+      '  {"name":"MY_SECRET","valueFrom":"arn"}',
+      ']'];
+    jsonObj = {name: "MY_SECRET", valueFrom: "arn"};
+
+    lines = getLinesForJSON(fileLines, jsonObj);
+    console.log(lines);
+    expect(lines.start).to.equal(3);
+    expect(lines.end).to.equal(3);
   });
 });
 
