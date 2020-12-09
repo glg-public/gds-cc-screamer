@@ -8,7 +8,7 @@ const sourceUse = /^source (.*)/gm;
  * @param {Object} context The context object provided by github 
  */
 async function noSourcing(orders, context) {
-  core.info(`Template Check - ${orders.path}`);
+  core.info(`No Sourcing Other Files - ${orders.path}`);
   const results = [];
 
   for (let i = 0; i < orders.contents.length; i++) {
