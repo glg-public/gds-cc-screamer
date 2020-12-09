@@ -278,4 +278,4 @@ describe.only('policy.json is valid', () => {
       level: 'failure'
     })
   });
-})
+});
