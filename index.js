@@ -84,7 +84,7 @@ async function run() {
               });
             } 
 
-            // If result.line is a range object, make a multi-line comment
+            // If result.line is a range object like { start, end }, make a multi-line comment
             else if (isNaN(result.line) && result.line.hasOwnProperty("start") && result.line.hasOwnProperty("end")) {
               await octokit.pulls.createReviewComment({
                 owner,
