@@ -27,7 +27,7 @@ async function secretsJsonIsValid(orders, context) {
     return [{
       title: "secrets.json is not valid JSON",
       path: orders.secretsPath,
-      problems: [`An error was encountered while trying to JSON parse ${secretsJsonPath}`],
+      problems: [`An error was encountered while trying to JSON parse ${orders.secretsPath}`],
       line: 0,
       level: 'failure'
     }];
@@ -58,8 +58,10 @@ async function secretsJsonIsValid(orders, context) {
     }
 
     const result = {
+      title: 'Invalid Secret Structure',
       problems: [],
-      level: 'failure'
+      level: 'failure',
+      path: orders.secretsPath
     };
 
     const lines = getLinesForJSON(orders.secretsContents, secret);
@@ -71,7 +73,6 @@ async function secretsJsonIsValid(orders, context) {
     
     if (!secret.hasOwnProperty('name') || !secret.hasOwnProperty('valueFrom')) {
       result.problems.push('Each secret must be an object like { name, valueFrom }');
-      result.title = "Invalid secret structure"
     }
 
     if (secret.name && typeof secret.name !== 'string') {
@@ -86,7 +87,7 @@ async function secretsJsonIsValid(orders, context) {
       result.problems.push('Each secret must **only** contain the keys "name" and "valueFrom".');
     }
 
-    if (secret.valueFrom && !secretArn.test(secret.valueFrom)) {
+    if (secret.valueFrom && secret.name && !secretArn.test(secret.valueFrom)) {
       result.problems.push(`Invalid secret ARN: ${secret.valueFrom}`);
       result.title = `Invalid Secret: ${secret.name}`
     }
