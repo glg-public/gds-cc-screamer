@@ -1,5 +1,5 @@
 const core = require('@actions/core');
-const { getLinesForJSON, suggest, getLineNumber } = require('../util');
+const { getLinesForJSON, suggest, getLineNumber, getLineWithinObject } = require('../util');
 
 const lowerVersion = /"version"/g;
 const lowerStatement = /"statement"/g;
@@ -210,19 +210,6 @@ function maybeFixCapitalization({ line, lineNumber, regex, correct, policyPath, 
       level: 'failure'
     }
   }
-}
-
-function getLineWithinObject(fileLines, jsonObj, regex) {
-  const blockLineNums = getLinesForJSON(fileLines, jsonObj);
-  let line;
-  if (blockLineNums.start === blockLineNums.end) {
-    line = blockLineNums.start;
-  } else {
-    const blockLines = fileLines.slice(blockLineNums.start - 1, blockLineNums.end);
-    line = getLineNumber(blockLines, regex) + blockLineNums.start - 1;
-  }
-
-  return line;
 }
 
 module.exports = policyJsonIsValid;

@@ -63,8 +63,22 @@ function getLineNumber(fileLines, regex) {
   }
 }
 
+function getLineWithinObject(fileLines, jsonObj, regex) {
+  const blockLineNums = getLinesForJSON(fileLines, jsonObj);
+  let line;
+  if (blockLineNums.start === blockLineNums.end) {
+    line = blockLineNums.start;
+  } else {
+    const blockLines = fileLines.slice(blockLineNums.start - 1, blockLineNums.end);
+    line = getLineNumber(blockLines, regex) + blockLineNums.start - 1;
+  }
+
+  return line;
+}
+
 module.exports = {
   getLinesForJSON,
   suggest,
-  getLineNumber
+  getLineNumber,
+  getLineWithinObject
 }
