@@ -4,6 +4,12 @@ const path = require('path');
 const fs = require('fs').promises;
 const checks = require('./checks');
 
+/**
+ * Read orders, secrets.json, and policy.json from the directory,
+ * and split them by \n.
+ * @param {String} filePath the path for the orders file
+ * @returns {{path: string, contents: Array<string>, secretsContents: (Array<string>|undefined), secretsPath: (string|undefined)}}
+ */
 async function getContents(filePath) {
   const contents = await fs.readFile(filePath, 'utf8');
   const result = { path: filePath, contents: contents.split('\n') };
@@ -35,7 +41,7 @@ async function run() {
       pull_number
     });
     
-    const orders = await Promise.all(files
+    const deployments = await Promise.all(files
       .filter(f => path.basename(f.filename).toLowerCase() === "orders")
       .filter(f => f.status !== 'removed')
       .map(f => f.filename)
@@ -55,11 +61,11 @@ async function run() {
       notice: '👉'
     }
 
-    // Run every check against each orders object. Each check can have
+    // Run every check against each deployment. Each check can have
     // multiple results.
-    for (const order of orders) {
+    for (const deployment of deployments) {
       for (const check of checks) {
-        const results = await(check(order, github.context));
+        const results = await(check(deployment, github.context));
         if (results.length === 0) {
           core.info('...Passed');
         }
@@ -91,7 +97,7 @@ async function run() {
                 repo,
                 pull_number,
                 commit_id: sha,
-                path: result.path || order.path,
+                path: result.path || deployment.path,
                 body: comment,
                 side: 'RIGHT',
                 start_line: result.line.start,
@@ -106,7 +112,7 @@ async function run() {
                 repo,
                 pull_number,
                 commit_id: sha,
-                path: result.path || order.path,
+                path: result.path || deployment.path,
                 body: comment,
                 side: 'RIGHT',
                 line: result.line
