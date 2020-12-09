@@ -7,7 +7,7 @@ const core = require('@actions/core');
  */
 async function templateCheck(orders, context) {
   core.info(`Template Check - ${orders.path}`);
-  const results = []
+  const results = [];
   /**
    * A Result Object:
    {
