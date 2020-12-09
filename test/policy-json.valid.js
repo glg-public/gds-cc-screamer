@@ -343,4 +343,6 @@ describe('policy.json is valid', () => {
       level: 'failure'
     });
   });
+
+  it('rejects policy.json where any statement block contains an invalid Resource');
 });

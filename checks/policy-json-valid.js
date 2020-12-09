@@ -153,7 +153,7 @@ async function policyJsonIsValid(orders, context) {
 
   // There is further validation to be done in each statement block
   for (let statement of statementBlock) {
-    let effect = statement.Effect || statement.effect;
+    let effect = statement.Effect || statement.effect; // we already suggested capitalization fixes
     if (effect && ["Allow", "Deny"].indexOf(effect) === -1) {
       const lineRegex = RegExp(`"Effect":\\s*"${effect}"`, 'i');
       const line = getLineWithinObject(orders.policyContents, statement, lineRegex);
@@ -167,7 +167,7 @@ async function policyJsonIsValid(orders, context) {
       });
     }
 
-    let action = statement.Action || statement.action || statement.NotAction || statement.notAction || statement.notaction || statement.Notaction;
+    let action = statement.Action || statement.action || statement.NotAction || statement.notAction || statement.notaction || statement.Notaction; // we already suggested capitalization fixes
     if (action && typeof action === 'string' && !actionString.test(action)) {
       const lineRegex = RegExp(`"Action":\\s*"${action}"`, 'i');
       const line = getLineWithinObject(orders.policyContents, statement, lineRegex);
