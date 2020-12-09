@@ -2,7 +2,7 @@ const { expect } = require('chai');
 const policyJsonIsValid = require('../checks/policy-json-valid');
 const { suggest } = require('../util');
 
-describe.only('policy.json is valid', () => {
+describe('policy.json is valid', () => {
   it('skips if there is no policy.json', async () => {
     const orders = {
       path: 'streamliner/orders',
@@ -191,7 +191,7 @@ describe.only('policy.json is valid', () => {
       problems: ['Version must be one of: 2008-10-17, 2012-10-17'],
       line: 2,
       level: 'failure'
-    })
+    });
   });
 
   it('rejects policy.json that is missing a Statement block', async () => {
@@ -213,7 +213,7 @@ describe.only('policy.json is valid', () => {
       problems: ['"Statement" is a required field'],
       line: 0,
       level: 'failure'
-    })
+    });
   });
 
   it('rejects policy.json where any statement block is missing required fields', async () => {
@@ -245,7 +245,7 @@ describe.only('policy.json is valid', () => {
       ],
       level: 'failure',
       line: { start: 9, end: 12 }
-    })
+    });
   });
 
   it('rejects policy.json where any statement block has an invalid Effect', async () => {
@@ -274,8 +274,73 @@ describe.only('policy.json is valid', () => {
       title: 'Invalid value for "Effect"',
       path: 'streamliner/policy.json',
       problems: [ '"Effect" must be one of: Allow, Deny' ],
-      line: 0,
+      line: 10,
       level: 'failure'
-    })
+    });
+  });
+
+  it('rejects policy.json where any statement block has an invalid Action', async () => {
+    let policyJson = JSON.stringify({
+      Version: '2012-10-17',
+      Statement: [{
+        Effect: 'Allow',
+        Action: 'resource:action',
+        Resource: 'arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret'
+      }, {
+        Effect: 'Allow',
+        Action: 'wrong',
+        Resource: 'arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret'
+      }]
+    }, null, 2);
+    let orders = {
+      path: 'streamliner/orders',
+      contents: [],
+      policyPath: 'streamliner/policy.json',
+      policyContents: policyJson.split('\n')
+    };
+
+    let results = await policyJsonIsValid(orders);
+    expect(results.length).to.equal(1);
+    expect(results[0]).to.deep.equal({
+      title: 'Invalid value for "Action"',
+      path: 'streamliner/policy.json',
+      problems: [ '"Action" must be either a valid action string, or an array of valid action strings.' ],
+      line: 11,
+      level: 'failure'
+    });
+
+    policyJson = JSON.stringify({
+      Version: '2012-10-17',
+      Statement: [{
+        Effect: 'Allow',
+        Action: 'resource:action',
+        Resource: 'arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret'
+      }, {
+        Effect: 'Allow',
+        Action: [
+          'resource:*',
+          'wrong'
+        ],
+        Resource: 'arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret'
+      }]
+    }, null, 2);
+    console.log(policyJson);
+
+    orders = {
+      path: 'streamliner/orders',
+      contents: [],
+      policyPath: 'streamliner/policy.json',
+      policyContents: policyJson.split('\n')
+    };
+
+    results = await policyJsonIsValid(orders);
+    expect(results.length).to.equal(1);
+    expect(results[0]).to.deep.equal({
+      title: 'Invalid value for "Action"',
+      path: 'streamliner/policy.json',
+      problems: [ '"Action" must be either a valid action string, or an array of valid action strings.' ],
+      line: 13,
+      level: 'failure'
+    });
   });
 });

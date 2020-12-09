@@ -14,6 +14,8 @@ const lowerResource = /"resource"/g;
 const lowerNotResource = /"(notResource|notresource|Notresource)"/g
 const lowerCondition = /"condition"/g;
 
+const actionString = /(^\*$|^\w+:[\w\*]+$)/;
+
 /**
  * Accepts an orders object, and does some kind of check
  * @param {{path: string, contents: Array<string>}} orders
@@ -149,19 +151,13 @@ async function policyJsonIsValid(orders, context) {
     }
   }
 
+  // There is further validation to be done in each statement block
   for (let statement of statementBlock) {
     let effect = statement.Effect || statement.effect;
     if (effect && ["Allow", "Deny"].indexOf(effect) === -1) {
-      const blockLineNums = getLinesForJSON(policyJson, statement);
-      let line;
-      if (blockLineNums.start === blockLineNums.end) {
-        line = blockLineNums.start;
-      } else {
-        const blockLines = policyJson.slice(blockLineNums.start - 1, blockLineNums.end);
-        const lineRegex = RegExp(`"Effect":\\s*"${effect}"`, 'i');
-        line = getLineNumber(blockLines, lineRegex) + blockLineNums.start - 1;
-      }
-
+      const lineRegex = RegExp(`"Effect":\\s*"${effect}"`, 'i');
+      const line = getLineWithinObject(orders.policyContents, statement, lineRegex);
+      
       results.push({
         title: 'Invalid value for "Effect"',
         path: orders.policyPath,
@@ -169,6 +165,35 @@ async function policyJsonIsValid(orders, context) {
         line,
         level: 'failure'
       });
+    }
+
+    let action = statement.Action || statement.action || statement.NotAction || statement.notAction || statement.notaction || statement.Notaction;
+    if (action && typeof action === 'string' && !actionString.test(action)) {
+      const lineRegex = RegExp(`"Action":\\s*"${action}"`, 'i');
+      const line = getLineWithinObject(orders.policyContents, statement, lineRegex);
+      
+      results.push({
+        title: 'Invalid value for "Action"',
+        path: orders.policyPath,
+        problems: ['"Action" must be either a valid action string, or an array of valid action strings.'],
+        line,
+        level: 'failure'
+      });
+    } else if (action && Array.isArray(action)) {
+      for (let item of action) {
+        if (!actionString.test(item)) {
+          const lineRegex = RegExp(`"${item}"`);
+          const line = getLineWithinObject(orders.policyContents, statement, lineRegex);
+          
+          results.push({
+            title: 'Invalid value for "Action"',
+            path: orders.policyPath,
+            problems: ['"Action" must be either a valid action string, or an array of valid action strings.'],
+            line,
+            level: 'failure'
+          });
+        }
+      }
     }
   }
   
@@ -185,6 +210,19 @@ function maybeFixCapitalization({ line, lineNumber, regex, correct, policyPath, 
       level: 'failure'
     }
   }
+}
+
+function getLineWithinObject(fileLines, jsonObj, regex) {
+  const blockLineNums = getLinesForJSON(fileLines, jsonObj);
+  let line;
+  if (blockLineNums.start === blockLineNums.end) {
+    line = blockLineNums.start;
+  } else {
+    const blockLines = fileLines.slice(blockLineNums.start - 1, blockLineNums.end);
+    line = getLineNumber(blockLines, regex) + blockLineNums.start - 1;
+  }
+
+  return line;
 }
 
 module.exports = policyJsonIsValid;

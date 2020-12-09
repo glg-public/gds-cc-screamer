@@ -4,11 +4,14 @@ function getLinesForJSON(fileLines, jsonObj) {
 
   // Convert the object into a regex
   const regex = RegExp(JSON.stringify(jsonObj)
+    .replace(/\*/g, '\\*')
     .replace(/{/g, '{\\s*')
     .replace(/:"/g, ':\\s*"')
     .replace(/",/g, '"\\s*,\\s*')
     .replace(/}/g, '\\s*}')
-  )
+    .replace(/\[/g, '\\s*\\[\\s*')
+    .replace(/\],?/g, '\\s*\\],?\\s*')
+  );
 
   for (let i = 0; i < fileLines.length; i++) {
     let text = fileLines[i];

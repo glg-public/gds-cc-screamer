@@ -71,4 +71,35 @@ describe('getLinesForJSON', () => {
     expect(lines.start).to.equal(3);
     expect(lines.end).to.equal(3);
   });
+
+  it('works for objects that contain arrays', () => {
+    const policyLines = JSON.stringify({
+      Version: '2012-10-17',
+      Statement: [{
+        Effect: 'Allow',
+        Action: 'resource:action',
+        Resource: 'arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret'
+      }, {
+        Effect: 'Allow',
+        Action: [
+          'resource:*',
+          'wrong'
+        ],
+        Resource: 'arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret'
+      }]
+    }, null, 2).split('\n');
+
+    const jsonObj = {
+      Effect: 'Allow',
+      Action: [
+        'resource:*',
+        'wrong'
+      ],
+      Resource: 'arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret'
+    };
+
+    const lines = getLinesForJSON(policyLines, jsonObj);
+    expect(lines.start).to.equal(9);
+    expect(lines.end).to.equal(16)
+  });
 });
