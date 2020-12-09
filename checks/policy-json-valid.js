@@ -79,23 +79,43 @@ async function policyJsonIsValid(orders, context) {
   // There are only two acceptable versions
   const version = policyJson.Version || policyJson.version;
   const acceptableVersions = ["2008-10-17", "2012-10-17"];
-  if (acceptableVersions.indexOf(version) === -1) {
+
+  if (!version) {
+    results.push({
+      title: 'Policy must have a "Version" field',
+      path: orders.policyPath,
+      problems: ['"Version" is a required field.'],
+      line: 0,
+      level: 'failure'
+    });
+  } else if (acceptableVersions.indexOf(version) === -1) {
     const lineRegex = RegExp(`"Version":\\s*"${version}"`, 'i');
     results.push({
       title: 'Invalid Version',
       path: orders.policyPath,
       problems: [`Version must be one of: ${acceptableVersions.join(', ')}`],
-      line: getLineNumber(policyContents, lineRegex),
+      line: getLineNumber(orders.policyContents, lineRegex),
+      level: 'failure'
+    });
+  }
+
+  // Statement is a required field
+  const statementBlock = policyJson.Statement || policyJson.statement || [];
+  if (!statementBlock || statementBlock.length === 0) {
+    results.push({
+      title: 'Policy must have a "Statement" block.',
+      path: orders.policyPath,
+      problems: ['"Statement" is a required field'],
+      line: 0,
       level: 'failure'
     });
   }
 
   // Statement blocks have some required fields
-  const statementBlock = policyJson.Statement || policyJson.statement;
   for (let statement of statementBlock) {
     const result = {
       title: 'Statement is missing required fields.',
-      path: policyPath,
+      path: orders.policyPath,
       problems: [],
       level: 'failure'
     }
@@ -119,7 +139,7 @@ async function policyJsonIsValid(orders, context) {
     }
 
     if (result.problems.length > 0) {
-      const lines = getLinesForJSON(policyContents, statement);
+      const lines = getLinesForJSON(orders.policyContents, statement);
       if (lines.start === lines.end) {
         result.line = lines.start;
       } else {
@@ -131,7 +151,7 @@ async function policyJsonIsValid(orders, context) {
 
   for (let statement of statementBlock) {
     let effect = statement.Effect || statement.effect;
-    if (["Allow", "Deny"].indexOf(effect) === -1) {
+    if (effect && ["Allow", "Deny"].indexOf(effect) === -1) {
       const blockLineNums = getLinesForJSON(policyJson, statement);
       let line;
       if (blockLineNums.start === blockLineNums.end) {
@@ -141,7 +161,7 @@ async function policyJsonIsValid(orders, context) {
         const lineRegex = RegExp(`"Effect":\\s*"${effect}"`, 'i');
         line = getLineNumber(blockLines, lineRegex) + blockLineNums.start - 1;
       }
-      
+
       results.push({
         title: 'Invalid value for "Effect"',
         path: orders.policyPath,
