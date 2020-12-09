@@ -68,7 +68,6 @@ describe('getLinesForJSON', () => {
     jsonObj = {name: "MY_SECRET", valueFrom: "arn"};
 
     lines = getLinesForJSON(fileLines, jsonObj);
-    console.log(lines);
     expect(lines.start).to.equal(3);
     expect(lines.end).to.equal(3);
   });

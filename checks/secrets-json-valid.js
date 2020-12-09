@@ -125,6 +125,7 @@ function getLinesForJSON(fileLines, jsonObj) {
       break;
     }
 
+    // If we've reached the end of an object, we start over at the next line
     if (/},*/.test(text)) {
       continue;
     }
