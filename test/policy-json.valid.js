@@ -2,7 +2,7 @@ const { expect } = require("chai");
 const policyJsonIsValid = require("../checks/policy-json-valid");
 const { suggest } = require("../util");
 
-describe.only("policy.json is valid", () => {
+describe("policy.json is valid", () => {
   it("skips if there is no policy.json", async () => {
     const orders = {
       path: "streamliner/orders",
@@ -689,7 +689,7 @@ describe.only("policy.json is valid", () => {
     });
   });
 
-  it.only("requires all secrets in secrets.json to be present in policy.json", async () => {
+  it("requires all secrets in secrets.json to be present in policy.json", async () => {
     let policyJson = JSON.stringify(
       {
         Version: "2012-10-17",
