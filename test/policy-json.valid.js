@@ -46,7 +46,7 @@ describe('policy.json is valid', () => {
       path: 'streamliner/orders',
       contents: [],
       policyPath: 'streamliner/policy.json',
-      policyContents: 'not valid json'
+      policyContents: ['not valid json']
     };
 
     const results = await policyJsonIsValid(orders);

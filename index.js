@@ -26,15 +26,15 @@ async function getContents(filePath) {
   // secrets.json is not required
   if (fs.existsSync(secretsJsonPath)) {
     const secretsJson = await fs.readFile(secretsJsonPath, 'utf8');
-    results.secretsContents = secretsJson.split('\n');
-    results.secretsPath = secretsJsonPath;
+    result.secretsContents = secretsJson.split('\n');
+    result.secretsPath = secretsJsonPath;
   }
 
   // policy.json is not required
   if (fs.existsSync(policyJsonPath)) {
     const policyJson = await fs.readFile(policyJsonPath, 'utf8');
-    results.policyContents = policyJson.split('\n');
-    results.policyPath = policyJsonPath;
+    result.policyContents = policyJson.split('\n');
+    result.policyPath = policyJsonPath;
   }
   return result;
 }
