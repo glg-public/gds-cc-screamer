@@ -22,6 +22,16 @@ describe("Deployment Line Check", () => {
     results = await deploymentLineCheck(orders);
 
     expect(results[0].problems.length).to.equal(0);
+
+    // works with jobdeploy
+    orders = {
+      path: "streamliner/orders",
+      contents: ["jobdeploy github/glg/price-service/main:latest"],
+    };
+
+    results = await deploymentLineCheck(orders);
+
+    expect(results[0].problems.length).to.equal(0);
   });
 
   it("rejects an improperly formatted dockerdeploy line", async () => {
@@ -35,6 +45,20 @@ describe("Deployment Line Check", () => {
     expect(results[0].problems.length).to.equal(1);
     expect(results[0].problems[0]).to.equal(
       "Incorrect Formatting: must be `dockerdeploy github/<org>/<repo>/<branch>:<tag>`"
+    );
+  });
+
+  it("rejects an improperly formatted jobdeploy line", async () => {
+    const orders = {
+      path: "streamliner/orders",
+      contents: ["jobdeploy git@github:glg/streamliner.git:latest"],
+    };
+
+    const results = await deploymentLineCheck(orders);
+
+    expect(results[0].problems.length).to.equal(1);
+    expect(results[0].problems[0]).to.equal(
+      "Incorrect Formatting: must be `jobdeploy github/<org>/<repo>/<branch>:<tag>`"
     );
   });
 
