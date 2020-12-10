@@ -2,7 +2,7 @@ const { expect } = require('chai');
 const policyJsonIsValid = require('../checks/policy-json-valid');
 const { suggest } = require('../util');
 
-describe.only('policy.json is valid', () => {
+describe('policy.json is valid', () => {
   it('skips if there is no policy.json', async () => {
     const orders = {
       path: 'streamliner/orders',
@@ -489,7 +489,81 @@ describe.only('policy.json is valid', () => {
     });
   });
 
-  it('rejects policy.json that is missing required actions');
+  it('rejects policy.json that is missing required actions', async () => {
+    let policyJson = JSON.stringify({
+      Version: '2012-10-17',
+      Statement: [{
+        Effect: 'Allow',
+        Action: 'resource:action',
+        Resource: 'arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret'
+      }, {
+        Effect: 'Allow',
+        Action: [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "secretsmanager:GetSecretValue"
+        ],
+        Resource: 'arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret'
+      }]
+    }, null, 2);
+    let orders = {
+      path: 'streamliner/orders',
+      contents: [],
+      policyPath: 'streamliner/policy.json',
+      policyContents: policyJson.split('\n')
+    };
 
-  it('requires the "secretsmanager:GetSecretValue" action if a secrets.json is present');
+    let results = await policyJsonIsValid(orders);
+    expect(results.length).to.equal(1);
+    expect(results[0]).to.deep.equal({
+      title: 'Policy is missing required actions',
+      path: 'streamliner/policy.json',
+      problems: [
+        'To run in GDS, your service requires the ecr:BatchGetImage action.'
+      ],
+      line: 0,
+      level: 'failure'
+    });
+  });
+
+  it('requires the "secretsmanager:GetSecretValue" action if a secrets.json is present', async () => {
+    let policyJson = JSON.stringify({
+      Version: '2012-10-17',
+      Statement: [{
+        Effect: 'Allow',
+        Action: 'resource:action',
+        Resource: 'arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret'
+      }, {
+        Effect: 'Allow',
+        Action: [
+          "ecr:*", // supports wildcard actions
+          "logs:*",
+        ],
+        Resource: 'arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret'
+      }]
+    }, null, 2);
+    let orders = {
+      path: 'streamliner/orders',
+      contents: [],
+      policyPath: 'streamliner/policy.json',
+      policyContents: policyJson.split('\n'),
+      secretsContents: [] // indicates presence of a secrets.json
+    };
+
+    let results = await policyJsonIsValid(orders);
+    expect(results.length).to.equal(1);
+    expect(results[0]).to.deep.equal({
+      title: 'Policy is missing required actions',
+      path: 'streamliner/policy.json',
+      problems: [
+        'To run in GDS, your service requires the secretsmanager:GetSecretValue action.'
+      ],
+      line: 0,
+      level: 'failure'
+    });
+  });
+
 });
