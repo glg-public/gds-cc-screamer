@@ -324,7 +324,6 @@ describe.only('policy.json is valid', () => {
         Resource: 'arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret'
       }]
     }, null, 2);
-    console.log(policyJson);
 
     orders = {
       path: 'streamliner/orders',
@@ -344,5 +343,70 @@ describe.only('policy.json is valid', () => {
     });
   });
 
-  it('rejects policy.json where any statement block contains an invalid Resource');
+  it('rejects policy.json where any statement block contains an invalid Resource', async () => {
+    let policyJson = JSON.stringify({
+      Version: '2012-10-17',
+      Statement: [{
+        Effect: 'Allow',
+        Action: 'resource:action',
+        Resource: 'arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret'
+      }, {
+        Effect: 'Allow',
+        Action: 'resource:action',
+        Resource: 'wrong'
+      }]
+    }, null, 2);
+    let orders = {
+      path: 'streamliner/orders',
+      contents: [],
+      policyPath: 'streamliner/policy.json',
+      policyContents: policyJson.split('\n')
+    };
+
+    let results = await policyJsonIsValid(orders);
+    expect(results.length).to.equal(1);
+    expect(results[0]).to.deep.equal({
+      title: 'Invalid value for "Resource"',
+      path: orders.policyPath,
+      problems: ['"Resource" must be either a valid [ARN](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html), or an array of valid ARNs.'],
+      line: 12,
+      level: 'failure'
+    });
+
+    policyJson = JSON.stringify({
+      Version: '2012-10-17',
+      Statement: [{
+        Effect: 'Allow',
+        Action: 'resource:action',
+        Resource: 'arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret'
+      }, {
+        Effect: 'Allow',
+        Action: [
+          'resource:*',
+          'other:action'
+        ],
+        Resource: [
+          'arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret',
+          'wrong'
+        ],
+      }]
+    }, null, 2);
+
+    orders = {
+      path: 'streamliner/orders',
+      contents: [],
+      policyPath: 'streamliner/policy.json',
+      policyContents: policyJson.split('\n')
+    };
+
+    results = await policyJsonIsValid(orders);
+    expect(results.length).to.equal(1);
+    expect(results[0]).to.deep.equal({
+      title: 'Invalid value for "Resource"',
+      path: orders.policyPath,
+      problems: ['"Resource" must be either a valid [ARN](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html), or an array of valid ARNs.'],
+      line: 17,
+      level: 'failure'
+    });
+  });
 });
