@@ -4,6 +4,18 @@ inputs:
   token:
     description: Should be secrets.GITHUB_TOKEN
     required: true
+  aws_account_id:
+    description: The ID of your AWS account. Used to generate certain comments.
+    required: false
+    default: "*"
+  aws_secrets_prefix:
+    description: A string to prefix your secrets with, i.e. us-east-1/production/
+    required: false
+    default: "us-east-1/production/"
+  aws_region:
+    description: Your AWS region. Used to generate certain comments
+    required: false
+    default: "us-east-1"
 runs:
   using: 'node12'
   main: 'index.js'

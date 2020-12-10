@@ -1,6 +1,6 @@
 const core = require("@actions/core");
 
-const exportedVariable = RegExp(/^export +(?<variable>\w+)=/);
+const exportedVariable = /^export +(?<variable>\w+)=/;
 
 /**
  * Accepts an orders object, and does some kind of check
