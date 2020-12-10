@@ -13,5 +13,6 @@ module.exports = [
   require("./jwt-access-flags"),
   require("./no-spaces-in-exports"),
   require("./secrets-json-valid"),
-  require("./policy-json-valid"),
+  require("./secrets-in-orders"),
+  require("./policy-json-valid"), //We should always validate the policy after anything that deals with secrets
 ];

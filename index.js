@@ -42,6 +42,11 @@ async function getContents(filePath) {
 async function run() {
   try {
     const token = core.getInput("token", { required: true });
+    const awsAccount = core.getInput("aws_account");
+    const secretsPrefix = core.getInput("aws_secrets_prefix");
+    const awsRegion = core.getInput("aws_region");
+    const inputs = { awsAccount, secretsPrefix, awsRegion };
+
     const octokit = github.getOctokit(token);
 
     const pr = github.context.payload.pull_request;
@@ -81,7 +86,7 @@ async function run() {
     // multiple results.
     for (const deployment of deployments) {
       for (const check of checks) {
-        const results = await check(deployment, github.context);
+        const results = await check(deployment, github.context, inputs);
         if (results.length === 0) {
           core.info("...Passed");
         }

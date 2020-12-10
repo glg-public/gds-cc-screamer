@@ -1,0 +1,169 @@
+const core = require("@actions/core");
+const { suggest, getLinesForJSON } = require("../util");
+
+const secretsUse = /^export +(?<variable>\w+)=\$\(\s*secrets\s*(?<secretName>\w*)\s*\)$/;
+const fromJsonUse = /^export +(?<variable>\w+)=\$\(\s*fromJson\s+"?\${?(?<sourceVar>\w+)}?"?\s+"?(?<jsonKey>\w+)"?\)$/;
+const autodeploy = /^autodeploy git@github.com:(?<org>[\w-]+)\/(?<repo>.+?)(.git|)#(?<branch>.+)/
+
+/**
+ * Accepts an orders object, and does some kind of check
+ * @param {{path: string, contents: Array<string>}} orders
+ * @param {Object} context The context object provided by github
+ */
+async function secretsInOrders(orders, context, inputs) {
+  core.info(`Secrets in Orders File - ${orders.path}`);
+  const { awsAccount, secretsPrefix, awsRegion } = inputs;
+  const results = [];
+  const secretsJson = [];
+
+  orders.contents
+    .map((line, i) => {
+      return { match: secretsUse.exec(line), index: i };
+    })
+    .filter(({ match }) => match)
+    .forEach(
+      ({
+        match: {
+          groups: { variable: secretVar, secretName },
+        },
+        index: i,
+      }) => {
+        results.push({
+          title: "Deprecated Utility",
+          problems: [
+            "The **secrets** binary is being deprecated. Please create a secrets.json in this directory instead.",
+            suggest("Remove this line", ""),
+          ],
+          line: i + 1,
+          level: "warning",
+        });
+
+        let hasKeys = false;
+        orders.contents
+          .slice(index + 1)
+          .map((line, j) => {
+            return { match: fromJsonUse.exec(line), index: j };
+          })
+          .filter(({ match }) => match)
+          .filter(
+            ({
+              match: {
+                groups: { sourceVar },
+              },
+            }) => sourceVar === secretVar
+          )
+          .forEach(
+            ({
+              match: {
+                groups: { variable, sourceVar, jsonKey },
+              },
+              index: j,
+            }) => {
+              results.push({
+                title: "Deprecated Utility",
+                problems: [
+                  "The **fromJson** utility is being deprecated. Please create a secrets.json instead.",
+                  suggest("Remove this line", ""),
+                ],
+                line: j + 1,
+                level: "warning",
+              });
+
+              hasKeys = true;
+              secretsJson.push({
+                name: variable,
+                valueFrom: `arn:aws:secretsmanager:${awsRegion}:${awsAccount}:secret:${secretsPrefix}${secretName}:${jsonKey}::`,
+              });
+            }
+          );
+
+        if (!hasKeys) {
+          secretsJson.push({
+            name: secretVar,
+            valueFrom: `arn:aws:secretsmanager:${awsRegion}:${awsAccount}:secret:${secretsPrefix}${secretName}:::`,
+          });
+        }
+      }
+    );
+
+  // If there's already a secrets.json, we still want to
+  // make sure it includes every secret it needs.
+  if (orders.secretsJson) {
+    const secretsToAdd = [
+      ...difference(
+        secretsJson.map(JSON.stringify),
+        orders.secretsJson.map(JSON.stringify)
+      ),
+    ].map(JSON.parse);
+    if (secretsToAdd.length > 0) {
+      const result = {
+        title: "Missing Secrets in secrets.json",
+        path: orders.secretsPath,
+        problems: [],
+        level: "failure",
+      };
+
+      // This lets us indent more correctly
+      const newSecretsJson = orders.secretsJson.concat(secretsToAdd);
+      const newSecretsLines = JSON.stringify(newSecretsJson, null, 2).split("\n");
+      let stringifiedStatement = '';
+      secretsToAdd.forEach(secret => {
+        const { start, end } = getLinesForJSON(newSecretsLines, secret);
+        stringifiedStatement += newSecretsLines
+          .slice(start - 1, end)
+          .join("\n")
+          .trim();
+      });
+    
+      const { end: lineToAnnotate } = getLinesForJSON(
+        orders.secetsContents,
+        orders.secretsJson[orders.secretsJson.length - 1]
+      );
+
+      result.line = lineToAnnotate;
+
+      const oldLine = orders.secretsContents[lineToAnnotate - 1];
+      let newLine = oldLine;
+      if (!oldLine.endsWith(",")) {
+        newLine += ", ";
+      }
+      newLine += stringifiedStatement;
+      result.problems.push(
+        suggest('Add the following secrets', newLine)
+      );
+
+      results.push(result);
+      orders.secretsJson = newSecretsJson;
+    }
+  } else {
+    // If there's not already a secrets.json, we should
+    // recommend that user create one
+    const secretsJsonPath = path.join(path.dirname(orders.path), "secrets.json");
+    const isAutodeploy = orders.contents.filter(autodeploy.test).length > 0;
+    const level = isAutodeploy ? 'warning': 'failure'; // autodeploy doesn't require this
+    results.push({
+      title: 'Create a secrets.json',
+      problems: [
+`Add a new file, ${secretsJsonPath}, that contains the following:\n\`\`\`json
+${JSON.stringify(secretsJson, null, 2)}
+\`\`\``
+      ],
+      line: 0,
+      level
+    });
+
+    orders.secretsJson = secretsJson;
+  }
+
+  return results;
+}
+
+function difference(setA, setB) {
+  let _difference = new Set(setA);
+  for (let elem of setB) {
+    _difference.delete(elem);
+  }
+  return _difference;
+}
+
+module.exports = secretsInOrders;
