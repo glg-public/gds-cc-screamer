@@ -3,24 +3,25 @@ function getLinesForJSON(fileLines, jsonObj) {
   let end = 0;
 
   // Convert the object into a regex
-  const regex = RegExp(JSON.stringify(jsonObj)
-    .replace(/\*/g, '\\*')
-    .replace(/{/g, '{\\s*')
-    .replace(/:"/g, ':\\s*"')
-    .replace(/",/g, '"\\s*,\\s*')
-    .replace(/}/g, '\\s*}')
-    .replace(/\[/g, '\\s*\\[\\s*')
-    .replace(/\],?/g, '\\s*\\],?\\s*')
+  const regex = RegExp(
+    JSON.stringify(jsonObj)
+      .replace(/\*/g, "\\*")
+      .replace(/{/g, "{\\s*")
+      .replace(/:"/g, ':\\s*"')
+      .replace(/",/g, '"\\s*,\\s*')
+      .replace(/}/g, "\\s*}")
+      .replace(/\[/g, "\\s*\\[\\s*")
+      .replace(/\],?/g, "\\s*\\],?\\s*")
   );
 
   for (let i = 0; i < fileLines.length; i++) {
     let text = fileLines[i];
 
-    if (text.trim() === '[') {
+    if (text.trim() === "[") {
       continue;
     }
 
-    start = i+1;
+    start = i + 1;
 
     if (regex.test(text)) {
       end = start;
@@ -32,11 +33,11 @@ function getLinesForJSON(fileLines, jsonObj) {
       continue;
     }
 
-    for (let j = i+1; j < fileLines.length; j++) {
+    for (let j = i + 1; j < fileLines.length; j++) {
       text += `\n${fileLines[j]}`;
       if (regex.test(text)) {
-        end = j+1;
-        return { start, end }
+        end = j + 1;
+        return { start, end };
       }
 
       // If we've reached the end of an object, we start over at the next line
@@ -46,7 +47,7 @@ function getLinesForJSON(fileLines, jsonObj) {
     }
   }
 
-  return { start, end }
+  return { start, end };
 }
 
 function suggest(title, suggestion) {
@@ -58,7 +59,7 @@ ${suggestion}
 function getLineNumber(fileLines, regex) {
   for (let i = 0; i < fileLines.length; i++) {
     if (regex.test(fileLines[i])) {
-      return i+1;
+      return i + 1;
     }
   }
 }
@@ -69,7 +70,10 @@ function getLineWithinObject(fileLines, jsonObj, regex) {
   if (blockLineNums.start === blockLineNums.end) {
     line = blockLineNums.start;
   } else {
-    const blockLines = fileLines.slice(blockLineNums.start - 1, blockLineNums.end);
+    const blockLines = fileLines.slice(
+      blockLineNums.start - 1,
+      blockLineNums.end
+    );
     line = getLineNumber(blockLines, regex) + blockLineNums.start - 1;
   }
 
@@ -80,5 +84,5 @@ module.exports = {
   getLinesForJSON,
   suggest,
   getLineNumber,
-  getLineWithinObject
-}
+  getLineWithinObject,
+};

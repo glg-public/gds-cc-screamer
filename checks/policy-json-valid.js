@@ -138,7 +138,8 @@ async function policyJsonIsValid(orders, context) {
     });
 
     function _toggleRequiredSecret(resource) {
-      const keyRegex = RegExp(resource.replace(/\*/g, "\\w+"));
+      // We need to account for wildcards
+      const keyRegex = RegExp(resource.replace(/\*/g, "[\\w\\-\\/\\:]+") + "$");
       Object.keys(requiredSecrets)
         .filter((key) => keyRegex.test(key))
         .forEach((key) => (requiredSecrets[key] = true));
@@ -186,15 +187,32 @@ async function policyJsonIsValid(orders, context) {
         ),
       };
 
-      const { end } = getLinesForJSON(orders.policyContents, statementBlock[statementBlock.length - 1]);
+      // This lets us indent more correctly
+      const newPolicy = Object.assign({}, document);
+      newPolicy.Statement = statementBlock.concat([newStatementBlock]);
+      const newPolicyLines = JSON.stringify(newPolicy, null, 2).split("\n");
+      const { start, end } = getLinesForJSON(newPolicyLines, newStatementBlock);
+      const stringifiedStatement = newPolicyLines
+        .slice(start - 1, end)
+        .join("\n")
+        .trim();
 
-      const oldLine = orders.policyContents[end - 1];
+      const { end: lineToAnnotate } = getLinesForJSON(
+        orders.policyContents,
+        statementBlock[statementBlock.length - 1]
+      );
+
+      result.line = lineToAnnotate;
+
+      const oldLine = orders.policyContents[lineToAnnotate - 1];
       let newLine = oldLine;
-      if (!oldLine.endsWith(',')) {
-        newLine += ',';
+      if (!oldLine.endsWith(",")) {
+        newLine += ", ";
       }
-      newLine += JSON.stringify(newStatementBlock, null, 2);
-      result.problems.push(suggest('Add the following statement block', newLine))
+      newLine += stringifiedStatement;
+      result.problems.push(
+        suggest("Add the following statement block", newLine)
+      );
 
       results.push(result);
     }
