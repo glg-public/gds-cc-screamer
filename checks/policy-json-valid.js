@@ -178,12 +178,23 @@ async function policyJsonIsValid(orders, context) {
         );
 
       const newStatementBlock = {
+        Sid: "AllowRequiredSecrets",
         Effect: "Allow",
         Action: secretsAction,
         Resource: Object.keys(requiredSecrets).filter(
           (s) => !requiredSecrets[s]
         ),
       };
+
+      const { end } = getLinesForJSON(orders.policyContents, statementBlock[statementBlock.length - 1]);
+
+      const oldLine = orders.policyContents[end - 1];
+      let newLine = oldLine;
+      if (!oldLine.endsWith(',')) {
+        newLine += ',';
+      }
+      newLine += JSON.stringify(newStatementBlock, null, 2);
+      result.problems.push(suggest('Add the following statement block', newLine))
 
       results.push(result);
     }
