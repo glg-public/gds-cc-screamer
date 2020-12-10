@@ -67,7 +67,7 @@ describe('Deployment Line Check', () => {
     const results = await deploymentLineCheck(orders);
 
     expect(results[0].problems.length).to.equal(1);
-    expect(results[0].problems[0]).to.equal(`**${orders.path}** - Missing deployment. Must include either an \`autodeploy\` line or a \`dockerdeploy\` line.`);
+    expect(results[0].problems[0]).to.equal(`**${orders.path}** - Missing deployment. Must include either an \`autodeploy\` line, a \`dockerdeploy\` line, or a \`jobdeploy\` line.`);
   });
 
   it('rejects repository names with invalid characters', async () => {
