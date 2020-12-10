@@ -40,8 +40,6 @@ async function policyJsonIsValid(orders, context) {
     orders.policyPath
   );
 
-  console.log(results, document);
-
   if (!document) {
     return results;
   }
