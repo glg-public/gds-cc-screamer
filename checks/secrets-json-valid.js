@@ -98,6 +98,10 @@ async function secretsJsonIsValid(orders, context) {
     }
   }
 
+  // Mark this as valid, so future checks don't have to redo this work
+  if (results.length === 0) {
+    orders.secretsJson = secretsJson;
+  }
   return results;
 }
 

@@ -1,5 +1,4 @@
 const core = require("@actions/core");
-const { forEach } = require(".");
 const {
   getLinesForJSON,
   suggest,
@@ -55,8 +54,9 @@ async function policyJsonIsValid(orders, context) {
   };
 
   // Secrets access is only needed for services that use secrets
+  const secretsAction = "secretsmanager:GetSecretValue";
   if (orders.secretsContents) {
-    requiredActions["secretsmanager:GetSecretValue"] = false;
+    requiredActions[secretsAction] = false;
   }
 
   function _toggleRequiredAction(item) {
@@ -89,29 +89,104 @@ async function policyJsonIsValid(orders, context) {
     return { effect, action, resource };
   }
 
-  // Validate the presence of all required actions
-  const statementBlock = document.Statement || document.statement || [];
-  statementBlock.map(_standardizeStatement).forEach((statement) => {
-    // The generic validator has already notated capitalization errors
-    const { action, effect } = statement;
+  function _isAllowed(statement) {
+    return (
+      statement.action && statement.resource && /allow/i.test(statement.effect)
+    );
+  }
 
-    if (!action || !/allow/i.test(effect)) {
-      return;
-    }
+  function _isAboutSecrets(statement) {
+    const { action } = statement;
 
     if (typeof action === "string" && actionString.test(action)) {
-      _toggleRequiredAction(action);
+      const keyRegex = RegExp(action.replace(/\*/g, "\\w+"));
+      return keyRegex.test(secretsAction);
     } else if (Array.isArray(action)) {
       action
         .filter((item) => actionString.test(item))
-        .forEach(_toggleRequiredAction);
+        .forEach((item) => {
+          const keyRegex = RegExp(item.replace(/\*/g, "\\w+"));
+          if (keyRegex.test(secretsAction)) {
+            return true;
+          }
+        });
+      return false;
     }
-  });
+  }
+
+  // Validate the presence of all required actions
+  const statementBlock = document.Statement || document.statement || [];
+  statementBlock
+    .map(_standardizeStatement)
+    .filter(_isAllowed)
+    .forEach(({ action }) => {
+      if (typeof action === "string" && actionString.test(action)) {
+        _toggleRequiredAction(action);
+      } else if (Array.isArray(action)) {
+        action
+          .filter((item) => actionString.test(item))
+          .forEach(_toggleRequiredAction);
+      }
+    });
 
   // If there's a secrets.json, we should make sure this policy
   // grants access to those secrets
-  if (orders.secretsContents) {
-    
+  if (orders.secretsJson) {
+    const requiredSecrets = {};
+    orders.secretsJson.forEach((secret) => {
+      requiredSecrets[secret.valueFrom] = false;
+    });
+
+    function _toggleRequiredSecret(resource) {
+      const keyRegex = RegExp(resource.replace(/\*/g, "\\w+"));
+      Object.keys(requiredSecrets)
+        .filter((key) => keyRegex.test(key))
+        .forEach((key) => (requiredSecrets[key] = true));
+    }
+
+    statementBlock
+      .map(_standardizeStatement)
+      .filter(_isAllowed)
+      .filter(_isAboutSecrets)
+      .forEach(({ resource }) => {
+        if (typeof resource === "string") {
+          _toggleRequiredSecret(resource);
+        } else if (Array.isArray(resource)) {
+          resource.forEach(_toggleRequiredSecret);
+        }
+      });
+
+    // Validate that all required secrets are accounted for
+    if (
+      statementBlock.length > 0 &&
+      !Object.keys(requiredSecrets).every((s) => requiredSecrets[s])
+    ) {
+      const result = {
+        title: "Policy is missing required secrets",
+        path: orders.policyPath,
+        problems: [],
+        line: 0,
+        level: "failure",
+      };
+
+      Object.keys(requiredSecrets)
+        .filter((key) => !requiredSecrets[key])
+        .forEach((key) =>
+          result.problems.push(
+            `Your secrets.json requests ${key}, but your policy does not allow access.`
+          )
+        );
+
+      const newStatementBlock = {
+        Effect: "Allow",
+        Action: secretsAction,
+        Resource: Object.keys(requiredSecrets).filter(
+          (s) => !requiredSecrets[s]
+        ),
+      };
+
+      results.push(result);
+    }
   }
 
   // Validate that all required actions have been satisfied
