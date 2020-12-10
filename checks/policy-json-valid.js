@@ -67,10 +67,7 @@ async function policyJsonIsValid(orders, context) {
       .forEach((key) => (requiredActions[key] = true));
   }
 
-  // Validate the presence of all required actions
-  const statementBlock = document.Statement || document.statement || [];
-  statementBlock.forEach((statement) => {
-    // The generic validator has already notated capitalization errors
+  function _standardizeStatement(statement) {
     const action =
       statement.Action ||
       statement.action ||
@@ -79,14 +76,43 @@ async function policyJsonIsValid(orders, context) {
       statement.notaction ||
       statement.Notaction;
 
-    if (action && typeof action === "string" && actionString.test(action)) {
+    const resource =
+      statement.Resource ||
+      statement.resource ||
+      statement.NotResource ||
+      statement.notResource ||
+      statement.notresource ||
+      statement.Notresource;
+
+    const effect = statement.Effect || statement.effect;
+
+    return { effect, action, resource };
+  }
+
+  // Validate the presence of all required actions
+  const statementBlock = document.Statement || document.statement || [];
+  statementBlock.map(_standardizeStatement).forEach((statement) => {
+    // The generic validator has already notated capitalization errors
+    const { action, effect } = statement;
+
+    if (!action || !/allow/i.test(effect)) {
+      return;
+    }
+
+    if (typeof action === "string" && actionString.test(action)) {
       _toggleRequiredAction(action);
-    } else if (action && Array.isArray(action)) {
+    } else if (Array.isArray(action)) {
       action
         .filter((item) => actionString.test(item))
         .forEach(_toggleRequiredAction);
     }
   });
+
+  // If there's a secrets.json, we should make sure this policy
+  // grants access to those secrets
+  if (orders.secretsContents) {
+    
+  }
 
   // Validate that all required actions have been satisfied
   if (
