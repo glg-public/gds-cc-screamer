@@ -2,7 +2,7 @@ const { expect } = require('chai');
 const policyJsonIsValid = require('../checks/policy-json-valid');
 const { suggest } = require('../util');
 
-describe('policy.json is valid', () => {
+describe.only('policy.json is valid', () => {
   it('skips if there is no policy.json', async () => {
     const orders = {
       path: 'streamliner/orders',
@@ -304,7 +304,7 @@ describe('policy.json is valid', () => {
     expect(results[0]).to.deep.equal({
       title: 'Invalid value for "Action"',
       path: 'streamliner/policy.json',
-      problems: [ '"Action" must be either a valid action string, or an array of valid action strings.' ],
+      problems: [ '"Action" must be either a valid [Action String](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_action.html), or an array of valid action strings.' ],
       line: 11,
       level: 'failure'
     });
@@ -338,7 +338,7 @@ describe('policy.json is valid', () => {
     expect(results[0]).to.deep.equal({
       title: 'Invalid value for "Action"',
       path: 'streamliner/policy.json',
-      problems: [ '"Action" must be either a valid action string, or an array of valid action strings.' ],
+      problems: [ '"Action" must be either a valid [Action String](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_action.html), or an array of valid action strings.' ],
       line: 13,
       level: 'failure'
     });

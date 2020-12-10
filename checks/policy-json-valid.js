@@ -1,20 +1,21 @@
 const core = require('@actions/core');
 const { getLinesForJSON, suggest, getLineNumber, getLineWithinObject } = require('../util');
 
-const lowerVersion = /"version"/g;
-const lowerStatement = /"statement"/g;
-const lowerId = /"id"/g;
-const lowerSid = /"sid"/g;
-const lowerEffect = /"effect"/g;
-const lowerPrincipal = /"principal"/g;
-const wrongPrinciple = /"principle"/gi;
-const lowerAction = /"action"/g;
-const lowerNotAction = /"(notAction|notaction|Notaction)"/g
-const lowerResource = /"resource"/g;
-const lowerNotResource = /"(notResource|notresource|Notresource)"/g
-const lowerCondition = /"condition"/g;
+const lowerVersion = /"version"/;
+const lowerStatement = /"statement"/;
+const lowerId = /"id"/;
+const lowerSid = /"sid"/;
+const lowerEffect = /"effect"/;
+const lowerPrincipal = /"principal"/;
+const wrongPrinciple = /"principle"/i;
+const lowerAction = /"action"/;
+const lowerNotAction = /"(notAction|notaction|Notaction)"/
+const lowerResource = /"resource"/;
+const lowerNotResource = /"(notResource|notresource|Notresource)"/
+const lowerCondition = /"condition"/;
 
 const actionString = /(^\*$|^\w+:[\w\*]+$)/;
+const arnRegex = /(arn:(?<partition>[\w\*\-]*):(?<service>[\w\*\-]*):(?<region>[\w\*\-]*):(?<accountId>[\d\*]*):(?<resourceId>[\w\*\-\/\:]*)|^\*$)/;
 
 /**
  * Accepts an orders object, and does some kind of check
@@ -126,14 +127,14 @@ async function policyJsonIsValid(orders, context) {
       result.problems.push('All policy statements must include an "Effect" field. Must be "Allow" or "Deny"');
     }
 
-    let action = statement.Action || statement.action || statement.NotAction || statement.notAction || statement.notaction || statement.Notaction;
+    const action = statement.Action || statement.action || statement.NotAction || statement.notAction || statement.notaction || statement.Notaction;
     if (!action) {
       result.problems.push('All policy statements must include an "Action" field.');
     } else if (typeof action !== 'string' && !Array.isArray(action)) {
       result.problems.push('The "Action" field must either be a string, or an array of strings.');
     }
 
-    let resource = statement.Resource || statement.resource || statement.NotResource || statement.notResource || statement.notresource || statement.Notresource;
+    const resource = statement.Resource || statement.resource || statement.NotResource || statement.notResource || statement.notresource || statement.Notresource;
     if (!resource) {
       results.problems.push('All policy statements must include a "Resource" field.')
     } else if (typeof resource !== 'string' && !Array.isArray(resource)) {
@@ -167,7 +168,7 @@ async function policyJsonIsValid(orders, context) {
       });
     }
 
-    let action = statement.Action || statement.action || statement.NotAction || statement.notAction || statement.notaction || statement.Notaction; // we already suggested capitalization fixes
+    const action = statement.Action || statement.action || statement.NotAction || statement.notAction || statement.notaction || statement.Notaction; // we already suggested capitalization fixes
     if (action && typeof action === 'string' && !actionString.test(action)) {
       const lineRegex = RegExp(`"Action":\\s*"${action}"`, 'i');
       const line = getLineWithinObject(orders.policyContents, statement, lineRegex);
@@ -175,7 +176,7 @@ async function policyJsonIsValid(orders, context) {
       results.push({
         title: 'Invalid value for "Action"',
         path: orders.policyPath,
-        problems: ['"Action" must be either a valid action string, or an array of valid action strings.'],
+        problems: ['"Action" must be either a valid [Action String](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_action.html), or an array of valid action strings.'],
         line,
         level: 'failure'
       });
@@ -188,13 +189,44 @@ async function policyJsonIsValid(orders, context) {
           results.push({
             title: 'Invalid value for "Action"',
             path: orders.policyPath,
-            problems: ['"Action" must be either a valid action string, or an array of valid action strings.'],
+            problems: ['"Action" must be either a valid [Action String](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_action.html), or an array of valid action strings.'],
             line,
             level: 'failure'
           });
         }
       }
     }
+
+    const resource = statement.Resource || statement.resource || statement.NotResource || statement.notResource || statement.notresource || statement.Notresource; // we already suggested capitalization fixes
+
+    if (resource && typeof resource === 'string' && !arnRegex.test(resource)) {
+      const lineRegex = RegExp(`"Resource":\\s*"${resource}"`, 'i');
+      const line = getLineWithinObject(orders.policyContents, statement, lineRegex);
+      
+      results.push({
+        title: 'Invalid value for "Resource"',
+        path: orders.policyPath,
+        problems: ['"Resource" must be either a valid [ARN](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html), or an array of valid ARNs.'],
+        line,
+        level: 'failure'
+      });
+    } else if (resource && Array.isArray(resource)) {
+      for (let item of resource) {
+        if (!arnRegex.test(item)) {
+          const lineRegex = RegExp(`"${item}"`);
+          const line = getLineWithinObject(orders.policyContents, statement, lineRegex);
+          
+          results.push({
+            title: 'Invalid value for "Resource"',
+            path: orders.policyPath,
+            problems: ['"Resource" must be either a valid [ARN](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html), or an array of valid ARNs.'],
+            line,
+            level: 'failure'
+          });
+        }
+      }
+    }
+
   }
   
   return results;
