@@ -1,18 +1,18 @@
-const { expect } = require('chai');
-const secretsJsonIsValid = require('../checks/secrets-json-valid');
+const { expect } = require("chai");
+const secretsJsonIsValid = require("../checks/secrets-json-valid");
 
-describe('secrets.json is valid check', () => {
-  it('skips when there is no secrets.json', async () => {
+describe("secrets.json is valid check", () => {
+  it("skips when there is no secrets.json", async () => {
     const orders = {
-      path: 'streamliner/orders',
-      contents: []
+      path: "streamliner/orders",
+      contents: [],
     };
 
     const results = await secretsJsonIsValid(orders);
     expect(results.length).to.equal(0);
   });
 
-  it('accepts valid secrets.json files', async () => {
+  it("accepts valid secrets.json files", async () => {
     const secretsJson = `[
       {
         "name": "JSON_SECRET",
@@ -25,24 +25,24 @@ describe('secrets.json is valid check', () => {
     ]`;
 
     const orders = {
-      path: 'streamliner/orders',
+      path: "streamliner/orders",
       contents: [],
-      secretsPath: 'streamliner/secrets.json',
-      secretsContents: secretsJson.split('\n')
+      secretsPath: "streamliner/secrets.json",
+      secretsContents: secretsJson.split("\n"),
     };
 
     const results = await secretsJsonIsValid(orders);
     expect(results.length).to.equal(0);
   });
 
-  it('rejects secrets.json that is not valid JSON', async () => {
-    const secretsJson = 'invalid json';
+  it("rejects secrets.json that is not valid JSON", async () => {
+    const secretsJson = "invalid json";
 
     const orders = {
-      path: 'streamliner/orders',
+      path: "streamliner/orders",
       contents: [],
-      secretsPath: 'streamliner/secrets.json',
-      secretsContents: secretsJson.split('\n')
+      secretsPath: "streamliner/secrets.json",
+      secretsContents: secretsJson.split("\n"),
     };
 
     const results = await secretsJsonIsValid(orders);
@@ -50,22 +50,24 @@ describe('secrets.json is valid check', () => {
     expect(results[0]).to.deep.equal({
       title: "secrets.json is not valid JSON",
       path: orders.secretsPath,
-      problems: [`An error was encountered while trying to JSON parse ${orders.secretsPath}`],
+      problems: [
+        `An error was encountered while trying to JSON parse ${orders.secretsPath}`,
+      ],
       line: 0,
-      level: 'failure'
+      level: "failure",
     });
   });
 
-  it('rejects secrets.json that is not an array', async () => {
+  it("rejects secrets.json that is not an array", async () => {
     const secretsJson = `{
       "JSON_SECRET": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:example::"
     }`;
 
     const orders = {
-      path: 'streamliner/orders',
+      path: "streamliner/orders",
       contents: [],
-      secretsPath: 'streamliner/secrets.json',
-      secretsContents: secretsJson.split('\n')
+      secretsPath: "streamliner/secrets.json",
+      secretsContents: secretsJson.split("\n"),
     };
 
     const results = await secretsJsonIsValid(orders);
@@ -73,13 +75,15 @@ describe('secrets.json is valid check', () => {
     expect(results[0]).to.deep.equal({
       title: `Invalid secrets.json`,
       path: orders.secretsPath,
-      problems: ["secrets.json must be an array of objects like `[{ name, valueFrom }]`"],
+      problems: [
+        "secrets.json must be an array of objects like `[{ name, valueFrom }]`",
+      ],
       line: 1,
-      level: 'failure'
+      level: "failure",
     });
   });
 
-  it('rejects a secrets.json where any secret is not an object', async () => {
+  it("rejects a secrets.json where any secret is not an object", async () => {
     const secretsJson = `[
       {
         "name": "JSON_SECRET",
@@ -93,10 +97,10 @@ describe('secrets.json is valid check', () => {
     ]`;
 
     const orders = {
-      path: 'streamliner/orders',
+      path: "streamliner/orders",
       contents: [],
-      secretsPath: 'streamliner/secrets.json',
-      secretsContents: secretsJson.split('\n')
+      secretsPath: "streamliner/secrets.json",
+      secretsContents: secretsJson.split("\n"),
     };
 
     const results = await secretsJsonIsValid(orders);
@@ -104,13 +108,15 @@ describe('secrets.json is valid check', () => {
     expect(results[0]).to.deep.equal({
       title: `Invalid secrets.json`,
       path: orders.secretsPath,
-      problems: ["secrets.json must be an array of objects like `[{ name, valueFrom }]`"],
+      problems: [
+        "secrets.json must be an array of objects like `[{ name, valueFrom }]`",
+      ],
       line: 1,
-      level: 'failure'
+      level: "failure",
     });
   });
 
-  it('rejects a secrets.json where any secret is missing a required key', async () => {
+  it("rejects a secrets.json where any secret is missing a required key", async () => {
     const secretsJson = `[
       {
         "valueFrom": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:example::"
@@ -122,10 +128,10 @@ describe('secrets.json is valid check', () => {
     ]`;
 
     const orders = {
-      path: 'streamliner/orders',
+      path: "streamliner/orders",
       contents: [],
-      secretsPath: 'streamliner/secrets.json',
-      secretsContents: secretsJson.split('\n')
+      secretsPath: "streamliner/secrets.json",
+      secretsContents: secretsJson.split("\n"),
     };
 
     const results = await secretsJsonIsValid(orders);
@@ -133,16 +139,16 @@ describe('secrets.json is valid check', () => {
     expect(results[0]).to.deep.equal({
       title: "Invalid Secret Structure",
       path: orders.secretsPath,
-      problems: ['Each secret must be an object like { name, valueFrom }'],
+      problems: ["Each secret must be an object like { name, valueFrom }"],
       line: {
         start: 2,
-        end: 4
+        end: 4,
       },
-      level: 'failure'
+      level: "failure",
     });
   });
 
-  it('rejects a secrets.json where any secret has non-required keys', async () => {
+  it("rejects a secrets.json where any secret has non-required keys", async () => {
     const secretsJson = `[
       {
         "name": "MY_SECRET",
@@ -156,10 +162,10 @@ describe('secrets.json is valid check', () => {
     ]`;
 
     const orders = {
-      path: 'streamliner/orders',
+      path: "streamliner/orders",
       contents: [],
-      secretsPath: 'streamliner/secrets.json',
-      secretsContents: secretsJson.split('\n')
+      secretsPath: "streamliner/secrets.json",
+      secretsContents: secretsJson.split("\n"),
     };
 
     const results = await secretsJsonIsValid(orders);
@@ -167,16 +173,18 @@ describe('secrets.json is valid check', () => {
     expect(results[0]).to.deep.equal({
       title: "Invalid Secret Structure",
       path: orders.secretsPath,
-      problems: ['Each secret must **only** contain the keys "name" and "valueFrom".'],
+      problems: [
+        'Each secret must **only** contain the keys "name" and "valueFrom".',
+      ],
       line: {
         start: 6,
-        end: 10
+        end: 10,
       },
-      level: 'failure'
+      level: "failure",
     });
   });
 
-  it('rejects a secrets.json if the arn is invalid', async () => {
+  it("rejects a secrets.json if the arn is invalid", async () => {
     const secretsJson = `[
       {
         "name": "JSON_SECRET",
@@ -189,10 +197,10 @@ describe('secrets.json is valid check', () => {
     ]`;
 
     const orders = {
-      path: 'streamliner/orders',
+      path: "streamliner/orders",
       contents: [],
-      secretsPath: 'streamliner/secrets.json',
-      secretsContents: secretsJson.split('\n')
+      secretsPath: "streamliner/secrets.json",
+      secretsContents: secretsJson.split("\n"),
     };
 
     const results = await secretsJsonIsValid(orders);
@@ -200,12 +208,12 @@ describe('secrets.json is valid check', () => {
     expect(results[0]).to.deep.equal({
       title: "Invalid Secret: OTHER_VALUE",
       path: orders.secretsPath,
-      problems: ['Invalid secret ARN: dev/json_secret'],
+      problems: ["Invalid secret ARN: dev/json_secret"],
       line: {
         start: 6,
-        end: 9
+        end: 9,
       },
-      level: 'failure'
-    })
+      level: "failure",
+    });
   });
-})
+});
