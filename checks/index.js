@@ -13,5 +13,6 @@ module.exports = [
   require('./no-sourcing'),
   require('./jwt-access-flags'),
   require('./no-spaces-in-exports'),
-  require('./secrets-json-valid')
+  require('./secrets-json-valid'),
+  require('./policy-json-valid')
 ];
