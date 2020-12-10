@@ -152,6 +152,21 @@ async function policyJsonIsValid(orders, context) {
     }
   }
 
+  // We will toggle these to true as we encounter them in the policy
+  const requiredActions = {
+    "ecr:GetAuthorizationToken": false,
+    "ecr:BatchCheckLayerAvailability": false,
+    "ecr:GetDownloadUrlForLayer": false,
+    "ecr:BatchGetImage": false,
+    "logs:CreateLogStream": false,
+    "logs:PutLogEvents": false,
+  };
+
+  // Secrets access is only needed for services that use secrets
+  if (orders.secretsContents) {
+    requiredActions["secretsmanager:GetSecretValue"] = false;
+  }
+
   // There is further validation to be done in each statement block
   for (let statement of statementBlock) {
     let effect = statement.Effect || statement.effect; // we already suggested capitalization fixes
@@ -180,6 +195,14 @@ async function policyJsonIsValid(orders, context) {
         line,
         level: 'failure'
       });
+    } else if (action && typeof action === 'string' && actionString.test(action)) {
+      // This way, ecr:* would toggle all of the required ECR actions
+      const keyRegex = RegExp(action.replace(/\*/g, '\\w+'))
+      
+      Object.keys(requiredActions)
+        .filter(key => keyRegex.test(key))
+        .forEach(key => requiredActions[key] = true);
+
     } else if (action && Array.isArray(action)) {
       for (let item of action) {
         if (!actionString.test(item)) {
@@ -193,6 +216,13 @@ async function policyJsonIsValid(orders, context) {
             line,
             level: 'failure'
           });
+        } else {
+          // This way, ecr:* would toggle all of the required ECR actions
+          const keyRegex = RegExp(item.replace(/\*/g, '\\w+'))
+          
+          Object.keys(requiredActions)
+            .filter(key => keyRegex.test(key))
+            .forEach(key => requiredActions[key] = true);
         }
       }
     }
@@ -227,6 +257,23 @@ async function policyJsonIsValid(orders, context) {
       }
     }
 
+  }
+
+  // Validate that all required actions have been satisfied
+  if (statementBlock.length > 0 && !Object.keys(requiredActions).every(a => requiredActions[a])) {
+    const result = {
+      title: 'Policy is missing required actions',
+      path: orders.policyPath,
+      problems: [],
+      line: 0,
+      level: 'failure'
+    };
+
+    Object.keys(requiredActions)
+      .filter(key => !requiredActions[key])
+      .forEach(key => result.problems.push(`To run in GDS, your service requires the ${key} action.`))
+
+    results.push(result)
   }
   
   return results;

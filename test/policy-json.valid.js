@@ -18,7 +18,15 @@ describe.only('policy.json is valid', () => {
       Version: '2012-10-17',
       Statement: [{
         Effect: 'Allow',
-        Action: 'resource:action',
+        Action: [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "secretsmanager:GetSecretValue"
+        ],
         Resource: 'arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret'
       }]
     }, null, 2);
@@ -84,7 +92,15 @@ describe.only('policy.json is valid', () => {
       version: '2012-10-17',
       statement: [{
         effect: 'Allow',
-        action: 'resource:action',
+        action: [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "secretsmanager:GetSecretValue"
+        ],
         resource: 'arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret'
       }]
     }, null, 2);
@@ -127,7 +143,7 @@ describe.only('policy.json is valid', () => {
     expect(action).to.deep.equal({
       title: 'Statement must be capitalized',
       path: orders.policyPath,
-      problems: [suggest('Capitalize this key', '      "Action": "resource:action",')],
+      problems: [suggest('Capitalize this key', '      "Action": [')],
       line: 6,
       level: 'failure'
     });
@@ -136,7 +152,7 @@ describe.only('policy.json is valid', () => {
       title: 'Statement must be capitalized',
       path: orders.policyPath,
       problems: [suggest('Capitalize this key', '      "Resource": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret"')],
-      line: 7,
+      line: 15,
       level: 'failure'
     });
   });
@@ -145,7 +161,15 @@ describe.only('policy.json is valid', () => {
     const policyJson = JSON.stringify({
       Statement: [{
         Effect: 'Allow',
-        Action: 'resource:action',
+        Action: [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "secretsmanager:GetSecretValue"
+        ],
         Resource: 'arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret'
       }]
     }, null, 2);
@@ -172,7 +196,15 @@ describe.only('policy.json is valid', () => {
       Version: '2.6',
       Statement: [{
         Effect: 'Allow',
-        Action: 'resource:action',
+        Action: [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "secretsmanager:GetSecretValue"
+        ],
         Resource: 'arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret'
       }]
     }, null, 2);
@@ -221,7 +253,15 @@ describe.only('policy.json is valid', () => {
       Version: '2012-10-17',
       Statement: [{
         Effect: 'Allow',
-        Action: 'resource:action',
+        Action: [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "secretsmanager:GetSecretValue"
+        ],
         Resource: 'arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret'
       }, {
         Action: 'resource:action',
@@ -244,7 +284,7 @@ describe.only('policy.json is valid', () => {
         'All policy statements must include an "Effect" field. Must be "Allow" or "Deny"'
       ],
       level: 'failure',
-      line: { start: 9, end: 12 }
+      line: { start: 17, end: 20 }
     });
   });
 
@@ -257,7 +297,15 @@ describe.only('policy.json is valid', () => {
         Resource: 'arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret'
       }, {
         Effect: 'allow', // This needs to be capitalized
-        Action: 'resource:action',
+        Action: [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "secretsmanager:GetSecretValue"
+        ],
         Resource: 'arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret'
       }]
     }, null, 2);
@@ -284,7 +332,15 @@ describe.only('policy.json is valid', () => {
       Version: '2012-10-17',
       Statement: [{
         Effect: 'Allow',
-        Action: 'resource:action',
+        Action: [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "secretsmanager:GetSecretValue"
+        ],
         Resource: 'arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret'
       }, {
         Effect: 'Allow',
@@ -305,7 +361,7 @@ describe.only('policy.json is valid', () => {
       title: 'Invalid value for "Action"',
       path: 'streamliner/policy.json',
       problems: [ '"Action" must be either a valid [Action String](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_action.html), or an array of valid action strings.' ],
-      line: 11,
+      line: 19,
       level: 'failure'
     });
 
@@ -319,7 +375,14 @@ describe.only('policy.json is valid', () => {
         Effect: 'Allow',
         Action: [
           'resource:*',
-          'wrong'
+          'wrong',
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "secretsmanager:GetSecretValue"
         ],
         Resource: 'arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret'
       }]
@@ -352,7 +415,15 @@ describe.only('policy.json is valid', () => {
         Resource: 'arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret'
       }, {
         Effect: 'Allow',
-        Action: 'resource:action',
+        Action: [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "secretsmanager:GetSecretValue"
+        ],
         Resource: 'wrong'
       }]
     }, null, 2);
@@ -369,7 +440,7 @@ describe.only('policy.json is valid', () => {
       title: 'Invalid value for "Resource"',
       path: orders.policyPath,
       problems: ['"Resource" must be either a valid [ARN](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html), or an array of valid ARNs.'],
-      line: 12,
+      line: 20,
       level: 'failure'
     });
 
@@ -377,7 +448,15 @@ describe.only('policy.json is valid', () => {
       Version: '2012-10-17',
       Statement: [{
         Effect: 'Allow',
-        Action: 'resource:action',
+        Action: [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "secretsmanager:GetSecretValue"
+        ],
         Resource: 'arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret'
       }, {
         Effect: 'Allow',
@@ -405,8 +484,12 @@ describe.only('policy.json is valid', () => {
       title: 'Invalid value for "Resource"',
       path: orders.policyPath,
       problems: ['"Resource" must be either a valid [ARN](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html), or an array of valid ARNs.'],
-      line: 17,
+      line: 25,
       level: 'failure'
     });
   });
+
+  it('rejects policy.json that is missing required actions');
+
+  it('requires the "secretsmanager:GetSecretValue" action if a secrets.json is present');
 });
