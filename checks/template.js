@@ -5,7 +5,7 @@ const core = require("@actions/core");
  * @param {{path: string, contents: Array<string>}} orders
  * @param {Object} context The context object provided by github
  */
-async function templateCheck(orders, context) {
+async function templateCheck(orders, context, inputs) {
   core.info(`Template Check - ${orders.path}`);
   const results = [];
   /**
@@ -18,11 +18,10 @@ async function templateCheck(orders, context) {
    }
    */
 
-  for (let i = 0; i < orders.contents.length; i++) {
-    const line = orders.contents[i];
+  orders.contents.forEach((line, i) => {
     const lineNumber = i + 1;
-    // Do something
-  }
+    // do something
+  });
 
   return results;
 }
