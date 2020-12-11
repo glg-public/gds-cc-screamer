@@ -33,6 +33,10 @@ describe("secrets.json is valid check", () => {
 
     const results = await secretsJsonIsValid(orders);
     expect(results.length).to.equal(0);
+
+    // When the secrets.json is valid, it gets attached to the orders object
+    // so that future checks can rely on it without redoing work.
+    expect(orders.secretsJson).to.deep.equal(JSON.parse(secretsJson));
   });
 
   it("rejects secrets.json that is not valid JSON", async () => {
