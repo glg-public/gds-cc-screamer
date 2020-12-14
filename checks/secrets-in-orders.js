@@ -1,6 +1,11 @@
 const core = require("@actions/core");
 const path = require("path");
-const { suggest, getLinesForJSON } = require("../util");
+const {
+  suggest,
+  getLinesForJSON,
+  getNewFileLink,
+  getOwnerRepoBranch,
+} = require("../util");
 
 const secretsUse = /^(export +|)(?<variable>\w+)=\$\(\s*secrets\s*(?<secretName>\w*)\s*\)$/;
 const fromJsonUse = /^export +(?<variable>\w+)=\$\(\s*fromJson\s+"?\${?(?<sourceVar>\w+)}?"?\s+"?(?<jsonKey>\w+)"?\)$/;
@@ -144,19 +149,27 @@ async function secretsInOrders(orders, context, inputs) {
   } else {
     // If there's not already a secrets.json, we should
     // recommend that user create one
-    const secretsJsonPath = path.join(
-      path.dirname(orders.path),
-      "secrets.json"
-    );
+    const deploymentDir = path.dirname(orders.path);
+    const secretsJsonPath = path.join(deploymentDir, "secrets.json");
     const isAutodeploy =
       orders.contents.filter((line) => autodeploy.test(line)).length > 0;
     const level = isAutodeploy ? "warning" : "failure"; // autodeploy doesn't require this
+    const { owner, repo, branch } = getOwnerRepoBranch(context);
+    const secretsFile = JSON.stringify(secretsJson, null, 2);
     results.push({
       title: "Create a secrets.json",
       problems: [
         `Add a new file, ${secretsJsonPath}, that contains the following:\n\`\`\`json
-${JSON.stringify(secretsJson, null, 2)}
+${secretsFile}
 \`\`\``,
+        `[Click to add file](${getNewFileLink({
+          owner,
+          repo,
+          branch,
+          path: deploymentDir,
+          filename: "secrets.json",
+          value: secretsFile,
+        })})`,
       ],
       line: 0,
       level,
