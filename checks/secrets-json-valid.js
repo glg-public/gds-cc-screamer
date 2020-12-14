@@ -86,6 +86,8 @@ async function secretsJsonIsValid(orders, context) {
       const wrongCaseForValueFrom =
         key.toLowerCase() === "valuefrom" && key !== "valueFrom";
 
+        console.log(wrongCaseForName, wrongCaseForValueFrom);
+
       if (wrongCaseForName) {
         secret.name = secret[key];
         const regex = RegExp(`"${key}":`);
