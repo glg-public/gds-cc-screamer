@@ -60,6 +60,7 @@ function getExpectedModes(context) {
   const repo = context.payload.pull_request.base.repo.name;
   const splitName = repo.split(".");
   const identifier = splitName[splitName.length - 1].charAt(0);
+  console.log(repo, splitName, identifier);
 
   const modes = {
     i: ["public"], // this is for internal-only clusters
