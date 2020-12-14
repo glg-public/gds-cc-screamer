@@ -45,13 +45,19 @@ async function getContents(filePath) {
 }
 
 async function clearPreviousRunComments(octokit, { owner, repo, pull_number }) {
-  const { data: comments } = await octokit.pulls.listCommentsForReview({
-    owner,
-    repo,
-    pull_number
-  });
-
-  console.log(comments);
+  try {
+    const { data: comments } = await octokit.pulls.listCommentsForReview({
+      owner,
+      repo,
+      pull_number
+    });
+  
+    console.log(comments);
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
+  
 }
 
 async function run() {
