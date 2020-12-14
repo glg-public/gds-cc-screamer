@@ -44,6 +44,16 @@ async function getContents(filePath) {
   return result;
 }
 
+async function clearPreviousRunComments(octokit, { owner, repo, pull_number }) {
+  const { data: comments } = await octokit.pulls.listCommentsForReview({
+    owner,
+    repo,
+    pull_number
+  });
+
+  console.log(comments);
+}
+
 async function run() {
   try {
     const token = core.getInput("token", { required: true });
@@ -59,6 +69,8 @@ async function run() {
     const repo = pr.base.repo.name;
     const pull_number = pr.number;
     const sha = pr.head.sha;
+
+    await clearPreviousRunComments();
 
     const { data: files } = await octokit.pulls.listFiles({
       owner,
