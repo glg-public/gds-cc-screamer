@@ -81,12 +81,12 @@ async function secretsJsonIsValid(orders, context) {
       result.line = lines;
     }
 
+    const standardSecret = Object.assign({}, secret);
+
     Object.keys(secret).forEach((key) => {
       const wrongCaseForName = key.toLowerCase() === "name" && key !== "name";
       const wrongCaseForValueFrom =
         key.toLowerCase() === "valuefrom" && key !== "valueFrom";
-
-        console.log(wrongCaseForName, wrongCaseForValueFrom);
 
       if (wrongCaseForName) {
         const regex = RegExp(`"${key}":`);
@@ -107,7 +107,7 @@ async function secretsJsonIsValid(orders, context) {
             ),
           ],
         });
-        secret.name = secret[key];
+        standardSecret.name = secret[key];
       } else if (wrongCaseForValueFrom) {
         const regex = RegExp(`"${key}":`);
         const lineNumber = getLineWithinObject(
@@ -131,21 +131,21 @@ async function secretsJsonIsValid(orders, context) {
             ),
           ],
         });
-        secret.valueFrom = secret[key];
+        standardSecret.valueFrom = secret[key];
       }
     });
 
-    if (!secret.hasOwnProperty("name") || !secret.hasOwnProperty("valueFrom")) {
+    if (!standardSecret.hasOwnProperty("name") || !standardSecret.hasOwnProperty("valueFrom")) {
       result.problems.push(
         "Each secret must be an object like { name, valueFrom }"
       );
     }
 
-    if (secret.name && typeof secret.name !== "string") {
+    if (standardSecret.name && typeof standardSecret.name !== "string") {
       result.problems.push("secret.name must be a string.");
     }
 
-    if (secret.valueFrom && typeof secret.valueFrom !== "string") {
+    if (standardSecret.valueFrom && typeof standardSecret.valueFrom !== "string") {
       result.problems.push("secret.valueFrom must be a string.");
     }
 
@@ -155,9 +155,9 @@ async function secretsJsonIsValid(orders, context) {
       );
     }
 
-    if (secret.valueFrom && secret.name && !secretArn.test(secret.valueFrom)) {
-      result.problems.push(`Invalid secret ARN: ${secret.valueFrom}`);
-      result.title = `Invalid Secret: ${secret.name}`;
+    if (standardSecret.valueFrom && standardSecret.name && !secretArn.test(standardSecret.valueFrom)) {
+      result.problems.push(`Invalid secret ARN: ${standardSecret.valueFrom}`);
+      result.title = `Invalid Secret: ${standardSecret.name}`;
     }
 
     if (result.problems.length > 0) {
