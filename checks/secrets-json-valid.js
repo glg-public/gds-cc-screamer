@@ -89,7 +89,6 @@ async function secretsJsonIsValid(orders, context) {
         console.log(wrongCaseForName, wrongCaseForValueFrom);
 
       if (wrongCaseForName) {
-        secret.name = secret[key];
         const regex = RegExp(`"${key}":`);
         const lineNumber = getLineWithinObject(
           orders.secretsContents,
@@ -108,8 +107,8 @@ async function secretsJsonIsValid(orders, context) {
             ),
           ],
         });
+        secret.name = secret[key];
       } else if (wrongCaseForValueFrom) {
-        secret.valueFrom = secret[key];
         const regex = RegExp(`"${key}":`);
         const lineNumber = getLineWithinObject(
           orders.secretsContents,
@@ -132,6 +131,7 @@ async function secretsJsonIsValid(orders, context) {
             ),
           ],
         });
+        secret.valueFrom = secret[key];
       }
     });
 
