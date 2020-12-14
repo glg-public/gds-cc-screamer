@@ -15,5 +15,10 @@ module.exports = [
   require("./no-debug-in-prod"),
   require("./secrets-json-valid"),
   require("./secrets-in-orders"),
-  require("./policy-json-valid"), //We should always validate the policy after anything that deals with secrets
+
+  /**
+   *  This should probably always be last, because it verifies that the
+   *  policy includes permissions that are implied by orders and secrets.json
+   * */ 
+  require("./policy-json-valid"),
 ];
