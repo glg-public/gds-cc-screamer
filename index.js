@@ -70,7 +70,7 @@ async function run() {
     const pull_number = pr.number;
     const sha = pr.head.sha;
 
-    await clearPreviousRunComments();
+    await clearPreviousRunComments(octokit, { owner, repo, pull_number });
 
     const { data: files } = await octokit.pulls.listFiles({
       owner,
