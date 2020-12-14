@@ -81,8 +81,10 @@ async function secretsJsonIsValid(orders, context) {
       result.line = lines;
     }
 
+    // This object will end up with correctly cased keys
     const standardSecret = Object.assign({}, secret);
 
+    // Suggest casing corrections
     Object.keys(secret).forEach((key) => {
       const wrongCaseForName = key.toLowerCase() === "name" && key !== "name";
       const wrongCaseForValueFrom =
