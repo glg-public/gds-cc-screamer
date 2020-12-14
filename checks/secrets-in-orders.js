@@ -143,7 +143,7 @@ async function secretsInOrders(orders, context, inputs) {
       newLine += stringifiedStatement;
       result.problems.push(suggest("Add the following secrets", newLine));
 
-      results.push(result);
+      results.unshift(result);
       orders.secretsJson = newSecretsJson;
     }
   } else {
