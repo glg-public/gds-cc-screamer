@@ -24,14 +24,14 @@ async function getContents(filePath) {
   const policyJsonPath = path.join(path.dirname(filePath), "policy.json");
 
   // secrets.json is not required
-  if (fs.existsSync(secretsJsonPath)) {
+  if (await fs.exists(secretsJsonPath)) {
     const secretsJson = await fs.readFile(secretsJsonPath, "utf8");
     result.secretsContents = secretsJson.split("\n");
     result.secretsPath = secretsJsonPath;
   }
 
   // policy.json is not required
-  if (fs.existsSync(policyJsonPath)) {
+  if (await fs.exists(policyJsonPath)) {
     const policyJson = await fs.readFile(policyJsonPath, "utf8");
     result.policyContents = policyJson.split("\n");
     result.policyPath = policyJsonPath;
