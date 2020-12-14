@@ -115,7 +115,6 @@ async function secretsJsonIsValid(orders, context) {
           secret,
           regex
         );
-        console.log(regex, lineNumber);
         results.push({
           title: "Incorrect Casing",
           level: "failure",
