@@ -91,7 +91,7 @@ async function clearPreviousRunComments(octokit, { owner, repo, pull_number }) {
 async function run() {
   try {
     const token = core.getInput("token", { required: true });
-    const awsAccount = core.getInput("aws_account");
+    const awsAccount = core.getInput("aws_account_id");
     const secretsPrefix = core.getInput("aws_secrets_prefix");
     const awsRegion = core.getInput("aws_region");
     const inputs = { awsAccount, secretsPrefix, awsRegion };
