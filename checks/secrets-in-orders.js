@@ -140,9 +140,9 @@ async function secretsInOrders(orders, context, inputs) {
       const oldLine = orders.secretsContents[lineToAnnotate - 1];
       let newLine = oldLine;
       if (!oldLine.endsWith(",")) {
-        newLine += ", ";
+        newLine += ",";
       }
-      newLine += stringifiedStatement;
+      newLine += `\n  ${stringifiedStatement}`;
       result.problems.push(suggest("Add the following secrets", newLine));
 
       results.unshift(result);
