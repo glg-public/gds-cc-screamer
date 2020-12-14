@@ -23,11 +23,7 @@ async function secretsInOrders(orders, context, inputs) {
   const results = [];
   const secretsJson = [];
   const { owner, repo, branch } = getOwnerRepoBranch(context);
-  const deploymentDir = path.dirname(orders.path);
-  const secretsJsonPath = path.join(deploymentDir, "secrets.json");
-
-  const edited = [].concat(orders.contents);
-  const linesToDelete = [];
+  const secretsJsonPath = path.join(path.dirname(orders.path), "secrets.json");
 
   orders.contents
     .map((line, i) => {
@@ -50,7 +46,6 @@ async function secretsInOrders(orders, context, inputs) {
           line: i + 1,
           level: "warning",
         });
-        linesToDelete.push(i);
 
         let hasKeys = false;
         orders.contents
@@ -82,7 +77,6 @@ async function secretsInOrders(orders, context, inputs) {
                 line: j + 1,
                 level: "warning",
               });
-              linesToDelete.push(j);
 
               hasKeys = true;
               secretsJson.push({
@@ -100,26 +94,6 @@ async function secretsInOrders(orders, context, inputs) {
         }
       }
     );
-
-  linesToDelete.reverse().forEach(i => {
-    edited.splice(i, 1);
-  });
-
-  if (linesToDelete.length > 0) {
-    results.unshift({
-      title: 'Deprecated Utilities',
-      level: 'warning',
-      line: 0,
-      problems: [`After you've created your secrets.json, you can [delete references to secrets and fromJson](${getFileLink({
-          owner,
-          repo,
-          branch,
-          filename: orders.path,
-          value: edited.join('\n'),
-          type: 'edit'
-        })})`]
-    });
-  }
 
   if (secretsJson.length === 0) {
     return results;
