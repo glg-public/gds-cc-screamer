@@ -57,7 +57,7 @@ async function clearPreviousRunComments(octokit, { owner, repo, pull_number }) {
     comments
       .filter(c => c.user.login === 'github-actions[bot]' && c.user.type === 'Bot')
       .forEach(comment => {
-        allDeletions.push(await octokit.pulls.deleteReviewComment({
+        allDeletions.push(octokit.pulls.deleteReviewComment({
           owner,
           repo,
           comment_id: comment.id,
