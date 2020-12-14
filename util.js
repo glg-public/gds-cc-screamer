@@ -90,8 +90,6 @@ function getOwnerRepoBranch(context) {
   const repo = pr.base.repo.name;
   const branch = pr.head.ref;
 
-  console.log(JSON.stringify(pr, null, 2));
-
   return { owner, repo, branch };
 }
 

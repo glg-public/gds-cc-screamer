@@ -117,7 +117,8 @@ async function secretsInOrders(orders, context, inputs) {
           repo,
           branch,
           filename: orders.path,
-          value: edited.join('\n')
+          value: edited.join('\n'),
+          type: 'edit'
         })})`]
     });
   }
