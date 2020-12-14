@@ -22,20 +22,25 @@ async function getContents(filePath) {
   const result = { path: filePath, contents: contents.split("\n") };
   const secretsJsonPath = path.join(path.dirname(filePath), "secrets.json");
   const policyJsonPath = path.join(path.dirname(filePath), "policy.json");
-
-  // secrets.json is not required
-  if (await fs.stat(secretsJsonPath)) {
+  
+  try {
+    await fs.stat(secretsJsonPath);
     const secretsJson = await fs.readFile(secretsJsonPath, "utf8");
     result.secretsContents = secretsJson.split("\n");
     result.secretsPath = secretsJsonPath;
+  } catch (e) {
+    // secrets.json is not required
   }
-
-  // policy.json is not required
-  if (await fs.stat(policyJsonPath)) {
+  
+  try {
+    await fs.stat(policyJsonPath);
     const policyJson = await fs.readFile(policyJsonPath, "utf8");
     result.policyContents = policyJson.split("\n");
     result.policyPath = policyJsonPath;
+  } catch (e) {
+    // policy.json is not required
   }
+  
   return result;
 }
 
