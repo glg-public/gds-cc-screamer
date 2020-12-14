@@ -46,15 +46,21 @@ async function getContents(filePath) {
 
 async function clearPreviousRunComments(octokit, { owner, repo, pull_number }) {
   try {
-    const { data: comments } = await octokit.pulls.listReviewComments({
+    const { data: reviewComments } = await octokit.pulls.listReviewComments({
       owner,
       repo,
       pull_number
     });
 
+    const { data: issueComments } = await octokit.issues.listComments({
+      owner,
+      repo,
+      issue_number: pull_number
+    });
+
     const allDeletions = [];
   
-    comments
+    reviewComments
       .filter(c => c.user.login === 'github-actions[bot]' && c.user.type === 'Bot')
       .forEach(comment => {
         allDeletions.push(octokit.pulls.deleteReviewComment({
@@ -63,7 +69,16 @@ async function clearPreviousRunComments(octokit, { owner, repo, pull_number }) {
           comment_id: comment.id,
         }));
       });
-      
+
+    issueComments
+      .filter(c => c.user.login === 'github-actions[bot]' && c.user.type === 'Bot')
+      .forEach(comment => {
+        allDeletions.push(octokit.pulls.deleteComment({
+          owner,
+          repo,
+          comment_id: comment.id,
+        }));
+      });
 
     await Promise.all(allDeletions);
   } catch (e) {
