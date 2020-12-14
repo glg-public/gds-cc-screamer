@@ -124,10 +124,9 @@ async function secretsInOrders(orders, context, inputs) {
       let stringifiedStatement = "";
       secretsToAdd.forEach((secret) => {
         const { start, end } = getLinesForJSON(newSecretsLines, secret);
-        stringifiedStatement += newSecretsLines
+        stringifiedStatement += `\n${newSecretsLines
           .slice(start - 1, end)
-          .join("\n")
-          .trim();
+          .join("\n")}`;
       });
 
       const { end: lineToAnnotate } = getLinesForJSON(
@@ -142,7 +141,7 @@ async function secretsInOrders(orders, context, inputs) {
       if (!oldLine.endsWith(",")) {
         newLine += ",";
       }
-      newLine += `\n  ${stringifiedStatement}`;
+      newLine += `${stringifiedStatement}`;
       result.problems.push(suggest("Add the following secrets", newLine));
 
       results.unshift(result);

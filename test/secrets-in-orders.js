@@ -1,11 +1,34 @@
 const { expect } = require("chai");
 const secretsInOrders = require("../checks/secrets-in-orders");
+const { getFileLink, getOwnerRepoBranch } = require('../util');
 
 const inputs = {
   awsAccount: 12345678,
   secretsPrefix: "us-east-1/production/",
   awsRegion: "us-east-1",
 };
+
+const context = {
+  payload: {
+    pull_request: {
+      base: {
+        repo: {
+          name: 'repo'
+        }
+      },
+      head: {
+        ref: 'branch',
+        repo: {
+          owner: {
+            login: 'org'
+          }
+        }
+      }
+    }
+  }
+};
+
+
 
 describe("Secrets in orders file", () => {
   it("accepts an orders file with no use of secrets", async () => {
@@ -17,7 +40,7 @@ describe("Secrets in orders file", () => {
       ],
     };
 
-    const results = await secretsInOrders(orders, {}, inputs);
+    const results = await secretsInOrders(orders, context, inputs);
     expect(results.length).to.equal(0);
   });
 
@@ -35,10 +58,47 @@ describe("Secrets in orders file", () => {
       ],
     };
 
-    let results = await secretsInOrders(orders, {}, inputs);
+    let results = await secretsInOrders(orders, context, inputs);
     expect(results.length).to.equal(6);
 
+    const { owner, repo, branch } = getOwnerRepoBranch(context);
+    const secretsJson = [
+      {
+        name: "SECRET_KEY",
+        valueFrom: `arn:aws:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}MY_SECRET:myKey::`,
+      },
+      {
+        name: "OTHER_SECRET",
+        valueFrom: `arn:aws:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}SOMETHING:::`,
+      },
+      {
+        name: "MORE_KEY",
+        valueFrom: `arn:aws:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}PANTS:belt::`,
+      },
+      {
+        name: "ONE_MORE",
+        valueFrom: `arn:aws:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}PANTS:::`,
+      },
+    ];
+    const secretsFile = JSON.stringify(secretsJson, null, 2);
     expect(results[0]).to.deep.equal({
+      title: "Create a secrets.json",
+      problems: [
+        `Add a new file, streamliner/secrets.json, that contains the following:\n\`\`\`json\n${secretsFile}\n\`\`\``,
+        `[Click to add file](${getFileLink({
+          owner,
+          repo,
+          branch,
+          filename: 'streamliner/secrets.json',
+          value: secretsFile,
+          type: 'new'
+        })})`
+      ],
+      line: 0,
+      level: "failure", // fails because dockerdeploy
+    });
+
+    expect(results[1]).to.deep.equal({
       title: "Deprecated Utility",
       problems: [
         "The **secrets** binary is being deprecated. Please create a secrets.json in this directory instead.",
@@ -48,7 +108,7 @@ describe("Secrets in orders file", () => {
       level: "warning",
     });
 
-    expect(results[1]).to.deep.equal({
+    expect(results[2]).to.deep.equal({
       title: "Deprecated Utility",
       problems: [
         "The **fromJson** utility is being deprecated. Please create a secrets.json instead.",
@@ -58,7 +118,7 @@ describe("Secrets in orders file", () => {
       level: "warning",
     });
 
-    expect(results[2]).to.deep.equal({
+    expect(results[3]).to.deep.equal({
       title: "Deprecated Utility",
       problems: [
         "The **secrets** binary is being deprecated. Please create a secrets.json in this directory instead.",
@@ -68,7 +128,7 @@ describe("Secrets in orders file", () => {
       level: "warning",
     });
 
-    expect(results[3]).to.deep.equal({
+    expect(results[4]).to.deep.equal({
       title: "Deprecated Utility",
       problems: [
         "The **secrets** binary is being deprecated. Please create a secrets.json in this directory instead.",
@@ -78,7 +138,7 @@ describe("Secrets in orders file", () => {
       level: "warning",
     });
 
-    expect(results[4]).to.deep.equal({
+    expect(results[5]).to.deep.equal({
       title: "Deprecated Utility",
       problems: [
         "The **fromJson** utility is being deprecated. Please create a secrets.json instead.",
@@ -88,41 +148,11 @@ describe("Secrets in orders file", () => {
       level: "warning",
     });
 
-    expect(results[5]).to.deep.equal({
-      title: "Create a secrets.json",
-      problems: [
-        `Add a new file, streamliner/secrets.json, that contains the following:\n\`\`\`json\n${JSON.stringify(
-          [
-            {
-              name: "SECRET_KEY",
-              valueFrom: `arn:aws:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}MY_SECRET:myKey::`,
-            },
-            {
-              name: "OTHER_SECRET",
-              valueFrom: `arn:aws:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}SOMETHING:::`,
-            },
-            {
-              name: "MORE_KEY",
-              valueFrom: `arn:aws:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}PANTS:belt::`,
-            },
-            {
-              name: "ONE_MORE",
-              valueFrom: `arn:aws:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}PANTS:::`,
-            },
-          ],
-          null,
-          2
-        )}\n\`\`\``,
-      ],
-      line: 0,
-      level: "failure", // fails because dockerdeploy
-    });
-
     orders.contents[6] = "autodeploy git@github.com:glg/streamliner.git#master";
     delete orders.secretsJson;
-    results = await secretsInOrders(orders, {}, inputs);
+    results = await secretsInOrders(orders, context, inputs);
     expect(results.length).to.equal(6); // same number of errors with an autodeploy
-    expect(results[5].level).to.equal("warning"); // not a hard failure if they are using legacy autodeploy
+    expect(results[0].level).to.equal("warning"); // not a hard failure if they are using legacy autodeploy
   });
 
   it("recommends adding missing secrets to an existing secrets.json", async () => {
@@ -152,10 +182,29 @@ describe("Secrets in orders file", () => {
       secretsPath: "streamliner/secrets.json",
     };
 
-    const results = await secretsInOrders(orders, {}, inputs);
+    const results = await secretsInOrders(orders, context, inputs);
     expect(results.length).to.equal(6);
-
+    const suggestion = `Add the following secrets
+\`\`\`suggestion
+  },
+  {
+    "name": "MORE_KEY",
+    "valueFrom": "arn:aws:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}PANTS:belt::"
+  },
+  {
+    "name": "ONE_MORE",
+    "valueFrom": "arn:aws:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}PANTS:::"
+  }
+\`\`\``;
     expect(results[0]).to.deep.equal({
+      title: "Missing Secrets in secrets.json",
+      path: "streamliner/secrets.json",
+      problems: [suggestion],
+      level: "failure",
+      line: 9,
+    });
+
+    expect(results[1]).to.deep.equal({
       title: "Deprecated Utility",
       problems: [
         "The **secrets** binary is being deprecated. Please create a secrets.json in this directory instead.",
@@ -165,7 +214,7 @@ describe("Secrets in orders file", () => {
       level: "warning",
     });
 
-    expect(results[1]).to.deep.equal({
+    expect(results[2]).to.deep.equal({
       title: "Deprecated Utility",
       problems: [
         "The **fromJson** utility is being deprecated. Please create a secrets.json instead.",
@@ -175,7 +224,7 @@ describe("Secrets in orders file", () => {
       level: "warning",
     });
 
-    expect(results[2]).to.deep.equal({
+    expect(results[3]).to.deep.equal({
       title: "Deprecated Utility",
       problems: [
         "The **secrets** binary is being deprecated. Please create a secrets.json in this directory instead.",
@@ -185,7 +234,7 @@ describe("Secrets in orders file", () => {
       level: "warning",
     });
 
-    expect(results[3]).to.deep.equal({
+    expect(results[4]).to.deep.equal({
       title: "Deprecated Utility",
       problems: [
         "The **secrets** binary is being deprecated. Please create a secrets.json in this directory instead.",
@@ -195,7 +244,7 @@ describe("Secrets in orders file", () => {
       level: "warning",
     });
 
-    expect(results[4]).to.deep.equal({
+    expect(results[5]).to.deep.equal({
       title: "Deprecated Utility",
       problems: [
         "The **fromJson** utility is being deprecated. Please create a secrets.json instead.",
@@ -205,22 +254,6 @@ describe("Secrets in orders file", () => {
       level: "warning",
     });
 
-    const suggestion = `Add the following secrets
-\`\`\`suggestion
-  }, {
-    "name": "MORE_KEY",
-    "valueFrom": "arn:aws:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}PANTS:belt::"
-  },{
-    "name": "ONE_MORE",
-    "valueFrom": "arn:aws:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}PANTS:::"
-  }
-\`\`\``;
-    expect(results[5]).to.deep.equal({
-      title: "Missing Secrets in secrets.json",
-      path: "streamliner/secrets.json",
-      problems: [suggestion],
-      level: "failure",
-      line: 9,
-    });
+    
   });
 });
