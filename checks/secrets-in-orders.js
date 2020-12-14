@@ -156,7 +156,7 @@ async function secretsInOrders(orders, context, inputs) {
     const level = isAutodeploy ? "warning" : "failure"; // autodeploy doesn't require this
     const { owner, repo, branch } = getOwnerRepoBranch(context);
     const secretsFile = JSON.stringify(secretsJson, null, 2);
-    results.push({
+    results.unshift({
       title: "Create a secrets.json",
       problems: [
         `Add a new file, ${secretsJsonPath}, that contains the following:\n\`\`\`json
