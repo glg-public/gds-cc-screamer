@@ -3,7 +3,7 @@ const path = require("path");
 const {
   suggest,
   getLinesForJSON,
-  getNewFileLink,
+  getFileLink,
   getOwnerRepoBranch,
 } = require("../util");
 
@@ -22,6 +22,12 @@ async function secretsInOrders(orders, context, inputs) {
   const { awsAccount, secretsPrefix, awsRegion } = inputs;
   const results = [];
   const secretsJson = [];
+  const { owner, repo, branch } = getOwnerRepoBranch(context);
+  const deploymentDir = path.dirname(orders.path);
+  const secretsJsonPath = path.join(deploymentDir, "secrets.json");
+
+  const edited = [].concat(orders.contents);
+  const linesToDelete = [];
 
   orders.contents
     .map((line, i) => {
@@ -44,6 +50,7 @@ async function secretsInOrders(orders, context, inputs) {
           line: i + 1,
           level: "warning",
         });
+        linesToDelete.push(i);
 
         let hasKeys = false;
         orders.contents
@@ -75,6 +82,7 @@ async function secretsInOrders(orders, context, inputs) {
                 line: j + 1,
                 level: "warning",
               });
+              linesToDelete.push(j);
 
               hasKeys = true;
               secretsJson.push({
@@ -92,6 +100,25 @@ async function secretsInOrders(orders, context, inputs) {
         }
       }
     );
+
+  linesToDelete.reverse().forEach(i => {
+    edited.splice(i, 1);
+  });
+
+  if (linesToDelete.length > 0) {
+    results.push({
+      title: 'Deprecated Utilities',
+      level: 'warning',
+      line: 0,
+      problems: [`After you've created your secrets.json, you can [delete references to secrets and fromJson](${getFileLink({
+          owner,
+          repo,
+          branch,
+          filename: orders.path,
+          value: edited.join('\n')
+        })})`]
+    });
+  }
 
   if (secretsJson.length === 0) {
     return results;
@@ -149,12 +176,9 @@ async function secretsInOrders(orders, context, inputs) {
   } else {
     // If there's not already a secrets.json, we should
     // recommend that user create one
-    const deploymentDir = path.dirname(orders.path);
-    const secretsJsonPath = path.join(deploymentDir, "secrets.json");
     const isAutodeploy =
       orders.contents.filter((line) => autodeploy.test(line)).length > 0;
     const level = isAutodeploy ? "warning" : "failure"; // autodeploy doesn't require this
-    const { owner, repo, branch } = getOwnerRepoBranch(context);
     const secretsFile = JSON.stringify(secretsJson, null, 2);
     results.unshift({
       title: "Create a secrets.json",
@@ -162,12 +186,13 @@ async function secretsInOrders(orders, context, inputs) {
         `Add a new file, ${secretsJsonPath}, that contains the following:\n\`\`\`json
 ${secretsFile}
 \`\`\``,
-        `[Click to add file](${getNewFileLink({
+        `[Click to add file](${getFileLink({
           owner,
           repo,
           branch,
           filename: secretsJsonPath,
           value: secretsFile,
+          type: 'new'
         })})`,
       ],
       line: 0,

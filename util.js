@@ -80,8 +80,8 @@ function getLineWithinObject(fileLines, jsonObj, regex) {
   return line;
 }
 
-function getNewFileLink({ owner, repo, branch, filename, value }) {
-  return `https://github.com/${owner}/${repo}/new/${branch}?filename=${encodeURIComponent(filename)}&value=${encodeURIComponent(value)}`;
+function getFileLink({ owner, repo, branch, filename, value, type = 'new' }) {
+  return `https://github.com/${owner}/${repo}/${type}/${branch}?filename=${encodeURIComponent(filename)}&value=${encodeURIComponent(value)}`;
 }
 
 function getOwnerRepoBranch(context) {
@@ -100,6 +100,6 @@ module.exports = {
   suggest,
   getLineNumber,
   getLineWithinObject,
-  getNewFileLink,
+  getFileLink,
   getOwnerRepoBranch,
 };
