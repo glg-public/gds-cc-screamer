@@ -80,15 +80,15 @@ function getLineWithinObject(fileLines, jsonObj, regex) {
   return line;
 }
 
-function getNewFileLink({ owner, repo, branch, path, filename, value }) {
-  return `https://github.com/${owner}/${repo}/new/${branch}/${path}?filename=${filename}&value=${encodeURIComponent(value)}`;
+function getNewFileLink({ owner, repo, branch, filename, value }) {
+  return `https://github.com/${owner}/${repo}/new/${branch}?filename=${encodeURIComponent(filename)}&value=${encodeURIComponent(value)}`;
 }
 
 function getOwnerRepoBranch(context) {
   const pr = context.payload.pull_request;
   const owner = pr.head.repo.owner.login;
   const repo = pr.base.repo.name;
-  const branch = pr.head.repo.ref;
+  const branch = pr.head.ref;
 
   console.log(JSON.stringify(pr, null, 2));
 
