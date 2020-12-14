@@ -105,8 +105,6 @@ async function secretsInOrders(orders, context, inputs) {
     edited.splice(i, 1);
   });
 
-  console.log(linesToDelete);
-
   if (linesToDelete.length > 0) {
     results.unshift({
       title: 'Deprecated Utilities',
