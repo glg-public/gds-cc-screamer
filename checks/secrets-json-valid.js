@@ -1,5 +1,5 @@
 const core = require("@actions/core");
-const { getLinesForJSON } = require("../util");
+const { getLinesForJSON, suggest, getLineWithinObject } = require("../util");
 
 const secretArn = /arn:aws:secretsmanager:(?<region>[\w-]*):(?<account>\d*):secret:(?<secretName>[\w-\/]*):(?<jsonKey>\S*?):(?<versionStage>\S*?):(?<versionId>\w*)/;
 
@@ -80,6 +80,57 @@ async function secretsJsonIsValid(orders, context) {
     } else {
       result.line = lines;
     }
+
+    Object.keys(secret).forEach((key) => {
+      const wrongCaseForName = key.toLowerCase() === "name" && key !== "name";
+      const wrongCaseForValueFrom =
+        key.toLowerCase() === "valuefrom" && key !== "valueFrom";
+
+      if (wrongCaseForName) {
+        secret.name = secret[key];
+        const regex = RegExp(`"${key}":`);
+        const lineNumber = getLineWithinObject(
+          orders.secretsContents,
+          secret,
+          regex
+        );
+        results.push({
+          title: "Incorrect Casing",
+          level: "failure",
+          path: orders.secretsPath,
+          line: lineNumber,
+          problems: [
+            suggest(
+              "Lowercase this key:",
+              orders.secretsContents[lineNumber - 1].replace(regex, '"name":')
+            ),
+          ],
+        });
+      } else if (wrongCaseForValueFrom) {
+        secret.valueFrom = secret[key];
+        const regex = RegExp(`"${key}":`);
+        const lineNumber = getLineWithinObject(
+          orders.secretsContents,
+          secret,
+          regex
+        );
+        results.push({
+          title: "Incorrect Casing",
+          level: "failure",
+          path: orders.secretsPath,
+          line: lineNumber,
+          problems: [
+            suggest(
+              "Lowercase this key:",
+              orders.secretsContents[lineNumber - 1].replace(
+                regex,
+                '"valueFrom":'
+              )
+            ),
+          ],
+        });
+      }
+    });
 
     if (!secret.hasOwnProperty("name") || !secret.hasOwnProperty("valueFrom")) {
       result.problems.push(
