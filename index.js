@@ -63,6 +63,7 @@ async function clearPreviousRunComments(octokit, { owner, repo, pull_number }) {
           comment_id: comment.id,
         }));
       });
+      
 
     await Promise.all(allDeletions);
   } catch (e) {
