@@ -137,7 +137,13 @@ async function run() {
     // multiple results.
     for (const deployment of deployments) {
       for (const check of checks) {
-        const results = await check(deployment, github.context, inputs);
+        let results;
+        try {
+          results = await check(deployment, github.context, inputs);
+        } catch (e) {
+          core.error(e);
+          continue;
+        }
         if (results.length === 0) {
           core.info("...Passed");
         }
