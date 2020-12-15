@@ -1,10 +1,10 @@
-const core = require('@actions/core');
+const core = require("@actions/core");
 
-const exportedVariable = RegExp(/^export +(?<variable>\w+)=/);
+const exportedVariable = /^export +(?<variable>\w+)=/;
 
 /**
  * Accepts an orders object, and does some kind of check
- * @param {{path: string, contents: Array<string>}} orders 
+ * @param {{path: string, contents: Array<string>}} orders
  */
 async function noDuplicateExports(orders) {
   core.info(`No Duplicate Exports - ${orders.path}`);
@@ -18,18 +18,18 @@ async function noDuplicateExports(orders) {
     const line = orders.contents[i];
 
     const match = exportedVariable.exec(line);
-    if(!match) {
+    if (!match) {
       continue;
     }
 
     const { variable } = match.groups;
-    if(!counts[variable]) {
+    if (!counts[variable]) {
       counts[variable] = 0;
       lines[variable] = [];
     }
 
     counts[variable] += 1;
-    lines[variable].push(i+1);
+    lines[variable].push(i + 1);
   }
 
   // Create a result for each dupe, notating where all of its duplicates are
@@ -37,26 +37,27 @@ async function noDuplicateExports(orders) {
     const line = orders.contents[i];
 
     const match = exportedVariable.exec(line);
-    if(!match) {
+    if (!match) {
       continue;
-    };
+    }
 
     const { variable } = match.groups;
 
-    if(counts[variable] && counts[variable] > 1) {
+    if (counts[variable] && counts[variable] > 1) {
       const result = {
-        title: 'Duplicate Export',
+        title: "Duplicate Export",
         problems: [
-          `The variable \`${variable}\` is exported on multiple lines: **${lines[variable].join(', ')}**`
+          `The variable \`${variable}\` is exported on multiple lines: **${lines[
+            variable
+          ].join(", ")}**`,
         ],
-        line: i+1,
-        level: 'failure'
+        line: i + 1,
+        level: "failure",
       };
 
       results.push(result);
     }
   }
-  
 
   return results;
 }

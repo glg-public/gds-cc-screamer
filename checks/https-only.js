@@ -1,18 +1,17 @@
-const core = require('@actions/core');
+const core = require("@actions/core");
 
-const SECURE_DOMAINS = [
-  'glgresearch.com',
-  'glg.it'
-];
+const SECURE_DOMAINS = ["glgresearch.com", "glg.it"];
 
 const reBadURLs = RegExp(
-  `^export +\\w+=[\'\"]?(http:)?\/\/[^\/]*\\.?(?:${SECURE_DOMAINS.map(x => x.replace(/\./g, '\\.')).join('|')})`,
-  'i'
+  `^export +\\w+=[\'\"]?(http:)?\/\/[^\/]*\\.?(?:${SECURE_DOMAINS.map((x) =>
+    x.replace(/\./g, "\\.")
+  ).join("|")})`,
+  "i"
 );
 
 /**
  * Accepts an orders object, and does some kind of check
- * @param {{path: string, contents: Array<string>}} orders 
+ * @param {{path: string, contents: Array<string>}} orders
  */
 async function httpsOnly(orders) {
   core.info(`HTTPS Only - ${orders.path}`);
@@ -23,15 +22,15 @@ async function httpsOnly(orders) {
 
     if (reBadURLs.test(line)) {
       const result = {
-        title: 'HTTPS Only',
+        title: "HTTPS Only",
         problems: [
-`Use HTTPS for all requests to GLG domains\n\`\`\`suggestion
-${line.replace(/http:/i, 'https:')}
-\`\`\``
+          `Use HTTPS for all requests to GLG domains\n\`\`\`suggestion
+${line.replace(/http:/i, "https:")}
+\`\`\``,
         ],
-        line: i+1,
-        level: 'failure'
-      }
+        line: i + 1,
+        level: "failure",
+      };
 
       results.push(result);
     }
