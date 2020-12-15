@@ -1,10 +1,15 @@
 const core = require("@actions/core");
+const { isAJob } = require('../util');
 
 /**
  * Accepts an orders object, and does some kind of check
  * @param {{path: string, contents: Array<string>}} orders
  */
 async function templateCheck(orders, context) {
+  if (isAJob(orders.contents)) {
+    core.info('Jobs do not require a security mode, skipping.');
+    return [];
+  }
   core.info(`Security Mode - ${orders.path}`);
   const results = [];
 

@@ -93,6 +93,19 @@ function getOwnerRepoBranch(context) {
   return { owner, repo, branch };
 }
 
+const jobdeploy = RegExp(
+  "^jobdeploy (?<source>\\w+)/(?<org>[\\w-]+)/(?<repo>.+?)/(?<branch>.+?):(?<tag>\\w+)"
+);
+
+function isAJob(fileLines) {
+  const isJobDeploy =
+    fileLines.filter((line) => jobdeploy.test(line)).length > 0;
+  const isUnpublished = 
+    fileLines.filter((line) => line === 'unpublished').length > 0;
+
+    return isJobDeploy || isUnpublished;
+}
+
 module.exports = {
   getLinesForJSON,
   suggest,
@@ -100,4 +113,6 @@ module.exports = {
   getLineWithinObject,
   getFileLink,
   getOwnerRepoBranch,
+  isAJob,
 };
+
