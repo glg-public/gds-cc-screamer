@@ -181,8 +181,8 @@ async function policyJsonIsValid(orders, context) {
           .filter((item) => actionString.test(item))
           .forEach((item) => {
             _toggleRequiredAction(item);
-            if (_isWarnAction(action)) {
-              results.push(_getWarnResult(original, 'action', action));
+            if (_isWarnAction(item)) {
+              results.push(_getWarnResult(original, 'action', item));
             }
           });
       }

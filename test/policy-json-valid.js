@@ -484,7 +484,7 @@ describe("policy.json is valid", () => {
       policyContents: policyJson.split("\n"),
     };
 
-    results = await policyJsonIsValid(orders);
+    results = (await policyJsonIsValid(orders)).filter(({ level }) => level === 'failure');
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: 'Invalid value for "Action"',
@@ -584,7 +584,7 @@ describe("policy.json is valid", () => {
       policyContents: policyJson.split("\n"),
     };
 
-    results = await policyJsonIsValid(orders);
+    results = (await policyJsonIsValid(orders)).filter(({ level }) => level === 'failure');
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: 'Invalid value for "Resource"',
@@ -679,7 +679,7 @@ describe("policy.json is valid", () => {
       secretsContents: [], // indicates presence of a secrets.json
     };
 
-    let results = await policyJsonIsValid(orders);
+    let results = (await policyJsonIsValid(orders)).filter(({ level }) => level === 'failure');
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: "Policy is missing required actions",
@@ -735,7 +735,7 @@ describe("policy.json is valid", () => {
         },
       ],
     };
-    let results = await policyJsonIsValid(orders);
+    let results = (await policyJsonIsValid(orders)).filter(({ level }) => level === 'failure');
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: "Policy is missing required secrets",
@@ -744,7 +744,8 @@ describe("policy.json is valid", () => {
         "Your secrets.json requests arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else, but your policy does not allow access.",
         "Add the following statement block\n" +
           "```suggestion\n" +
-          "    }, {\n" +
+          "    },\n" + 
+          "    {\n" +
           '      "Sid": "AllowRequiredSecrets",\n' +
           '      "Effect": "Allow",\n' +
           '      "Action": "secretsmanager:GetSecretValue",\n' +
@@ -800,7 +801,7 @@ describe("policy.json is valid", () => {
         },
       ],
     };
-    results = await policyJsonIsValid(orders);
+    results = (await policyJsonIsValid(orders)).filter(({ level }) => level === 'failure');
     expect(results.length).to.equal(0);
   });
 });
