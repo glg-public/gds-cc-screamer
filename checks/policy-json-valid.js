@@ -144,8 +144,8 @@ async function policyJsonIsValid(orders, context) {
     return false;
   }
 
-  function _getWarnResult(statement, type, line) {
-    const regex = RegExp(`"${type}":\\s*"${escapeRegExp(line)}"`, 'i');
+  function _getWarnResult(searchBlock, line) {
+    const regex = RegExp(`"${escapeRegExp(line)}"`, 'i');
     let title = 'Broad Permissions';
     let problem = 'It is best practice to be as specific as possible with your IAM Policies. Overly broad policies can lead to unintentional vulnerabilities.';
     if (/delete/i.test(line)) {
@@ -155,7 +155,7 @@ async function policyJsonIsValid(orders, context) {
     return {
       title,
       path: orders.policyPath,
-      line: getLineWithinObject(orders.policyContents, statement, regex),
+      line: getLineWithinObject(orders.policyContents, searchBlock, regex),
       level: 'warning',
       problems: [
         problem
@@ -174,7 +174,7 @@ async function policyJsonIsValid(orders, context) {
       if (typeof action === "string" && actionString.test(action)) {
         _toggleRequiredAction(action);
         if (_isWarnAction(action)) {
-          results.push(_getWarnResult(original, 'action', action));
+          results.push(_getWarnResult(original, action));
         }
       } else if (Array.isArray(action)) {
         action
@@ -182,18 +182,18 @@ async function policyJsonIsValid(orders, context) {
           .forEach((item) => {
             _toggleRequiredAction(item);
             if (_isWarnAction(item)) {
-              results.push(_getWarnResult(original, 'action', item));
+              results.push(_getWarnResult(original, item));
             }
           });
       }
 
       if (typeof resource === "string" && _isWarnResource(resource)){
-        results.push(_getWarnResult(original, 'resource', resource));
+        results.push(_getWarnResult(original, resource));
       } else if (Array.isArray(resource)) {
         resource
           .filter(_isWarnResource)
           .forEach(item => {
-            results.push(_getWarnResult(original, 'resource', item));
+            results.push(_getWarnResult(original, item));
           });
       }
     });

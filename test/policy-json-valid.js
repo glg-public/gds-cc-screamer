@@ -804,4 +804,77 @@ describe("policy.json is valid", () => {
     results = (await policyJsonIsValid(orders)).filter(({ level }) => level === 'failure');
     expect(results.length).to.equal(0);
   });
+
+  it.only('warns about overly broad policies', async () => {
+    const policyJson = JSON.stringify(
+      {
+        Version: "2012-10-17",
+        Statement: [
+          {
+            Effect: "Allow",
+            Action: "secretsmanager:GetSecretValue",
+            Resource: "arn:aws:secretsmanager:us-east-1:868468680417:secret:*", // supports wildcards
+          },
+          {
+            Effect: "Allow",
+            Action: [
+              "ecr:*", // supports wildcard actions, but warns about them
+              "logs:*",
+            ],
+            Resource: "*", // supports wildcard resources, but warns about them
+          },
+        ],
+      },
+      null,
+      2
+    );
+    const orders = {
+      path: "streamliner/orders",
+      contents: [],
+      policyPath: "streamliner/policy.json",
+      policyContents: policyJson.split("\n"),
+      secretsContents: [], // indicates presence of a secrets.json
+      secretsJson: [
+        {
+          name: "MY_SECRET",
+          valueFrom:
+            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:example::",
+        },
+        {
+          name: "MY_OTHER_SECRET",
+          valueFrom:
+            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else:::",
+        },
+      ],
+    };
+    const results = (await policyJsonIsValid(orders)).filter(({ level }) => level === 'warning');
+    expect(results.length).to.equal(3);
+    const problem = 'It is best practice to be as specific as possible with your IAM Policies. Overly broad policies can lead to unintentional vulnerabilities.';
+    
+    expect(results[0]).to.deep.equal({
+      title: 'Broad Permissions',
+      level: 'warning',
+      line: 12,
+      path: orders.policyPath,
+      problems: [problem]
+    });
+
+    expect(results[1]).to.deep.equal({
+      title: 'Broad Permissions',
+      level: 'warning',
+      line: 13,
+      path: orders.policyPath,
+      problems: [problem]
+    });
+
+    expect(results[2]).to.deep.equal({
+      title: 'Broad Permissions',
+      level: 'warning',
+      line: 15,
+      path: orders.policyPath,
+      problems: [problem]
+    });
+  });
+
+  it('warns about delete access');
 });
