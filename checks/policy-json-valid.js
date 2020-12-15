@@ -33,7 +33,9 @@ const warnResources = [
   /arn:aws:\\*?:.*/
 ];
 
-const secretArn = /arn:aws:secretsmanager:(?<region>[\w-]*):(?<account>\d*):secret:(?<secretName>[\w-\/]*):(?<jsonKey>\S*?):(?<versionStage>\S*?):(?<versionId>\w*)/;
+const secretArn = /arn:aws:secretsmanager:(?<region>[\w-]*):(?<account>\d*):secret:(?<secretName>[\w-\/]*)(:(?<jsonKey>\S*?):(?<versionStage>\S*?):(?<versionId>\w*)|)/;
+
+
 
 /**
  * Accepts an orders object, and does some kind of check
@@ -71,6 +73,12 @@ async function policyJsonIsValid(orders, context) {
   const secretsAction = "secretsmanager:GetSecretValue";
   if (orders.secretsContents) {
     requiredActions[secretsAction] = false;
+  }
+
+  function _getSimpleSecret(secret) {
+    const match = secretArn.exec(secret);
+    const { region, account, secretName } = match.groups;
+    return `arn:aws:secretsmanager:${region}:${account}:secret:${secretName}`;
   }
 
   function _toggleRequiredAction(item) {
@@ -206,7 +214,7 @@ async function policyJsonIsValid(orders, context) {
   if (orders.secretsJson) {
     const requiredSecrets = {};
     orders.secretsJson.forEach((secret) => {
-      requiredSecrets[secret.valueFrom] = false;
+      requiredSecrets[_getSimpleSecret(secret.valueFrom)] = false;
     });
 
     function _toggleRequiredSecret(resource) {
@@ -257,11 +265,7 @@ async function policyJsonIsValid(orders, context) {
         Resource: Array.from(new Set(
           Object.keys(requiredSecrets)
             .filter((s) => !requiredSecrets[s])
-            .map((s) => {
-              const match = secretArn.exec(s);
-              const { region, account, secretName } = match.groups;
-              return `arn:aws:secretsmanager:${region}:${account}:secret:${secretName}`;
-            })
+            .map(_getSimpleSecret)
           ))
       };
 
