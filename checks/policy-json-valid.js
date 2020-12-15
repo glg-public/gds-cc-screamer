@@ -142,7 +142,7 @@ async function policyJsonIsValid(orders, context) {
     return false;
   }
 
-  function _getWarnResult(type, statement, line) {
+  function _getWarnResult(statement, type, line) {
     const regex = RegExp(`"${type}":\\s*"${escapeRegExp(line)}"`, 'i');
     return {
       title: 'Broad Permissions',
