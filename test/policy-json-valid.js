@@ -805,7 +805,7 @@ describe("policy.json is valid", () => {
     expect(results.length).to.equal(0);
   });
 
-  it.only('warns about overly broad policies', async () => {
+  it('warns about overly broad policies', async () => {
     const policyJson = JSON.stringify(
       {
         Version: "2012-10-17",
@@ -876,5 +876,57 @@ describe("policy.json is valid", () => {
     });
   });
 
-  it('warns about delete access');
+  it.only('warns about delete access', async () => {
+    const policyJson = JSON.stringify(
+      {
+        Version: "2012-10-17",
+        Statement: [
+          {
+            Effect: "Allow",
+            Action: "secretsmanager:GetSecretValue",
+            Resource: "arn:aws:secretsmanager:us-east-1:868468680417:secret:*", // supports wildcards
+          },
+          {
+            Effect: "Allow",
+            Action: [
+              "ecr:DeleteSomething", // will warn about this delete
+            ],
+            Resource: "arn:aws:secretsmanager:us-east-1:868468680417:secret:*", // doesn't care that this is the wrong resource type
+          },
+        ],
+      },
+      null,
+      2
+    );
+    const orders = {
+      path: "streamliner/orders",
+      contents: [],
+      policyPath: "streamliner/policy.json",
+      policyContents: policyJson.split("\n"),
+      secretsContents: [], // indicates presence of a secrets.json
+      secretsJson: [
+        {
+          name: "MY_SECRET",
+          valueFrom:
+            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:example::",
+        },
+        {
+          name: "MY_OTHER_SECRET",
+          valueFrom:
+            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else:::",
+        },
+      ],
+    };
+    const results = (await policyJsonIsValid(orders)).filter(({ level }) => level === 'warning');
+    expect(results.length).to.equal(1);
+    const problem = 'It is extremeley rare that a service needs Delete access. Make sure you have discussed this with SRE before merging.';
+
+    expect(results[0]).to.deep.equal({
+      title: 'Delete Access',
+      level: 'warning',
+      line: 12,
+      path: orders.policyPath,
+      problems: [problem]
+    });
+  });
 });
