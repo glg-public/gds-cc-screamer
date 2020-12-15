@@ -192,10 +192,9 @@ async function policyJsonIsValid(orders, context) {
       newPolicy.Statement = statementBlock.concat([newStatementBlock]);
       const newPolicyLines = JSON.stringify(newPolicy, null, 2).split("\n");
       const { start, end } = getLinesForJSON(newPolicyLines, newStatementBlock);
-      const stringifiedStatement = newPolicyLines
+      const stringifiedStatement = `\n${newPolicyLines
         .slice(start - 1, end)
-        .join("\n")
-        .trim();
+        .join("\n")}`;
 
       const { end: lineToAnnotate } = getLinesForJSON(
         orders.policyContents,
@@ -207,7 +206,7 @@ async function policyJsonIsValid(orders, context) {
       const oldLine = orders.policyContents[lineToAnnotate - 1];
       let newLine = oldLine;
       if (!oldLine.endsWith(",")) {
-        newLine += ", ";
+        newLine += ",";
       }
       newLine += stringifiedStatement;
       result.problems.push(
