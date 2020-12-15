@@ -143,7 +143,7 @@ async function policyJsonIsValid(orders, context) {
   }
 
   function _getWarnResult(type, statement, line) {
-    const regex = RegExp(`"${type}":\\s*"${escapeRegExp(line)}"`);
+    const regex = RegExp(`"${type}":\\s*"${escapeRegExp(line)}"`, 'i');
     return {
       title: 'Broad Permissions',
       path: orders.policyPath,
@@ -166,7 +166,7 @@ async function policyJsonIsValid(orders, context) {
       if (typeof action === "string" && actionString.test(action)) {
         _toggleRequiredAction(action);
         if (_isWarnAction(action)) {
-          results.push(_getWarnResult(original, action));
+          results.push(_getWarnResult(original, 'action', action));
         }
       } else if (Array.isArray(action)) {
         action
@@ -174,18 +174,18 @@ async function policyJsonIsValid(orders, context) {
           .forEach((item) => {
             _toggleRequiredAction(item);
             if (_isWarnAction(action)) {
-              results.push(_getWarnResult(original, action));
+              results.push(_getWarnResult(original, 'action', action));
             }
           });
       }
 
       if (typeof resource === "string" && _isWarnResource(resource)){
-        results.push(_getWarnResult(original, resource));
+        results.push(_getWarnResult(original, 'resource', resource));
       } else if (Array.isArray(resource)) {
         resource
           .filter(_isWarnResource)
           .forEach(item => {
-            results.push(_getWarnResult(original, item));
+            results.push(_getWarnResult(original, 'resource', item));
           });
       }
     });
