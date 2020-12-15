@@ -145,12 +145,14 @@ async function policyJsonIsValid(orders, context) {
 
   function _getWarnResult(statement, type, line) {
     const regex = RegExp(`"${type}":\\s*"${escapeRegExp(line)}"`, 'i');
+    let title = 'Broad Permissions';
     let problem = 'It is best practice to be as specific as possible with your IAM Policies. Overly broad policies can lead to unintentional vulnerabilities.';
     if (/delete/i.test(line)) {
+      title = 'Delete Access'
       problem = 'It is extremeley rare that a service needs Delete access. Make sure you have discussed this with SRE before merging.';
     }
     return {
-      title: 'Broad Permissions',
+      title,
       path: orders.policyPath,
       line: getLineWithinObject(orders.policyContents, statement, regex),
       level: 'warning',
