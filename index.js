@@ -141,7 +141,7 @@ async function run() {
         try {
           results = await check(deployment, github.context, inputs);
         } catch (e) {
-          core.error(e);
+          console.log(e);
           continue;
         }
         if (results.length === 0) {
