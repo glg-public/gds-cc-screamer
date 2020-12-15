@@ -21,6 +21,15 @@ const lowerCondition = /"condition"/;
 const actionString = /(^\*$|^\w+:[\w\*]+$)/;
 const arnRegex = /(arn:(?<partition>[\w\*\-]*):(?<service>[\w\*\-]*):(?<region>[\w\*\-]*):(?<accountId>[\d\*]*):(?<resourceId>[\w\*\-\/\:]*)|^\*$)/;
 
+const warnActions = [
+  /^\*$/,
+  /[\w\*]+:Delete[\w\*]/
+];
+
+const warnResources = [
+  /^\*$/,
+];
+
 /**
  * Accepts an orders object, and does some kind of check
  * @param {{path: string, contents: Array<string>}} orders
@@ -114,20 +123,70 @@ async function policyJsonIsValid(orders, context) {
     }
   }
 
+  function _isWarnAction(line) {
+    for (let regex of warnActions) {
+      if (regex.test(line)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function _isWarnResource(line) {
+    for (let regex of warnResources) {
+      if (regex.test(line)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function _getWarnResult(statement, line) {
+    return {
+      title: 'Broad Permissions',
+      path: orders.policyPath,
+      line: getLineWithinObject(orders.policyContents, statement, RegExp(line)),
+      level: 'warning',
+      problems: [
+        'It is best practice to be as specific as possible with your IAM Policies. Overly broad policies can lead to unintentional vulnerabilities.'
+      ]
+    }
+  }
+
+
   // Validate the presence of all required actions
   const statementBlock = document.Statement || document.statement || [];
   statementBlock
     .map(_standardizeStatement)
     .filter(_isAllowed)
-    .forEach(({ action }) => {
+    .forEach(({ action, resource }) => {
       if (typeof action === "string" && actionString.test(action)) {
         _toggleRequiredAction(action);
+        if (_isWarnAction(action)) {
+          results.push(_getWarnResult(statement, action));
+        }
       } else if (Array.isArray(action)) {
         action
           .filter((item) => actionString.test(item))
-          .forEach(_toggleRequiredAction);
+          .forEach((item) => {
+            _toggleRequiredAction(item);
+            if (_isWarnAction(action)) {
+              results.push(_getWarnResult(statement, action));
+            }
+          });
+      }
+
+      if (typeof resource === "string" && _isWarnResource(resource)){
+        results.push(_getWarnResult(statment, resource));
+      } else if (Array.isArray(resource)) {
+        resource
+          .filter(_isWarnResource)
+          .forEach(item => {
+            results.push(_getWarnResult(statement, item));
+          });
       }
     });
+
 
   // If there's a secrets.json, we should make sure this policy
   // grants access to those secrets
