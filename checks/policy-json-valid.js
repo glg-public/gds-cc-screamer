@@ -4,6 +4,7 @@ const {
   suggest,
   getLineNumber,
   getLineWithinObject,
+  escapeRegExp
 } = require("../util");
 
 const lowerVersion = /"version"/;
@@ -145,7 +146,7 @@ async function policyJsonIsValid(orders, context) {
     return {
       title: 'Broad Permissions',
       path: orders.policyPath,
-      line: getLineWithinObject(orders.policyContents, statement, RegExp(line)),
+      line: getLineWithinObject(orders.policyContents, statement, RegExp(escapeRegExp(line))),
       level: 'warning',
       problems: [
         'It is best practice to be as specific as possible with your IAM Policies. Overly broad policies can lead to unintentional vulnerabilities.'

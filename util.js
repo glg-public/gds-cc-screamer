@@ -106,6 +106,10 @@ function isAJob(fileLines) {
     return isJobDeploy || isUnpublished;
 }
 
+function escapeRegExp(string) {
+  return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+
 module.exports = {
   getLinesForJSON,
   suggest,
@@ -114,5 +118,6 @@ module.exports = {
   getFileLink,
   getOwnerRepoBranch,
   isAJob,
+  escapeRegExp,
 };
 
