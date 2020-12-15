@@ -594,6 +594,7 @@ function validateGenericIamPolicy(file, filePath) {
       statement.notAction ||
       statement.notaction ||
       statement.Notaction; // we already suggested capitalization fixes
+    const actionFmtError = '"Action" must be either a valid [Action String](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_action.html), or an array of valid action strings. SRE recommends as specific of an Action String as possible.';
     if (action && typeof action === "string" && !actionString.test(action)) {
       const lineRegex = RegExp(`"Action":\\s*"${escapeRegExp(action)}"`, "i");
       const line = getLineWithinObject(fileLines, statement, lineRegex);
@@ -602,7 +603,7 @@ function validateGenericIamPolicy(file, filePath) {
         title: 'Invalid value for "Action"',
         path: filePath,
         problems: [
-          '"Action" must be either a valid [Action String](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_action.html), or an array of valid action strings.',
+          actionFmtError,
         ],
         line,
         level: "failure",
@@ -618,7 +619,7 @@ function validateGenericIamPolicy(file, filePath) {
             title: 'Invalid value for "Action"',
             path: filePath,
             problems: [
-              '"Action" must be either a valid [Action String](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_action.html), or an array of valid action strings.',
+              actionFmtError,
             ],
             line,
             level: "failure",
@@ -633,7 +634,7 @@ function validateGenericIamPolicy(file, filePath) {
       statement.notResource ||
       statement.notresource ||
       statement.Notresource; // we already suggested capitalization fixes
-
+    const resourceFmtError = '"Resource" must be either a valid [ARN](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html), or an array of valid ARNs. SRE recommends as specific of an ARN as possible.';
     if (resource && typeof resource === "string" && !arnRegex.test(resource)) {
       const lineRegex = RegExp(`"Resource":\\s*"${escapeRegExp(resource)}"`, "i");
       const line = getLineWithinObject(fileLines, statement, lineRegex);
@@ -642,7 +643,7 @@ function validateGenericIamPolicy(file, filePath) {
         title: 'Invalid value for "Resource"',
         path: filePath,
         problems: [
-          '"Resource" must be either a valid [ARN](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html), or an array of valid ARNs.',
+          resourceFmtError,
         ],
         line,
         level: "failure",
@@ -658,7 +659,7 @@ function validateGenericIamPolicy(file, filePath) {
             title: 'Invalid value for "Resource"',
             path: filePath,
             problems: [
-              '"Resource" must be either a valid [ARN](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html), or an array of valid ARNs.',
+              resourceFmtError,
             ],
             line,
             level: "failure",
