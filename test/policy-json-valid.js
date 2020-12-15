@@ -2,6 +2,9 @@ const { expect } = require("chai");
 const policyJsonIsValid = require("../checks/policy-json-valid");
 const { suggest } = require("../util");
 
+const actionFmtError = '"Action" must be either a valid [Action String](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_action.html), or an array of valid action strings. SRE recommends as specific of an Action String as possible.';
+const resourceFmtError = '"Resource" must be either a valid [ARN](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html), or an array of valid ARNs. SRE recommends as specific of an ARN as possible.';
+
 describe("policy.json is valid", () => {
   it("skips if there is no policy.json", async () => {
     const orders = {
@@ -436,7 +439,7 @@ describe("policy.json is valid", () => {
       title: 'Invalid value for "Action"',
       path: "streamliner/policy.json",
       problems: [
-        '"Action" must be either a valid [Action String](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_action.html), or an array of valid action strings.',
+        actionFmtError,
       ],
       line: 19,
       level: "failure",
@@ -487,7 +490,7 @@ describe("policy.json is valid", () => {
       title: 'Invalid value for "Action"',
       path: "streamliner/policy.json",
       problems: [
-        '"Action" must be either a valid [Action String](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_action.html), or an array of valid action strings.',
+        actionFmtError,
       ],
       line: 13,
       level: "failure",
@@ -536,7 +539,7 @@ describe("policy.json is valid", () => {
       title: 'Invalid value for "Resource"',
       path: orders.policyPath,
       problems: [
-        '"Resource" must be either a valid [ARN](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html), or an array of valid ARNs.',
+        resourceFmtError,
       ],
       line: 20,
       level: "failure",
@@ -587,7 +590,7 @@ describe("policy.json is valid", () => {
       title: 'Invalid value for "Resource"',
       path: orders.policyPath,
       problems: [
-        '"Resource" must be either a valid [ARN](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html), or an array of valid ARNs.',
+        resourceFmtError,
       ],
       line: 25,
       level: "failure",

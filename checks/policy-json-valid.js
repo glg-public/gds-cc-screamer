@@ -24,7 +24,8 @@ const arnRegex = /(arn:(?<partition>[\w\*\-]*):(?<service>[\w\*\-]*):(?<region>[
 
 const warnActions = [
   /^\*$/,
-  /[\w\*]+:Delete[\w\*]/
+  /[\w\*]+:Delete[\w\*]/,
+  /[\w\*]+:\*/
 ];
 
 const warnResources = [
