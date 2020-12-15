@@ -159,7 +159,8 @@ async function policyJsonIsValid(orders, context) {
   statementBlock
     .map(_standardizeStatement)
     .filter(_isAllowed)
-    .forEach(({ action, resource }) => {
+    .forEach((statement) => {
+      const { action, resource } = statement;
       if (typeof action === "string" && actionString.test(action)) {
         _toggleRequiredAction(action);
         if (_isWarnAction(action)) {
