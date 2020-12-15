@@ -726,12 +726,12 @@ describe("policy.json is valid", () => {
         {
           name: "MY_SECRET",
           valueFrom:
-            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
+            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:::",
         },
         {
           name: "MY_OTHER_SECRET",
           valueFrom:
-            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else",
+            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else:::",
         },
       ],
     };
@@ -876,7 +876,7 @@ describe("policy.json is valid", () => {
     });
   });
 
-  it.only('warns about delete access', async () => {
+  it('warns about delete access', async () => {
     const policyJson = JSON.stringify(
       {
         Version: "2012-10-17",
