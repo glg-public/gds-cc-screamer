@@ -96,7 +96,7 @@ async function policyJsonIsValid(orders, context) {
 
     const effect = statement.Effect || statement.effect;
 
-    return { effect, action, resource };
+    return { original: statement, standard: { effect, action, resource }};
   }
 
   function _isAllowed(statement) {
@@ -142,11 +142,12 @@ async function policyJsonIsValid(orders, context) {
     return false;
   }
 
-  function _getWarnResult(statement, line) {
+  function _getWarnResult(type, statement, line) {
+    const regex = RegExp(`"${type}":\\s*"${escapeRegExp(line)}"`);
     return {
       title: 'Broad Permissions',
       path: orders.policyPath,
-      line: getLineWithinObject(orders.policyContents, statement, RegExp(escapeRegExp(line))),
+      line: getLineWithinObject(orders.policyContents, statement, regex),
       level: 'warning',
       problems: [
         'It is best practice to be as specific as possible with your IAM Policies. Overly broad policies can lead to unintentional vulnerabilities.'
@@ -160,12 +161,12 @@ async function policyJsonIsValid(orders, context) {
   statementBlock
     .map(_standardizeStatement)
     .filter(_isAllowed)
-    .forEach((statement) => {
+    .forEach(({ original, standard: statement }) => {
       const { action, resource } = statement;
       if (typeof action === "string" && actionString.test(action)) {
         _toggleRequiredAction(action);
         if (_isWarnAction(action)) {
-          results.push(_getWarnResult(statement, action));
+          results.push(_getWarnResult(original, action));
         }
       } else if (Array.isArray(action)) {
         action
@@ -173,18 +174,18 @@ async function policyJsonIsValid(orders, context) {
           .forEach((item) => {
             _toggleRequiredAction(item);
             if (_isWarnAction(action)) {
-              results.push(_getWarnResult(statement, action));
+              results.push(_getWarnResult(original, action));
             }
           });
       }
 
       if (typeof resource === "string" && _isWarnResource(resource)){
-        results.push(_getWarnResult(statement, resource));
+        results.push(_getWarnResult(original, resource));
       } else if (Array.isArray(resource)) {
         resource
           .filter(_isWarnResource)
           .forEach(item => {
-            results.push(_getWarnResult(statement, item));
+            results.push(_getWarnResult(original, item));
           });
       }
     });
