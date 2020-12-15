@@ -160,7 +160,7 @@ async function policyJsonIsValid(orders, context) {
   const statementBlock = document.Statement || document.statement || [];
   statementBlock
     .map(_standardizeStatement)
-    .filter(_isAllowed)
+    .filter(({ standard }) => _isAllowed(standard))
     .forEach(({ original, standard: statement }) => {
       const { action, resource } = statement;
       if (typeof action === "string" && actionString.test(action)) {
@@ -209,9 +209,9 @@ async function policyJsonIsValid(orders, context) {
 
     statementBlock
       .map(_standardizeStatement)
-      .filter(_isAllowed)
-      .filter(_isAboutSecrets)
-      .forEach(({ resource }) => {
+      .filter(({ standard }) => _isAllowed(standard))
+      .filter(({ standard }) => _isAboutSecrets(standard))
+      .forEach(({ standard: { resource }}) => {
         if (typeof resource === "string") {
           _toggleRequiredSecret(resource);
         } else if (Array.isArray(resource)) {
