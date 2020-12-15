@@ -22,7 +22,7 @@ async function getContents(filePath) {
   const result = { path: filePath, contents: contents.split("\n") };
   const secretsJsonPath = path.join(path.dirname(filePath), "secrets.json");
   const policyJsonPath = path.join(path.dirname(filePath), "policy.json");
-  
+
   try {
     await fs.stat(secretsJsonPath);
     const secretsJson = await fs.readFile(secretsJsonPath, "utf8");
@@ -31,7 +31,7 @@ async function getContents(filePath) {
   } catch (e) {
     // secrets.json is not required
   }
-  
+
   try {
     await fs.stat(policyJsonPath);
     const policyJson = await fs.readFile(policyJsonPath, "utf8");
@@ -40,7 +40,7 @@ async function getContents(filePath) {
   } catch (e) {
     // policy.json is not required
   }
-  
+
   return result;
 }
 
@@ -49,35 +49,43 @@ async function clearPreviousRunComments(octokit, { owner, repo, pull_number }) {
     const { data: reviewComments } = await octokit.pulls.listReviewComments({
       owner,
       repo,
-      pull_number
+      pull_number,
     });
 
     const { data: issueComments } = await octokit.issues.listComments({
       owner,
       repo,
-      issue_number: pull_number
+      issue_number: pull_number,
     });
 
     const allDeletions = [];
-  
+
     reviewComments
-      .filter(c => c.user.login === 'github-actions[bot]' && c.user.type === 'Bot')
-      .forEach(comment => {
-        allDeletions.push(octokit.pulls.deleteReviewComment({
-          owner,
-          repo,
-          comment_id: comment.id,
-        }));
+      .filter(
+        (c) => c.user.login === "github-actions[bot]" && c.user.type === "Bot"
+      )
+      .forEach((comment) => {
+        allDeletions.push(
+          octokit.pulls.deleteReviewComment({
+            owner,
+            repo,
+            comment_id: comment.id,
+          })
+        );
       });
 
     issueComments
-      .filter(c => c.user.login === 'github-actions[bot]' && c.user.type === 'Bot')
-      .forEach(comment => {
-        allDeletions.push(octokit.issues.deleteComment({
-          owner,
-          repo,
-          comment_id: comment.id,
-        }));
+      .filter(
+        (c) => c.user.login === "github-actions[bot]" && c.user.type === "Bot"
+      )
+      .forEach((comment) => {
+        allDeletions.push(
+          octokit.issues.deleteComment({
+            owner,
+            repo,
+            comment_id: comment.id,
+          })
+        );
       });
 
     await Promise.all(allDeletions);
@@ -85,7 +93,6 @@ async function clearPreviousRunComments(octokit, { owner, repo, pull_number }) {
     console.log(e);
     throw e;
   }
-  
 }
 
 async function run() {
@@ -157,48 +164,52 @@ async function run() {
               comment += `- ${problem}\n`;
               core.error(`${result.title} - ${problem}`);
             }
+            try {
+              // Line 0 means a general comment, not a line-specific comment
+              if (result.line === 0) {
+                await octokit.issues.createComment({
+                  owner,
+                  repo,
+                  issue_number: pull_number,
+                  body: comment,
+                });
+              }
 
-            // Line 0 means a general comment, not a line-specific comment
-            if (result.line === 0) {
-              await octokit.issues.createComment({
-                owner,
-                repo,
-                issue_number: pull_number,
-                body: comment,
-              });
-            }
+              // If result.line is a range object like { start, end }, make a multi-line comment
+              else if (
+                isNaN(result.line) &&
+                result.line.hasOwnProperty("start") &&
+                result.line.hasOwnProperty("end")
+              ) {
+                await octokit.pulls.createReviewComment({
+                  owner,
+                  repo,
+                  pull_number,
+                  commit_id: sha,
+                  path: result.path || deployment.path,
+                  body: comment,
+                  side: "RIGHT",
+                  start_line: result.line.start,
+                  line: result.line.end,
+                });
+              }
 
-            // If result.line is a range object like { start, end }, make a multi-line comment
-            else if (
-              isNaN(result.line) &&
-              result.line.hasOwnProperty("start") &&
-              result.line.hasOwnProperty("end")
-            ) {
-              await octokit.pulls.createReviewComment({
-                owner,
-                repo,
-                pull_number,
-                commit_id: sha,
-                path: result.path || deployment.path,
-                body: comment,
-                side: "RIGHT",
-                start_line: result.line.start,
-                line: result.line.end,
-              });
-            }
-
-            // If line number is anything but 0, or a range object, we make a line-specific comment
-            else {
-              await octokit.pulls.createReviewComment({
-                owner,
-                repo,
-                pull_number,
-                commit_id: sha,
-                path: result.path || deployment.path,
-                body: comment,
-                side: "RIGHT",
-                line: result.line,
-              });
+              // If line number is anything but 0, or a range object, we make a line-specific comment
+              else {
+                await octokit.pulls.createReviewComment({
+                  owner,
+                  repo,
+                  pull_number,
+                  commit_id: sha,
+                  path: result.path || deployment.path,
+                  body: comment,
+                  side: "RIGHT",
+                  line: result.line,
+                });
+              }
+            } catch (e) {
+              console.log(e);
+              console.log(result);
             }
           } else {
             counts.success += 1;
