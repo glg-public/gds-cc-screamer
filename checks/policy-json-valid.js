@@ -254,13 +254,15 @@ async function policyJsonIsValid(orders, context) {
         Sid: "AllowRequiredSecrets",
         Effect: "Allow",
         Action: secretsAction,
-        Resource: Object.keys(requiredSecrets)
-          .filter((s) => !requiredSecrets[s])
-          .map((s) => {
-            const match = secretArn.exec(s);
-            const { region, account, secretName } = match.groups;
-            return `arn:aws:secretsmanager:${region}:${account}:secret:${secretName}`;
-          }),
+        Resource: Array.from(new Set(
+          Object.keys(requiredSecrets)
+            .filter((s) => !requiredSecrets[s])
+            .map((s) => {
+              const match = secretArn.exec(s);
+              const { region, account, secretName } = match.groups;
+              return `arn:aws:secretsmanager:${region}:${account}:secret:${secretName}`;
+            })
+          ))
       };
 
       // This lets us indent more correctly
