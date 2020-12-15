@@ -1,8 +1,8 @@
 const core = require("@actions/core");
 
-const SECURE_DOMAINS = ["glgresearch.com", "glg.it"];
+const SECURE_DOMAINS = ["glgresearch.com", "glg.it", "glginsights.com"];
 
-const reBadURLs = RegExp(
+const reBadURLs = new RegExp(
   `^export +\\w+=[\'\"]?(http:)?\/\/[^\/]*\\.?(?:${SECURE_DOMAINS.map((x) =>
     x.replace(/\./g, "\\.")
   ).join("|")})`,

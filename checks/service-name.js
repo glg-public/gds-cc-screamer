@@ -1,7 +1,7 @@
 const path = require("path");
 const core = require("@actions/core");
 
-const validCharacters = RegExp("^[a-z][a-z0-9-]*");
+const validCharacters = new RegExp("^[a-z][a-z0-9-]*");
 
 /**
  * Accepts an orders object, and validates the name of the service

@@ -3,7 +3,7 @@ function getLinesForJSON(fileLines, jsonObj) {
   let end = 0;
 
   // Convert the object into a regex
-  const regex = RegExp(
+  const regex = new RegExp(
     JSON.stringify(jsonObj)
       .replace(/\*/g, "\\*")
       .replace(/{/g, "{\\s*")
@@ -93,7 +93,7 @@ function getOwnerRepoBranch(context) {
   return { owner, repo, branch };
 }
 
-const jobdeploy = RegExp(
+const jobdeploy = new RegExp(
   "^jobdeploy (?<source>\\w+)/(?<org>[\\w-]+)/(?<repo>.+?)/(?<branch>.+?):(?<tag>\\w+)"
 );
 

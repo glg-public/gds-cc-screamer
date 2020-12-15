@@ -91,7 +91,7 @@ async function secretsJsonIsValid(orders, context) {
         key.toLowerCase() === "valuefrom" && key !== "valueFrom";
 
       if (wrongCaseForName) {
-        const regex = RegExp(`"${key}":`);
+        const regex = new RegExp(`"${key}":`);
         const lineNumber = getLineWithinObject(
           orders.secretsContents,
           secret,
@@ -111,7 +111,7 @@ async function secretsJsonIsValid(orders, context) {
         });
         standardSecret.name = secret[key];
       } else if (wrongCaseForValueFrom) {
-        const regex = RegExp(`"${key}":`);
+        const regex = new RegExp(`"${key}":`);
         const lineNumber = getLineWithinObject(
           orders.secretsContents,
           secret,

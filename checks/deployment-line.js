@@ -1,15 +1,15 @@
 const core = require("@actions/core");
 
-const dockerdeploy = RegExp(
+const dockerdeploy = new RegExp(
   "^dockerdeploy (?<source>\\w+)/(?<org>[\\w-]+)/(?<repo>.+?)/(?<branch>.+?):(?<tag>\\w+)"
 );
-const jobdeploy = RegExp(
+const jobdeploy = new RegExp(
   "^jobdeploy (?<source>\\w+)/(?<org>[\\w-]+)/(?<repo>.+?)/(?<branch>.+?):(?<tag>\\w+)"
 );
-const autodeploy = RegExp(
+const autodeploy = new RegExp(
   "^autodeploy git@github.com:(?<org>[\\w-]+)/(?<repo>.+?)(.git|)#(?<branch>.+)"
 );
-const validCharacters = RegExp("^[a-z][a-z0-9-]*");
+const validCharacters = new RegExp("^[a-z][a-z0-9-]*");
 
 function getDeployment(match) {
   const { source, org, repo, branch, tag } = match.groups;

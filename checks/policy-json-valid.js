@@ -83,7 +83,7 @@ async function policyJsonIsValid(orders, context) {
 
   function _toggleRequiredAction(item) {
     // This way, ecr:* would toggle all of the required ECR actions
-    const keyRegex = RegExp(item.replace(/\*/g, "\\w+"));
+    const keyRegex = new RegExp(item.replace(/\*/g, "\\w+"));
     Object.keys(requiredActions)
       .filter((key) => keyRegex.test(key))
       .forEach((key) => (requiredActions[key] = true));
@@ -121,13 +121,13 @@ async function policyJsonIsValid(orders, context) {
     const { action } = statement;
 
     if (typeof action === "string" && actionString.test(action)) {
-      const keyRegex = RegExp(action.replace(/\*/g, "\\w+"));
+      const keyRegex = new RegExp(action.replace(/\*/g, "\\w+"));
       return keyRegex.test(secretsAction);
     } else if (Array.isArray(action)) {
       action
         .filter((item) => actionString.test(item))
         .forEach((item) => {
-          const keyRegex = RegExp(item.replace(/\*/g, "\\w+"));
+          const keyRegex = new RegExp(item.replace(/\*/g, "\\w+"));
           if (keyRegex.test(secretsAction)) {
             return true;
           }
@@ -155,7 +155,7 @@ async function policyJsonIsValid(orders, context) {
   }
 
   function _getWarnResult(searchBlock, line) {
-    const regex = RegExp(`"${escapeRegExp(line)}"`, 'i');
+    const regex = new RegExp(`"${escapeRegExp(line)}"`, 'i');
     let title = 'Broad Permissions';
     let problem = 'It is best practice to be as specific as possible with your IAM Policies. Overly broad policies can lead to unintentional vulnerabilities.';
     if (/delete/i.test(line)) {
@@ -219,7 +219,7 @@ async function policyJsonIsValid(orders, context) {
 
     function _toggleRequiredSecret(resource) {
       // We need to account for wildcards
-      const keyRegex = RegExp(resource.replace(/\*/g, "[\\w\\-\\/\\:]+") + "$");
+      const keyRegex = new RegExp(resource.replace(/\*/g, "[\\w\\-\\/\\:]+") + "$");
       Object.keys(requiredSecrets)
         .filter((key) => keyRegex.test(key))
         .forEach((key) => (requiredSecrets[key] = true));
@@ -500,7 +500,7 @@ function validateGenericIamPolicy(file, filePath) {
       level: "failure",
     });
   } else if (acceptableVersions.indexOf(version) === -1) {
-    const lineRegex = RegExp(`"Version":\\s*"${version}"`, "i");
+    const lineRegex = new RegExp(`"Version":\\s*"${version}"`, "i");
     results.push({
       title: "Invalid Version",
       path: filePath,
@@ -587,7 +587,7 @@ function validateGenericIamPolicy(file, filePath) {
     // Validate Effect statement
     let effect = statement.Effect || statement.effect; // we already suggested capitalization fixes
     if (effect && ["Allow", "Deny"].indexOf(effect) === -1) {
-      const lineRegex = RegExp(`"Effect":\\s*"${effect}"`, "i");
+      const lineRegex = new RegExp(`"Effect":\\s*"${effect}"`, "i");
       const line = getLineWithinObject(fileLines, statement, lineRegex);
 
       results.push({
@@ -609,7 +609,7 @@ function validateGenericIamPolicy(file, filePath) {
       statement.Notaction; // we already suggested capitalization fixes
     const actionFmtError = '"Action" must be either a valid [Action String](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_action.html), or an array of valid action strings. SRE recommends as specific of an Action String as possible.';
     if (action && typeof action === "string" && !actionString.test(action)) {
-      const lineRegex = RegExp(`"Action":\\s*"${escapeRegExp(action)}"`, "i");
+      const lineRegex = new RegExp(`"Action":\\s*"${escapeRegExp(action)}"`, "i");
       const line = getLineWithinObject(fileLines, statement, lineRegex);
 
       results.push({
@@ -625,7 +625,7 @@ function validateGenericIamPolicy(file, filePath) {
       action
         .filter((item) => !actionString.test(item))
         .forEach((item) => {
-          const lineRegex = RegExp(`"${escapeRegExp(item)}"`);
+          const lineRegex = new RegExp(`"${escapeRegExp(item)}"`);
           const line = getLineWithinObject(fileLines, statement, lineRegex);
 
           results.push({
@@ -649,7 +649,7 @@ function validateGenericIamPolicy(file, filePath) {
       statement.Notresource; // we already suggested capitalization fixes
     const resourceFmtError = '"Resource" must be either a valid [ARN](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html), or an array of valid ARNs. SRE recommends as specific of an ARN as possible.';
     if (resource && typeof resource === "string" && !arnRegex.test(resource)) {
-      const lineRegex = RegExp(`"Resource":\\s*"${escapeRegExp(resource)}"`, "i");
+      const lineRegex = new RegExp(`"Resource":\\s*"${escapeRegExp(resource)}"`, "i");
       const line = getLineWithinObject(fileLines, statement, lineRegex);
 
       results.push({
@@ -665,7 +665,7 @@ function validateGenericIamPolicy(file, filePath) {
       resource
         .filter((item) => !arnRegex.test(item))
         .forEach((item) => {
-          const lineRegex = RegExp(`"${escapeRegExp(item)}"`);
+          const lineRegex = new RegExp(`"${escapeRegExp(item)}"`);
           const line = getLineWithinObject(fileLines, statement, lineRegex);
 
           results.push({

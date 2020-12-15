@@ -1,6 +1,6 @@
 const core = require("@actions/core");
 
-const singleQuoteSubsitution = RegExp("export \\w+='.*\\$({|)\\w+(}|).*'");
+const singleQuoteSubsitution = new RegExp("export \\w+='.*\\$({|)\\w+(}|).*'");
 
 /**
  * Accepts an orders object, and does some kind of check
