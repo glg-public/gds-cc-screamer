@@ -595,7 +595,7 @@ function validateGenericIamPolicy(file, filePath) {
       statement.notaction ||
       statement.Notaction; // we already suggested capitalization fixes
     if (action && typeof action === "string" && !actionString.test(action)) {
-      const lineRegex = RegExp(`"Action":\\s*"${action}"`, "i");
+      const lineRegex = RegExp(`"Action":\\s*"${escapeRegExp(action)}"`, "i");
       const line = getLineWithinObject(fileLines, statement, lineRegex);
 
       results.push({
@@ -611,7 +611,7 @@ function validateGenericIamPolicy(file, filePath) {
       action
         .filter((item) => !actionString.test(item))
         .forEach((item) => {
-          const lineRegex = RegExp(`"${item}"`);
+          const lineRegex = RegExp(`"${escapeRegExp(item)}"`);
           const line = getLineWithinObject(fileLines, statement, lineRegex);
 
           results.push({
@@ -635,7 +635,7 @@ function validateGenericIamPolicy(file, filePath) {
       statement.Notresource; // we already suggested capitalization fixes
 
     if (resource && typeof resource === "string" && !arnRegex.test(resource)) {
-      const lineRegex = RegExp(`"Resource":\\s*"${resource}"`, "i");
+      const lineRegex = RegExp(`"Resource":\\s*"${escapeRegExp(resource)}"`, "i");
       const line = getLineWithinObject(fileLines, statement, lineRegex);
 
       results.push({
@@ -651,7 +651,7 @@ function validateGenericIamPolicy(file, filePath) {
       resource
         .filter((item) => !arnRegex.test(item))
         .forEach((item) => {
-          const lineRegex = RegExp(`"${item}"`);
+          const lineRegex = RegExp(`"${escapeRegExp(item)}"`);
           const line = getLineWithinObject(fileLines, statement, lineRegex);
 
           results.push({
