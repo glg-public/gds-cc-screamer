@@ -1,14 +1,29 @@
 const core = require("@actions/core");
 
+const jobdeploy = RegExp(
+  "^jobdeploy (?<source>\\w+)/(?<org>[\\w-]+)/(?<repo>.+?)/(?<branch>.+?):(?<tag>\\w+)"
+);
+
 /**
  * Accepts an orders object, and validates the healthcheck
  * @param {{path: string, contents: Array<string>}} orders
  */
 async function validateHealthcheck(orders) {
-  core.info(`Valid Health Check - ${orders.path}`);
+  
 
   const problems = [];
   let lineNumber = 0;
+
+  const isJobDeploy =
+    orders.contents.filter((line) => jobdeploy.test(line)).length > 0;
+  const isUnpublished = 
+    orders.contents.filter((line) => line === 'unpublished').length > 0;
+
+  if (isJobDeploy || isUnpublished) {
+    core.info('Jobs do not require a healthcheck, skipping.');
+    return [];
+  }
+  core.info(`Valid Health Check - ${orders.path}`);
 
   for (let i = 0; i < orders.contents.length; i++) {
     const line = orders.contents[i];
