@@ -179,7 +179,7 @@ async function policyJsonIsValid(orders, context) {
       }
 
       if (typeof resource === "string" && _isWarnResource(resource)){
-        results.push(_getWarnResult(statment, resource));
+        results.push(_getWarnResult(statement, resource));
       } else if (Array.isArray(resource)) {
         resource
           .filter(_isWarnResource)
