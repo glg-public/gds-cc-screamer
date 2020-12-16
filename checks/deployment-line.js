@@ -1,16 +1,10 @@
 require('../typedefs');
 const core = require("@actions/core");
 
-const dockerdeploy = new RegExp(
-  "^dockerdeploy (?<source>\\w+)/(?<org>[\\w-]+)/(?<repo>.+?)/(?<branch>.+?):(?<tag>\\w+)"
-);
-const jobdeploy = new RegExp(
-  "^jobdeploy (?<source>\\w+)/(?<org>[\\w-]+)/(?<repo>.+?)/(?<branch>.+?):(?<tag>\\w+)"
-);
-const autodeploy = new RegExp(
-  "^autodeploy git@github.com:(?<org>[\\w-]+)/(?<repo>.+?)(.git|)#(?<branch>.+)"
-);
-const validCharacters = new RegExp("^[a-z][a-z0-9-]*");
+const dockerdeploy = /^dockerdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\w+)/;
+const jobdeploy = /^jobdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\w+)/;
+const autodeploy = /^autodeploy git@github.com:(?<org>[\w-]+)\/(?<repo>.+?)(.git|)#(?<branch>.+)/;
+const validCharacters = /^[a-z][a-z0-9-]*$/;
 
 function getDeployment(match) {
   const { source, org, repo, branch, tag } = match.groups;
@@ -26,18 +20,18 @@ function getDeployment(match) {
 
 /**
  * Accepts an orders object, and validates the name of the repo and branch
- * @param {Deployment} orders
+ * @param {Deployment} deployment
  */
-async function validateDeploymentLine(orders) {
-  core.info(`Valid Deployment Line - ${orders.path}`);
+async function validateDeploymentLine(deployment) {
+  core.info(`Valid Deployment Line - ${deployment.path}`);
 
   const problems = [];
   let lineNumber = 0;
 
-  let deployment;
+  let deploymentParts;
 
-  for (let i = 0; i < orders.contents.length; i++) {
-    const line = orders.contents[i];
+  for (let i = 0; i < deployment.contents.length; i++) {
+    const line = deployment.contents[i];
     if (line.startsWith("dockerdeploy")) {
       lineNumber = i + 1;
       const match = dockerdeploy.exec(line);
@@ -49,7 +43,7 @@ async function validateDeploymentLine(orders) {
         break;
       }
 
-      deployment = getDeployment(match);
+      deploymentParts = getDeployment(match);
       break;
     } else if (line.startsWith("autodeploy")) {
       lineNumber = i + 1;
@@ -62,7 +56,7 @@ async function validateDeploymentLine(orders) {
         break;
       }
 
-      deployment = getDeployment(match);
+      deploymentParts = getDeployment(match);
     } else if (line.startsWith("jobdeploy")) {
       lineNumber = i + 1;
       const match = jobdeploy.exec(line);
@@ -74,32 +68,32 @@ async function validateDeploymentLine(orders) {
         break;
       }
 
-      deployment = getDeployment(match);
+      deploymentParts = getDeployment(match);
       break;
     }
   }
 
-  if (deployment) {
-    if (!validCharacters.test(deployment.repo)) {
+  if (deploymentParts) {
+    if (!validCharacters.test(deploymentParts.repo)) {
       problems.push(
-        `**${deployment.repo}** - Repository name must be only lowercase alphanumeric characters and hyphens.`
+        `**${deploymentParts.repo}** - Repository name must be only lowercase alphanumeric characters and hyphens.`
       );
     }
 
-    if (!validCharacters.test(deployment.branch)) {
+    if (!validCharacters.test(deploymentParts.branch)) {
       problems.push(
-        `**${deployment.branch}** - Branch name must be only lowercase alphanumeric characters and hyphens.`
+        `**${deploymentParts.branch}** - Branch name must be only lowercase alphanumeric characters and hyphens.`
       );
     }
 
-    if (deployment.branch.includes("--")) {
+    if (deploymentParts.branch.includes("--")) {
       problems.push(
-        `**${deployment.branch}** - Branch name cannot contain \`--\``
+        `**${deploymentParts.branch}** - Branch name cannot contain \`--\``
       );
     }
-  } else if (!deployment && problems.length === 0) {
+  } else if (!deploymentParts && problems.length === 0) {
     problems.push(
-      `**${orders.path}** - Missing deployment. Must include either an \`autodeploy\` line, a \`dockerdeploy\` line, or a \`jobdeploy\` line.`
+      `**${deployment.path}** - Missing deployment. Must include either an \`autodeploy\` line, a \`dockerdeploy\` line, or a \`jobdeploy\` line.`
     );
     lineNumber = 0;
   }

@@ -1,3 +1,4 @@
+require('../typedefs');
 const core = require("@actions/core");
 
 const enableDebug = /^export +ENABLE_DEBUG=["']?true["']?/;
@@ -8,21 +9,20 @@ const debugs = [
   enableDebug,
   debug,
   logLevel
-]
+];
 
 /**
  * Accepts an orders object, and does some kind of check
- * @param {{path: string, contents: Array<string>}} orders
- * @param {Object} context The context object provided by github
+ * @param {Deployment} deployment
  */
-async function noDebugInProd(orders) {
-  core.info(`No Debug In Production - ${orders.path}`);
+async function noDebugInProd(deployment) {
+  core.info(`No Debug In Production - ${deployment.path}`);
   const results = [];
  
-  orders.contents.forEach((line, i) => {
+  deployment.contents.forEach((line, i) => {
     const result = {
       title: 'Debug In Production',
-      path: orders.path,
+      path: deployment.path,
       line: i+1,
       problems: [],
       level: 'warning',

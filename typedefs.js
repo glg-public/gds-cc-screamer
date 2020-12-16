@@ -264,3 +264,20 @@
  * path: (string | undefined)
  * }} Result
  */
+
+/**
+ * @typedef {{
+ * payload: {
+ *  pull_request: PullRequest
+ * }
+ * }} GitHubContext
+ */
+
+/**
+ * @typedef {{
+ * awsAccount: string,
+ * awsRegion: string,
+ * awsPartition: string,
+ * secretsPrefix: string
+ * }} ActionInputs
+ */

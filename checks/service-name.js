@@ -1,16 +1,17 @@
+require('../typedefs');
 const path = require("path");
 const core = require("@actions/core");
 
-const validCharacters = new RegExp("^[a-z][a-z0-9-]*");
+const validCharacters = /^[a-z][a-z0-9-]*$/;
 
 /**
  * Accepts an orders object, and validates the name of the service
- * @param {{path: string, contents: Array<string>}} orders
+ * @param {Deployment} deployment
  */
-async function validateServiceName(orders) {
-  core.info(`Valid Service Name - ${orders.path}`);
+async function validateServiceName(deployment) {
+  core.info(`Valid Service Name - ${deployment.path}`);
 
-  const serviceName = path.dirname(orders.path);
+  const serviceName = path.dirname(deployment.path);
 
   const problems = [];
 

@@ -1,17 +1,18 @@
+require('../typedefs');
 const core = require("@actions/core");
 
-const singleQuoteSubsitution = new RegExp("export \\w+='.*\\$({|)\\w+(}|).*'");
+const singleQuoteSubsitution = /export \w+='.*\$({|)\w+(}|).*'/;
 
 /**
  * Accepts an orders object, and does some kind of check
- * @param {{path: string, contents: Array<string>}} orders
+ * @param {Deployment} deployment
  */
-async function validBashSubsitutions(orders) {
-  core.info(`Valid Bash Substitution - ${orders.path}`);
+async function validBashSubsitutions(deployment) {
+  core.info(`Valid Bash Substitution - ${deployment.path}`);
   const results = [];
 
-  for (let i = 0; i < orders.contents.length; i++) {
-    const line = orders.contents[i];
+  for (let i = 0; i < deployment.contents.length; i++) {
+    const line = deployment.contents[i];
 
     if (singleQuoteSubsitution.test(line)) {
       results.push({

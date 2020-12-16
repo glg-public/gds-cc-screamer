@@ -1,3 +1,4 @@
+require('../typedefs');
 const core = require("@actions/core");
 const {
   getLinesForJSON,
@@ -39,20 +40,19 @@ const secretArn = /arn:(?<partition>[\w\*\-]*):secretsmanager:(?<region>[\w-]*):
 
 /**
  * Accepts an orders object, and does some kind of check
- * @param {{path: string, contents: Array<string>}} orders
- * @param {Object} context The context object provided by github
+ * @param {Deployment} deployment
  */
-async function policyJsonIsValid(orders, context) {
+async function policyJsonIsValid(deployment) {
   // policy.json is not required
-  if (!orders.policyContents) {
-    core.info(`No policy.json present, skipping - ${orders.path}`);
+  if (!deployment.policyContents) {
+    core.info(`No policy.json present, skipping - ${deployment.path}`);
     return [];
   }
-  core.info(`policy.json is valid - ${orders.policyPath}`);
+  core.info(`policy.json is valid - ${deployment.policyPath}`);
 
   let { results, document } = validateGenericIamPolicy(
-    orders.policyContents.join("\n"),
-    orders.policyPath
+    deployment.policyContents.join("\n"),
+    deployment.policyPath
   );
 
   if (!document) {
@@ -71,7 +71,7 @@ async function policyJsonIsValid(orders, context) {
 
   // Secrets access is only needed for services that use secrets
   const secretsAction = "secretsmanager:GetSecretValue";
-  if (orders.secretsContents) {
+  if (deployment.secretsContents) {
     requiredActions[secretsAction] = false;
   }
 
@@ -164,8 +164,8 @@ async function policyJsonIsValid(orders, context) {
     }
     return {
       title,
-      path: orders.policyPath,
-      line: getLineWithinObject(orders.policyContents, searchBlock, regex),
+      path: deployment.policyPath,
+      line: getLineWithinObject(deployment.policyContents, searchBlock, regex),
       level: 'warning',
       problems: [
         problem
@@ -211,9 +211,9 @@ async function policyJsonIsValid(orders, context) {
 
   // If there's a secrets.json, we should make sure this policy
   // grants access to those secrets
-  if (orders.secretsJson) {
+  if (deployment.secretsJson) {
     const requiredSecrets = {};
-    orders.secretsJson.forEach((secret) => {
+    deployment.secretsJson.forEach((secret) => {
       requiredSecrets[_getSimpleSecret(secret.valueFrom)] = false;
     });
 
@@ -244,7 +244,7 @@ async function policyJsonIsValid(orders, context) {
     ) {
       const result = {
         title: "Policy is missing required secrets",
-        path: orders.policyPath,
+        path: deployment.policyPath,
         problems: [],
         line: 0,
         level: "failure",
@@ -279,13 +279,13 @@ async function policyJsonIsValid(orders, context) {
         .join("\n")}`;
 
       const { end: lineToAnnotate } = getLinesForJSON(
-        orders.policyContents,
+        deployment.policyContents,
         statementBlock[statementBlock.length - 1]
       );
 
       result.line = lineToAnnotate;
 
-      const oldLine = orders.policyContents[lineToAnnotate - 1];
+      const oldLine = deployment.policyContents[lineToAnnotate - 1];
       let newLine = oldLine;
       if (!oldLine.endsWith(",")) {
         newLine += ",";
@@ -306,7 +306,7 @@ async function policyJsonIsValid(orders, context) {
   ) {
     const result = {
       title: "Policy is missing required actions",
-      path: orders.policyPath,
+      path: deployment.policyPath,
       problems: [],
       line: 0,
       level: "failure",

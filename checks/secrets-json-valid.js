@@ -1,3 +1,4 @@
+require('../typedefs');
 const core = require("@actions/core");
 const { getLinesForJSON, suggest, getLineWithinObject } = require("../util");
 
@@ -5,31 +6,30 @@ const secretArn = /arn:(?<partition>[\w\*\-]*):secretsmanager:(?<region>[\w-]*):
 
 /**
  * Accepts an orders object, and does some kind of check
- * @param {{path: string, contents: Array<string>}} orders
- * @param {Object} context The context object provided by github
+ * @param {Deployment} deployment
  */
-async function secretsJsonIsValid(orders, context) {
+async function secretsJsonIsValid(deployment) {
   const results = [];
 
   // secrets.json is not required
-  if (!orders.secretsContents) {
-    core.info(`No secrets.json present, skipping - ${orders.path}`);
+  if (!deployment.secretsContents) {
+    core.info(`No secrets.json present, skipping - ${deployment.path}`);
     return results;
   }
 
-  core.info(`secrets.json is valid - ${orders.secretsPath}`);
+  core.info(`secrets.json is valid - ${deployment.secretsPath}`);
 
   // secrets.json must be valid json
   let secretsJson;
   try {
-    secretsJson = JSON.parse(orders.secretsContents.join("\n"));
+    secretsJson = JSON.parse(deployment.secretsContents.join("\n"));
   } catch (e) {
     return [
       {
         title: "secrets.json is not valid JSON",
-        path: orders.secretsPath,
+        path: deployment.secretsPath,
         problems: [
-          `An error was encountered while trying to JSON parse ${orders.secretsPath}`,
+          `An error was encountered while trying to JSON parse ${deployment.secretsPath}`,
         ],
         line: 0,
         level: "failure",
@@ -42,7 +42,7 @@ async function secretsJsonIsValid(orders, context) {
     return [
       {
         title: `Invalid secrets.json`,
-        path: orders.secretsPath,
+        path: deployment.secretsPath,
         problems: [
           "secrets.json must be an array of objects like `[{ name, valueFrom }]`",
         ],
@@ -57,7 +57,7 @@ async function secretsJsonIsValid(orders, context) {
       return [
         {
           title: `Invalid secrets.json`,
-          path: orders.secretsPath,
+          path: deployment.secretsPath,
           problems: [
             "secrets.json must be an array of objects like `[{ name, valueFrom }]`",
           ],
@@ -71,10 +71,10 @@ async function secretsJsonIsValid(orders, context) {
       title: "Invalid Secret Structure",
       problems: [],
       level: "failure",
-      path: orders.secretsPath,
+      path: deployment.secretsPath,
     };
 
-    const lines = getLinesForJSON(orders.secretsContents, secret);
+    const lines = getLinesForJSON(deployment.secretsContents, secret);
     if (lines.start === lines.end) {
       result.line = lines.start;
     } else {
@@ -93,19 +93,19 @@ async function secretsJsonIsValid(orders, context) {
       if (wrongCaseForName) {
         const regex = new RegExp(`"${key}":`);
         const lineNumber = getLineWithinObject(
-          orders.secretsContents,
+          deployment.secretsContents,
           secret,
           regex
         );
         results.push({
           title: "Incorrect Casing",
           level: "failure",
-          path: orders.secretsPath,
+          path: deployment.secretsPath,
           line: lineNumber,
           problems: [
             suggest(
               "Lowercase this key:",
-              orders.secretsContents[lineNumber - 1].replace(regex, '"name":')
+              deployment.secretsContents[lineNumber - 1].replace(regex, '"name":')
             ),
           ],
         });
@@ -113,19 +113,19 @@ async function secretsJsonIsValid(orders, context) {
       } else if (wrongCaseForValueFrom) {
         const regex = new RegExp(`"${key}":`);
         const lineNumber = getLineWithinObject(
-          orders.secretsContents,
+          deployment.secretsContents,
           secret,
           regex
         );
         results.push({
           title: "Incorrect Casing",
           level: "failure",
-          path: orders.secretsPath,
+          path: deployment.secretsPath,
           line: lineNumber,
           problems: [
             suggest(
               "Lowercase this key:",
-              orders.secretsContents[lineNumber - 1].replace(
+              deployment.secretsContents[lineNumber - 1].replace(
                 regex,
                 '"valueFrom":'
               )
@@ -168,7 +168,7 @@ async function secretsJsonIsValid(orders, context) {
 
   // Mark this as valid, so future checks don't have to redo this work
   if (results.length === 0) {
-    orders.secretsJson = secretsJson;
+    deployment.secretsJson = secretsJson;
   }
   return results;
 }

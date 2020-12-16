@@ -1,3 +1,4 @@
+require('../typedefs');
 const core = require("@actions/core");
 const path = require("path");
 const {
@@ -14,18 +15,19 @@ const removeLineSuggestion = "Remove this line\n```suggestion\n```";
 
 /**
  * Accepts an orders object, and does some kind of check
- * @param {{path: string, contents: Array<string>}} orders
- * @param {Object} context The context object provided by github
+ * @param {Deployment} deployment
+ * @param {GitHubContext} context The context object provided by github
+ * @param {ActionInputs} inputs The inputs (excluding the token) from the github action
  */
-async function secretsInOrders(orders, context, inputs) {
-  core.info(`Secrets in Orders File - ${orders.path}`);
+async function secretsInOrders(deployment, context, inputs) {
+  core.info(`Secrets in Orders File - ${deployment.path}`);
   const { awsAccount, secretsPrefix, awsRegion, awsPartition } = inputs;
   const results = [];
   const secretsJson = [];
   const { owner, repo, branch } = getOwnerRepoBranch(context);
-  const secretsJsonPath = path.join(path.dirname(orders.path), "secrets.json");
+  const secretsJsonPath = path.join(path.dirname(deployment.path), "secrets.json");
 
-  orders.contents
+  deployment.contents
     .map((line, i) => {
       return { match: secretsUse.exec(line), index: i };
     })
@@ -48,7 +50,7 @@ async function secretsInOrders(orders, context, inputs) {
         });
 
         let hasKeys = false;
-        orders.contents
+        deployment.contents
           .slice(i + 1) // References to this secret must be below it in the orders file
           .map((line, j) => {
             return { match: fromJsonUse.exec(line), index: i + j + 1 };
@@ -86,7 +88,7 @@ async function secretsInOrders(orders, context, inputs) {
             }
           );
 
-        if (!hasKeys || orders.contents[i].startsWith("export ")) {
+        if (!hasKeys || deployment.contents[i].startsWith("export ")) {
           secretsJson.push({
             name: secretVar,
             valueFrom: `arn:${awsPartition}:secretsmanager:${awsRegion}:${awsAccount}:secret:${secretsPrefix}${secretName}:::`,
@@ -101,23 +103,23 @@ async function secretsInOrders(orders, context, inputs) {
 
   // If there's already a secrets.json, we still want to
   // make sure it includes every secret it needs.
-  if (orders.secretsJson) {
+  if (deployment.secretsJson) {
     const secretsToAdd = [
       ...difference(
         secretsJson.map(JSON.stringify),
-        orders.secretsJson.map(JSON.stringify)
+        deployment.secretsJson.map(JSON.stringify)
       ),
     ].map(JSON.parse);
     if (secretsToAdd.length > 0) {
       const result = {
         title: "Missing Secrets in secrets.json",
-        path: orders.secretsPath,
+        path: deployment.secretsPath,
         problems: [],
         level: "failure",
       };
 
       // This lets us indent more correctly
-      const newSecretsJson = orders.secretsJson.concat(secretsToAdd);
+      const newSecretsJson = deployment.secretsJson.concat(secretsToAdd);
       const newSecretsLines = JSON.stringify(newSecretsJson, null, 2).split(
         "\n"
       );
@@ -130,13 +132,13 @@ async function secretsInOrders(orders, context, inputs) {
       });
 
       const { end: lineToAnnotate } = getLinesForJSON(
-        orders.secretsContents,
-        orders.secretsJson[orders.secretsJson.length - 1]
+        deployment.secretsContents,
+        deployment.secretsJson[deployment.secretsJson.length - 1]
       );
 
       result.line = lineToAnnotate;
 
-      const oldLine = orders.secretsContents[lineToAnnotate - 1];
+      const oldLine = deployment.secretsContents[lineToAnnotate - 1];
       let newLine = oldLine;
       if (!oldLine.endsWith(",")) {
         newLine += ",";
@@ -145,13 +147,13 @@ async function secretsInOrders(orders, context, inputs) {
       result.problems.push(suggest("Add the following secrets", newLine));
 
       results.unshift(result);
-      orders.secretsJson = newSecretsJson;
+      deployment.secretsJson = newSecretsJson;
     }
   } else {
     // If there's not already a secrets.json, we should
     // recommend that user create one
     const isAutodeploy =
-      orders.contents.filter((line) => autodeploy.test(line)).length > 0;
+      deployment.contents.filter((line) => autodeploy.test(line)).length > 0;
     const level = isAutodeploy ? "warning" : "failure"; // autodeploy doesn't require this
     const secretsFile = JSON.stringify(secretsJson, null, 2);
     results.unshift({
@@ -173,7 +175,7 @@ ${secretsFile}
       level,
     });
 
-    orders.secretsJson = secretsJson;
+    deployment.secretsJson = secretsJson;
   }
 
   return results;

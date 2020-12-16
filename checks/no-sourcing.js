@@ -1,18 +1,18 @@
+require('../typedefs');
 const core = require("@actions/core");
 
-const sourceUse = /^source (.*)/gm;
+const sourceUse = /^source (.*)/;
 
 /**
  * Accepts an orders object, and does some kind of check
- * @param {{path: string, contents: Array<string>}} orders
- * @param {Object} context The context object provided by github
+ * @param {Deployment} deployment
  */
-async function noSourcing(orders, context) {
-  core.info(`No Sourcing Other Files - ${orders.path}`);
+async function noSourcing(deployment) {
+  core.info(`No Sourcing Other Files - ${deployment.path}`);
   const results = [];
 
-  for (let i = 0; i < orders.contents.length; i++) {
-    const line = orders.contents[i];
+  for (let i = 0; i < deployment.contents.length; i++) {
+    const line = deployment.contents[i];
     if (sourceUse.test(line)) {
       results.push({
         title: "No Use of `source`",

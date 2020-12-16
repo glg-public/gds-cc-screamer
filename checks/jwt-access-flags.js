@@ -1,16 +1,16 @@
+require('../typedefs');
 const core = require("@actions/core");
 
 /**
  * Accepts an orders object, and does some kind of check
- * @param {{path: string, contents: Array<string>}} orders
- * @param {Object} context The context object provided by github
+ * @param {Deployment} deployment
  */
-async function jwtAccessFlags(orders, context) {
-  core.info(`JWT Access Flags - ${orders.path}`);
+async function jwtAccessFlags(deployment) {
+  core.info(`JWT Access Flags - ${deployment.path}`);
   const results = [];
 
-  for (let i = 0; i < orders.contents.length; i++) {
-    const line = orders.contents[i];
+  for (let i = 0; i < deployment.contents.length; i++) {
+    const line = deployment.contents[i];
     const accessFlags = getExportValue(line, "JWT_ACCESS_FLAGS");
     if (accessFlags && accessFlags.includes("+")) {
       results.push({

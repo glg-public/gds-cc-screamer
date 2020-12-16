@@ -1,3 +1,4 @@
+require('../typedefs');
 const core = require("@actions/core");
 
 const SECURE_DOMAINS = ["glgresearch.com", "glg.it", "glginsights.com"];
@@ -11,14 +12,14 @@ const reBadURLs = new RegExp(
 
 /**
  * Accepts an orders object, and does some kind of check
- * @param {{path: string, contents: Array<string>}} orders
+ * @param {Deployment} deployment
  */
-async function httpsOnly(orders) {
-  core.info(`HTTPS Only - ${orders.path}`);
+async function httpsOnly(deployment) {
+  core.info(`HTTPS Only - ${deployment.path}`);
   const results = [];
 
-  for (let i = 0; i < orders.contents.length; i++) {
-    const line = orders.contents[i];
+  for (let i = 0; i < deployment.contents.length; i++) {
+    const line = deployment.contents[i];
 
     if (reBadURLs.test(line)) {
       const result = {

@@ -2,19 +2,10 @@ require('../typedefs');
 const core = require("@actions/core");
 
 /**
- * Accepts an deployment object, and does some kind of check
- * @param {Deployment} deployment An object containing information about a deployments
- * @param {{
- * payload: {
- *  pull_request: PullRequest
- * }
- * }} context The context object provided by github
- * @param {{
- * awsAccount: string,
- * secretsPrefix: string,
- * awsRegion: string,
- * awsPartition: string
- * }} inputs The inputs (excluding the token) from the github action
+ * Accepts a deployment object, and does some kind of check
+ * @param {Deployment} deployment An object containing information about a deployment
+ * @param {GitHubContext} context The context object provided by github
+ * @param {ActionInputs} inputs The inputs (excluding the token) from the github action
  * 
  * @returns {Result}
  */

@@ -1,21 +1,23 @@
+require('../typedefs');
 const core = require("@actions/core");
 const { isAJob } = require('../util');
 
 /**
  * Accepts an orders object, and does some kind of check
- * @param {{path: string, contents: Array<string>}} orders
+ * @param {Deployment} deployment An object containing information about a deployment
+ * @param {GitHubContext} context The context object provided by github
  */
-async function templateCheck(orders, context) {
-  if (isAJob(orders.contents)) {
+async function templateCheck(deployment, context) {
+  if (isAJob(deployment.contents)) {
     core.info('Jobs do not require a security mode, skipping.');
     return [];
   }
-  core.info(`Security Mode - ${orders.path}`);
+  core.info(`Security Mode - ${deployment.path}`);
   const results = [];
 
   const expectedModes = getExpectedModes(context);
   const securityMode = getExportValue(
-    orders.contents.join("\n"),
+    deployment.contents.join("\n"),
     "SECURITY_MODE"
   );
   if (!securityMode) {
@@ -30,8 +32,8 @@ async function templateCheck(orders, context) {
   } else if (expectedModes.indexOf(securityMode) > -1) {
     return [];
   } else {
-    for (let i = 0; i < orders.contents.length; i++) {
-      const line = orders.contents[i];
+    for (let i = 0; i < deployment.contents.length; i++) {
+      const line = deployment.contents[i];
 
       if (line.startsWith("export SECURITY_MODE=")) {
         results.push({

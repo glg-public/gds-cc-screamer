@@ -1,21 +1,22 @@
+require('../typedefs');
 const core = require("@actions/core");
 
 const exportedVariable = /^export +(?<variable>\w+)=/;
 
 /**
  * Accepts an orders object, and does some kind of check
- * @param {{path: string, contents: Array<string>}} orders
+ * @param {Deployment} deployment
  */
-async function noDuplicateExports(orders) {
-  core.info(`No Duplicate Exports - ${orders.path}`);
+async function noDuplicateExports(deployment) {
+  core.info(`No Duplicate Exports - ${deployment.path}`);
   const results = [];
 
   const counts = {};
   const lines = {};
 
   // Take one pass to determine where all the duplicates are
-  for (let i = 0; i < orders.contents.length; i++) {
-    const line = orders.contents[i];
+  for (let i = 0; i < deployment.contents.length; i++) {
+    const line = deployment.contents[i];
 
     const match = exportedVariable.exec(line);
     if (!match) {
@@ -33,8 +34,8 @@ async function noDuplicateExports(orders) {
   }
 
   // Create a result for each dupe, notating where all of its duplicates are
-  for (let i = 0; i < orders.contents.length; i++) {
-    const line = orders.contents[i];
+  for (let i = 0; i < deployment.contents.length; i++) {
+    const line = deployment.contents[i];
 
     const match = exportedVariable.exec(line);
     if (!match) {
