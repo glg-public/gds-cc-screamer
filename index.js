@@ -1,3 +1,4 @@
+require('./typedefs');
 const core = require("@actions/core");
 const github = require("@actions/github");
 const path = require("path");
@@ -8,14 +9,7 @@ const checks = require("./checks");
  * Read orders, secrets.json, and policy.json from the directory,
  * and split them by \n.
  * @param {String} filePath the path for the orders file
- * @returns {{
- * path: string,
- * contents: Array<string>,
- * secretsPath: (string|undefined),
- * secretsContents: (Array<string>|undefined),
- * policyPath: (string|undefined),
- * policyContents: (Array<string>|undefined)
- * }}
+ * @returns {Deployment}
  */
 async function getContents(filePath) {
   const contents = await fs.readFile(filePath, "utf8");

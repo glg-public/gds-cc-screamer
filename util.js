@@ -1,3 +1,5 @@
+require('./typedefs');
+
 function getLinesForJSON(fileLines, jsonObj) {
   let start = 0;
   let end = 0;
@@ -84,6 +86,14 @@ function getFileLink({ owner, repo, branch, filename, value, type = 'new' }) {
   return `https://github.com/${owner}/${repo}/${type}/${branch}?filename=${encodeURIComponent(filename)}&value=${encodeURIComponent(value)}`;
 }
 
+/**
+ * Get the owner, repo, and branch for this PR
+ * @param {{
+ * payload: {
+  *  pull_request: PullRequest
+  * }
+  * }} context The Github Pull Request Context Object
+ */
 function getOwnerRepoBranch(context) {
   const pr = context.payload.pull_request;
   const owner = pr.head.repo.owner.login;

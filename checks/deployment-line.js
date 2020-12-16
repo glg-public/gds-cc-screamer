@@ -1,3 +1,4 @@
+require('../typedefs');
 const core = require("@actions/core");
 
 const dockerdeploy = new RegExp(
@@ -25,7 +26,7 @@ function getDeployment(match) {
 
 /**
  * Accepts an orders object, and validates the name of the repo and branch
- * @param {{path: string, contents: Array<string>}} orders
+ * @param {Deployment} orders
  */
 async function validateDeploymentLine(orders) {
   core.info(`Valid Deployment Line - ${orders.path}`);
