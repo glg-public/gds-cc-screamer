@@ -6,6 +6,8 @@ const exportedVariable = /^export +(?<variable>\w+)=/;
 /**
  * Accepts an orders object, and does some kind of check
  * @param {Deployment} deployment
+ * 
+ * @returns {Array<Result>}
  */
 async function noDuplicateExports(deployment) {
   core.info(`No Duplicate Exports - ${deployment.path}`);

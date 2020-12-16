@@ -14,6 +14,8 @@ const debugs = [
 /**
  * Accepts an orders object, and does some kind of check
  * @param {Deployment} deployment
+ * 
+ * @returns {Array<Result>}
  */
 async function noDebugInProd(deployment) {
   core.info(`No Debug In Production - ${deployment.path}`);

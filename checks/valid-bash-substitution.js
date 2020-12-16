@@ -6,6 +6,8 @@ const singleQuoteSubsitution = /export \w+='.*\$({|)\w+(}|).*'/;
 /**
  * Accepts an orders object, and does some kind of check
  * @param {Deployment} deployment
+ * 
+ * @returns {Array<Result>}
  */
 async function validBashSubsitutions(deployment) {
   core.info(`Valid Bash Substitution - ${deployment.path}`);

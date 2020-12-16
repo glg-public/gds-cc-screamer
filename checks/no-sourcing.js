@@ -6,6 +6,8 @@ const sourceUse = /^source (.*)/;
 /**
  * Accepts an orders object, and does some kind of check
  * @param {Deployment} deployment
+ * 
+ * @returns {Array<Result>}
  */
 async function noSourcing(deployment) {
   core.info(`No Sourcing Other Files - ${deployment.path}`);

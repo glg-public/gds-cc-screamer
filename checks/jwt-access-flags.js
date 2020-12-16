@@ -4,6 +4,8 @@ const core = require("@actions/core");
 /**
  * Accepts an orders object, and does some kind of check
  * @param {Deployment} deployment
+ * 
+ * @returns {Array<Result>}
  */
 async function jwtAccessFlags(deployment) {
   core.info(`JWT Access Flags - ${deployment.path}`);

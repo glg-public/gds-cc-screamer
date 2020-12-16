@@ -5,6 +5,8 @@ const { isAJob } = require('../util');
 /**
  * Accepts an orders object, and validates the healthcheck
  * @param {Deployment} deployment
+ * 
+ * @returns {Array<Result>}
  */
 async function validateHealthcheck(deployment) {
   

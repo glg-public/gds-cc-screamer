@@ -21,6 +21,8 @@ function getDeployment(match) {
 /**
  * Accepts an orders object, and validates the name of the repo and branch
  * @param {Deployment} deployment
+ * 
+ * @returns {Array<Result>}
  */
 async function validateDeploymentLine(deployment) {
   core.info(`Valid Deployment Line - ${deployment.path}`);

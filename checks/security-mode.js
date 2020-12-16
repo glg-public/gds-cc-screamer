@@ -6,6 +6,8 @@ const { isAJob } = require('../util');
  * Accepts an orders object, and does some kind of check
  * @param {Deployment} deployment An object containing information about a deployment
  * @param {GitHubContext} context The context object provided by github
+ * 
+ * @returns {Array<Result>}
  */
 async function templateCheck(deployment, context) {
   if (isAJob(deployment.contents)) {

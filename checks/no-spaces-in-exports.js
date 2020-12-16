@@ -6,6 +6,8 @@ const exportLine = /^export\s(?<variable>.*?)\s*=\s*(?<value>.*)/i;
 /**
  * Accepts an orders object, and does some kind of check
  * @param {Deployment} deployment
+ * 
+ * @returns {Array<Result>}
  */
 async function noSpacesInExports(deployment) {
   core.info(`No Spaces in Exports - ${deployment.path}`);

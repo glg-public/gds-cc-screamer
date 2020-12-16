@@ -18,6 +18,8 @@ const removeLineSuggestion = "Remove this line\n```suggestion\n```";
  * @param {Deployment} deployment
  * @param {GitHubContext} context The context object provided by github
  * @param {ActionInputs} inputs The inputs (excluding the token) from the github action
+ * 
+ * @returns {Array<Result>}
  */
 async function secretsInOrders(deployment, context, inputs) {
   core.info(`Secrets in Orders File - ${deployment.path}`);

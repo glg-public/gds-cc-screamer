@@ -13,6 +13,8 @@ const reBadURLs = new RegExp(
 /**
  * Accepts an orders object, and does some kind of check
  * @param {Deployment} deployment
+ * 
+ * @returns {Array<Result>}
  */
 async function httpsOnly(deployment) {
   core.info(`HTTPS Only - ${deployment.path}`);

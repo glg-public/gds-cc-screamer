@@ -7,6 +7,8 @@ const validCharacters = /^[a-z][a-z0-9-]*$/;
 /**
  * Accepts an orders object, and validates the name of the service
  * @param {Deployment} deployment
+ * 
+ * @returns {Array<Result>}
  */
 async function validateServiceName(deployment) {
   core.info(`Valid Service Name - ${deployment.path}`);
