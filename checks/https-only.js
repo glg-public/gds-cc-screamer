@@ -11,7 +11,7 @@ const reBadURLs = new RegExp(
 );
 
 /**
- * Accepts an orders object, and does some kind of check
+ * Accepts a deployment object, and does some kind of check
  * @param {Deployment} deployment
  * 
  * @returns {Array<Result>}

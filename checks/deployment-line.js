@@ -19,7 +19,8 @@ function getDeployment(match) {
 }
 
 /**
- * Accepts an orders object, and validates the name of the repo and branch
+ * Accepts a deployment object, and validates the name of the repo and branch.
+ * Also validates that there is a valid deployment line
  * @param {Deployment} deployment
  * 
  * @returns {Array<Result>}

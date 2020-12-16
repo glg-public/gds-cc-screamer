@@ -3,7 +3,7 @@ const core = require("@actions/core");
 const { isAJob } = require('../util');
 
 /**
- * Accepts an orders object, and validates the healthcheck
+ * Accepts a deployment object, and validates the healthcheck
  * @param {Deployment} deployment
  * 
  * @returns {Array<Result>}
