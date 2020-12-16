@@ -10,11 +10,11 @@ const sourceUse = /^source (.*)/;
  * @returns {Array<Result>}
  */
 async function noSourcing(deployment) {
-  core.info(`No Sourcing Other Files - ${deployment.path}`);
+  core.info(`No Sourcing Other Files - ${deployment.ordersPath}`);
   const results = [];
 
-  for (let i = 0; i < deployment.contents.length; i++) {
-    const line = deployment.contents[i];
+  for (let i = 0; i < deployment.ordersContents.length; i++) {
+    const line = deployment.ordersContents[i];
     if (sourceUse.test(line)) {
       results.push({
         title: "No Use of `source`",

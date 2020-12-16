@@ -16,66 +16,66 @@ describe("Security Mode Check", () => {
     };
 
     // Bare jwt
-    let orders = {
-      path: "streamliner/orders",
-      contents: ["export SECURITY_MODE=jwt"],
+    let deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ["export SECURITY_MODE=jwt"],
     };
 
-    let results = await securityMode(orders, context);
+    let results = await securityMode(deployment, context);
     expect(results.length).to.equal(0);
 
     // single quote jwt
-    orders = {
-      path: "streamliner/orders",
-      contents: ["export SECURITY_MODE='jwt'"],
+    deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ["export SECURITY_MODE='jwt'"],
     };
 
-    results = await securityMode(orders, context);
+    results = await securityMode(deployment, context);
     expect(results.length).to.equal(0);
 
     // double quote jwt
-    orders = {
-      path: "streamliner/orders",
-      contents: ['export SECURITY_MODE="jwt"'],
+    deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ['export SECURITY_MODE="jwt"'],
     };
 
-    results = await securityMode(orders, context);
+    results = await securityMode(deployment, context);
     expect(results.length).to.equal(0);
 
     // bare verfifiedSession
-    orders = {
-      path: "streamliner/orders",
-      contents: ["export SECURITY_MODE=verifiedSession"],
+    deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ["export SECURITY_MODE=verifiedSession"],
     };
 
-    results = await securityMode(orders, context);
+    results = await securityMode(deployment, context);
     expect(results.length).to.equal(0);
 
     // single quote verifiedSession
-    orders = {
-      path: "streamliner/orders",
-      contents: ["export SECURITY_MODE='verifiedSession'"],
+    deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ["export SECURITY_MODE='verifiedSession'"],
     };
 
-    results = await securityMode(orders, context);
+    results = await securityMode(deployment, context);
     expect(results.length).to.equal(0);
 
     // double quote verifiedSession
-    orders = {
-      path: "streamliner/orders",
-      contents: ['export SECURITY_MODE="verifiedSession"'],
+    deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ['export SECURITY_MODE="verifiedSession"'],
     };
 
-    results = await securityMode(orders, context);
+    results = await securityMode(deployment, context);
     expect(results.length).to.equal(0);
 
     // And this fails as an invalid security mode
-    orders = {
-      path: "streamliner/orders",
-      contents: ["export SECURITY_MODE=public"],
+    deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ["export SECURITY_MODE=public"],
     };
 
-    results = await securityMode(orders, context);
+    results = await securityMode(deployment, context);
     expect(results.length).to.equal(1);
     expect(results[0].level).to.equal("failure");
     expect(results[0].problems[0]).to.equal(
@@ -97,36 +97,39 @@ describe("Security Mode Check", () => {
     };
 
     // Bare public
-    let orders = {
-      path: "streamliner/orders",
-      contents: ["export SECURITY_MODE=public"],
+    let deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ["export SECURITY_MODE=public"],
     };
 
-    let results = await securityMode(orders, context);
+    let results = await securityMode(deployment, context);
     expect(results.length).to.equal(0);
 
     // single quote public
-    orders = {
-      path: "streamliner/orders",
-      contents: ["export SECURITY_MODE='public'"],
+    deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ["export SECURITY_MODE='public'"],
     };
 
-    results = await securityMode(orders, context);
+    results = await securityMode(deployment, context);
     expect(results.length).to.equal(0);
 
     // double quote public
-    orders = {
-      path: "streamliner/orders",
-      contents: ['export SECURITY_MODE="public"'],
+    deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ['export SECURITY_MODE="public"'],
     };
+
+    results = await securityMode(deployment, context);
+    expect(results.length).to.equal(0);
 
     // And this fails as an invalid security mode
-    orders = {
-      path: "streamliner/orders",
-      contents: ["export SECURITY_MODE=jwt"],
+    deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ["export SECURITY_MODE=jwt"],
     };
 
-    results = await securityMode(orders, context);
+    results = await securityMode(deployment, context);
     expect(results.length).to.equal(1);
     expect(results[0].level).to.equal("failure");
     expect(results[0].problems[0]).to.equal(
@@ -148,36 +151,36 @@ describe("Security Mode Check", () => {
     };
 
     // Bare public
-    let orders = {
-      path: "streamliner/orders",
-      contents: ["export SECURITY_MODE=public"],
+    let deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ["export SECURITY_MODE=public"],
     };
 
-    let results = await securityMode(orders, context);
+    let results = await securityMode(deployment, context);
     expect(results.length).to.equal(0);
 
     // single quote public
-    orders = {
-      path: "streamliner/orders",
-      contents: ["export SECURITY_MODE='public'"],
+    deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ["export SECURITY_MODE='public'"],
     };
 
-    results = await securityMode(orders, context);
+    results = await securityMode(deployment, context);
     expect(results.length).to.equal(0);
 
     // double quote public
-    orders = {
-      path: "streamliner/orders",
-      contents: ['export SECURITY_MODE="public"'],
+    deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ['export SECURITY_MODE="public"'],
     };
 
     // And this fails as an invalid security mode
-    orders = {
-      path: "streamliner/orders",
-      contents: ["export SECURITY_MODE=jwt"],
+    deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ["export SECURITY_MODE=jwt"],
     };
 
-    results = await securityMode(orders, context);
+    results = await securityMode(deployment, context);
     expect(results.length).to.equal(1);
     expect(results[0].level).to.equal("failure");
     expect(results[0].problems[0]).to.equal(
@@ -199,12 +202,12 @@ describe("Security Mode Check", () => {
     };
 
     // Bare public
-    let orders = {
-      path: "streamliner/orders",
-      contents: [],
+    let deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
     };
 
-    let results = await securityMode(orders, context);
+    let results = await securityMode(deployment, context);
     expect(results.length).to.equal(1);
     expect(results[0].level).to.equal("failure");
     expect(results[0].problems[0]).to.equal(

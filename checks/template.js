@@ -10,7 +10,7 @@ const core = require("@actions/core");
  * @returns {Array<Result>}
  */
 async function templateCheck(deployment, context, inputs) {
-  core.info(`Template Check - ${deployment.path}`);
+  core.info(`Template Check - ${deployment.ordersPath}`);
   const results = [];
   /**
    * A Result Object:
@@ -23,7 +23,7 @@ async function templateCheck(deployment, context, inputs) {
    }
    */
 
-  deployment.contents.forEach((line, i) => {
+  deployment.ordersContents.forEach((line, i) => {
     const lineNumber = i + 1;
     // do something
   });

@@ -18,13 +18,13 @@ const debugs = [
  * @returns {Array<Result>}
  */
 async function noDebugInProd(deployment) {
-  core.info(`No Debug In Production - ${deployment.path}`);
+  core.info(`No Debug In Production - ${deployment.ordersPath}`);
   const results = [];
  
-  deployment.contents.forEach((line, i) => {
+  deployment.ordersContents.forEach((line, i) => {
     const result = {
       title: 'Debug In Production',
-      path: deployment.path,
+      path: deployment.ordersPath,
       line: i+1,
       problems: [],
       level: 'warning',

@@ -3,31 +3,31 @@ const noDupes = require("../checks/no-duplicate-exports");
 
 describe("No Duplicate Exports Check", () => {
   it("allows orders with no duplicate exports", async () => {
-    const orders = {
-      path: "streamliner/orders",
-      contents: [
+    const deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [
         "export THREE=something",
         "export UNIQUE=123",
         'export VARS="quoted string"',
       ],
     };
 
-    const results = await noDupes(orders);
+    const results = await noDupes(deployment);
 
     expect(results.length).to.equal(0);
   });
 
   it("rejects orders that contain duplicate exports", async () => {
-    const orders = {
-      path: "streamliner/orders",
-      contents: [
+    const deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [
         "export DUPED=something",
         "export DUPED=123",
         'export UNIQUE="quoted string"',
       ],
     };
 
-    const results = await noDupes(orders);
+    const results = await noDupes(deployment);
 
     expect(results.length).to.equal(2);
 

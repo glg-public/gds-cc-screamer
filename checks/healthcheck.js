@@ -14,14 +14,14 @@ async function validateHealthcheck(deployment) {
   const problems = [];
   let lineNumber = 0;
 
-  if (isAJob(deployment.contents)) {
+  if (isAJob(deployment.ordersContents)) {
     core.info('Jobs do not require a healthcheck, skipping.');
     return [];
   }
-  core.info(`Valid Health Check - ${deployment.path}`);
+  core.info(`Valid Health Check - ${deployment.ordersPath}`);
 
-  for (let i = 0; i < deployment.contents.length; i++) {
-    const line = deployment.contents[i];
+  for (let i = 0; i < deployment.ordersContents.length; i++) {
+    const line = deployment.ordersContents[i];
 
     if (line.startsWith("export HEALTHCHECK")) {
       const [_, healthcheck] = line.split("=");
@@ -51,7 +51,7 @@ async function validateHealthcheck(deployment) {
 
   if (lineNumber === 0) {
     problems.push(
-      `**${deployment.path}** - You must set a healthcheck, and it cannot be at \`/\``
+      `**${deployment.ordersPath}** - You must set a healthcheck, and it cannot be at \`/\``
     );
   }
 

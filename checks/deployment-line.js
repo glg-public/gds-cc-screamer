@@ -26,15 +26,15 @@ function getDeployment(match) {
  * @returns {Array<Result>}
  */
 async function validateDeploymentLine(deployment) {
-  core.info(`Valid Deployment Line - ${deployment.path}`);
+  core.info(`Valid Deployment Line - ${deployment.ordersPath}`);
 
   const problems = [];
   let lineNumber = 0;
 
   let deploymentParts;
 
-  for (let i = 0; i < deployment.contents.length; i++) {
-    const line = deployment.contents[i];
+  for (let i = 0; i < deployment.ordersContents.length; i++) {
+    const line = deployment.ordersContents[i];
     if (line.startsWith("dockerdeploy")) {
       lineNumber = i + 1;
       const match = dockerdeploy.exec(line);
@@ -96,7 +96,7 @@ async function validateDeploymentLine(deployment) {
     }
   } else if (!deploymentParts && problems.length === 0) {
     problems.push(
-      `**${deployment.path}** - Missing deployment. Must include either an \`autodeploy\` line, a \`dockerdeploy\` line, or a \`jobdeploy\` line.`
+      `**${deployment.ordersPath}** - Missing deployment. Must include either an \`autodeploy\` line, a \`dockerdeploy\` line, or a \`jobdeploy\` line.`
     );
     lineNumber = 0;
   }

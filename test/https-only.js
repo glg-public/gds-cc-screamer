@@ -3,16 +3,16 @@ const httpsOnly = require("../checks/https-only");
 
 describe("HTTPS Only Check", () => {
   it("rejects exported insecure glg domains", async () => {
-    const orders = {
-      path: "streamliner/orders",
-      contents: [
+    const deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [
         "export SEARCH=http://search.glgresearch.com/mosaic",
         'export SOMETHING="http://glg.it"',
         "export MORE='http://services.glgresearch.com/streamliner'",
       ],
     };
 
-    const results = await httpsOnly(orders);
+    const results = await httpsOnly(deployment);
 
     // expect(results.length).to.equal(3);
 
@@ -36,16 +36,16 @@ export MORE='https://services.glgresearch.com/streamliner'
   });
 
   it("accepts secure glg domains", async () => {
-    const orders = {
-      path: "streamliner/orders",
-      contents: [
+    const deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [
         "export SEARCH=https://search.glgresearch.com/mosaic",
         'export SOMETHING="https://glg.it"',
         "export MORE='https://services.glgresearch.com/streamliner'",
       ],
     };
 
-    const results = await httpsOnly(orders);
+    const results = await httpsOnly(deployment);
 
     expect(results.length).to.equal(0);
   });

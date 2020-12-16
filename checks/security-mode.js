@@ -10,16 +10,16 @@ const { isAJob } = require('../util');
  * @returns {Array<Result>}
  */
 async function templateCheck(deployment, context) {
-  if (isAJob(deployment.contents)) {
+  if (isAJob(deployment.ordersContents)) {
     core.info('Jobs do not require a security mode, skipping.');
     return [];
   }
-  core.info(`Security Mode - ${deployment.path}`);
+  core.info(`Security Mode - ${deployment.ordersPath}`);
   const results = [];
 
   const expectedModes = getExpectedModes(context);
   const securityMode = getExportValue(
-    deployment.contents.join("\n"),
+    deployment.ordersContents.join("\n"),
     "SECURITY_MODE"
   );
   if (!securityMode) {
@@ -34,8 +34,8 @@ async function templateCheck(deployment, context) {
   } else if (expectedModes.indexOf(securityMode) > -1) {
     return [];
   } else {
-    for (let i = 0; i < deployment.contents.length; i++) {
-      const line = deployment.contents[i];
+    for (let i = 0; i < deployment.ordersContents.length; i++) {
+      const line = deployment.ordersContents[i];
 
       if (line.startsWith("export SECURITY_MODE=")) {
         results.push({

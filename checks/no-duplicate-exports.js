@@ -10,15 +10,15 @@ const exportedVariable = /^export +(?<variable>\w+)=/;
  * @returns {Array<Result>}
  */
 async function noDuplicateExports(deployment) {
-  core.info(`No Duplicate Exports - ${deployment.path}`);
+  core.info(`No Duplicate Exports - ${deployment.ordersPath}`);
   const results = [];
 
   const counts = {};
   const lines = {};
 
   // Take one pass to determine where all the duplicates are
-  for (let i = 0; i < deployment.contents.length; i++) {
-    const line = deployment.contents[i];
+  for (let i = 0; i < deployment.ordersContents.length; i++) {
+    const line = deployment.ordersContents[i];
 
     const match = exportedVariable.exec(line);
     if (!match) {
@@ -36,8 +36,8 @@ async function noDuplicateExports(deployment) {
   }
 
   // Create a result for each dupe, notating where all of its duplicates are
-  for (let i = 0; i < deployment.contents.length; i++) {
-    const line = deployment.contents[i];
+  for (let i = 0; i < deployment.ordersContents.length; i++) {
+    const line = deployment.ordersContents[i];
 
     const match = exportedVariable.exec(line);
     if (!match) {

@@ -33,22 +33,22 @@ const context = {
 
 describe("Secrets in orders file", () => {
   it("accepts an orders file with no use of secrets", async () => {
-    const orders = {
-      path: "streamliner/orders",
-      contents: [
+    const deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [
         "export SOMEVAR=notasecret",
         "dockerdeploy github/glg/streamliner/master:latest",
       ],
     };
 
-    const results = await secretsInOrders(orders, context, inputs);
+    const results = await secretsInOrders(deployment, context, inputs);
     expect(results.length).to.equal(0);
   });
 
   it("recommends creating a secrets.json if one is not present and there are secrets in the orders", async () => {
-    const orders = {
-      path: "streamliner/orders",
-      contents: [
+    const deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [
         "export SOMEVAR=notasecret",
         "MY_SECRET=$(secrets MY_SECRET)", // unexported
         'export SECRET_KEY=$(fromJson "${MY_SECRET}" myKey)', // uses "${}"
@@ -59,7 +59,7 @@ describe("Secrets in orders file", () => {
       ],
     };
 
-    let results = await secretsInOrders(orders, context, inputs);
+    let results = await secretsInOrders(deployment, context, inputs);
     expect(results.length).to.equal(6);
 
     const { owner, repo, branch } = getOwnerRepoBranch(context);
@@ -92,7 +92,6 @@ describe("Secrets in orders file", () => {
           branch,
           filename: 'streamliner/secrets.json',
           value: secretsFile,
-          type: 'new'
         })})`
       ],
       line: 0,
@@ -149,9 +148,9 @@ describe("Secrets in orders file", () => {
       level: "warning",
     });
 
-    orders.contents[6] = "autodeploy git@github.com:glg/streamliner.git#master";
-    delete orders.secretsJson;
-    results = await secretsInOrders(orders, context, inputs);
+    deployment.ordersContents[6] = "autodeploy git@github.com:glg/streamliner.git#master";
+    delete deployment.secretsJson;
+    results = await secretsInOrders(deployment, context, inputs);
     expect(results.length).to.equal(6); // same number of errors with an autodeploy
     expect(results[0].level).to.equal("warning"); // not a hard failure if they are using legacy autodeploy
   });
@@ -167,9 +166,9 @@ describe("Secrets in orders file", () => {
         valueFrom: `arn:aws:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}SOMETHING:::`,
       },
     ];
-    const orders = {
-      path: "streamliner/orders",
-      contents: [
+    const deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [
         "export SOMEVAR=notasecret",
         "MY_SECRET=$(secrets MY_SECRET)", // unexported
         'export SECRET_KEY=$(fromJson "${MY_SECRET}" myKey)', // uses "${}"
@@ -183,7 +182,7 @@ describe("Secrets in orders file", () => {
       secretsPath: "streamliner/secrets.json",
     };
 
-    const results = await secretsInOrders(orders, context, inputs);
+    const results = await secretsInOrders(deployment, context, inputs);
     expect(results.length).to.equal(6);
     const suggestion = `Add the following secrets
 \`\`\`suggestion

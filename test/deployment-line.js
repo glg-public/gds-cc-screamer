@@ -4,43 +4,43 @@ const deploymentLineCheck = require("../checks/deployment-line");
 describe("Deployment Line Check", () => {
   it("works with a valid deployment line", async () => {
     // works with autodeploy
-    let orders = {
-      path: "streamliner/orders",
-      contents: ["autodeploy git@github.com:glg/price-service.git#main"],
+    let deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ["autodeploy git@github.com:glg/price-service.git#main"],
     };
 
-    let results = await deploymentLineCheck(orders);
+    let results = await deploymentLineCheck(deployment);
 
     expect(results[0].problems.length).to.equal(0);
 
     // works with dockerdeploy
-    orders = {
-      path: "streamliner/orders",
-      contents: ["dockerdeploy github/glg/price-service/main:latest"],
+    deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ["dockerdeploy github/glg/price-service/main:latest"],
     };
 
-    results = await deploymentLineCheck(orders);
+    results = await deploymentLineCheck(deployment);
 
     expect(results[0].problems.length).to.equal(0);
 
     // works with jobdeploy
-    orders = {
-      path: "streamliner/orders",
-      contents: ["jobdeploy github/glg/price-service/main:latest"],
+    deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ["jobdeploy github/glg/price-service/main:latest"],
     };
 
-    results = await deploymentLineCheck(orders);
+    results = await deploymentLineCheck(deployment);
 
     expect(results[0].problems.length).to.equal(0);
   });
 
   it("rejects an improperly formatted dockerdeploy line", async () => {
-    const orders = {
-      path: "streamliner/orders",
-      contents: ["dockerdeploy git@github:glg/streamliner.git:latest"],
+    const deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ["dockerdeploy git@github:glg/streamliner.git:latest"],
     };
 
-    const results = await deploymentLineCheck(orders);
+    const results = await deploymentLineCheck(deployment);
 
     expect(results[0].problems.length).to.equal(1);
     expect(results[0].problems[0]).to.equal(
@@ -49,12 +49,12 @@ describe("Deployment Line Check", () => {
   });
 
   it("rejects an improperly formatted jobdeploy line", async () => {
-    const orders = {
-      path: "streamliner/orders",
-      contents: ["jobdeploy git@github:glg/streamliner.git:latest"],
+    const deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ["jobdeploy git@github:glg/streamliner.git:latest"],
     };
 
-    const results = await deploymentLineCheck(orders);
+    const results = await deploymentLineCheck(deployment);
 
     expect(results[0].problems.length).to.equal(1);
     expect(results[0].problems[0]).to.equal(
@@ -63,12 +63,12 @@ describe("Deployment Line Check", () => {
   });
 
   it("rejects an improperly formatted autodeploy line", async () => {
-    const orders = {
-      path: "streamliner/orders",
-      contents: ["autodeploy git@github/glg/streamliner.git#main"],
+    const deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ["autodeploy git@github/glg/streamliner.git#main"],
     };
 
-    const results = await deploymentLineCheck(orders);
+    const results = await deploymentLineCheck(deployment);
 
     expect(results[0].problems.length).to.equal(1);
     expect(results[0].problems[0]).to.equal(
@@ -77,27 +77,27 @@ describe("Deployment Line Check", () => {
   });
 
   it("requires either a dockerdeploy or an autodeploy line", async () => {
-    const orders = {
-      path: "streamliner/orders",
-      contents: ['export HEALTHCHECK="/diagnostic"'],
+    const deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ['export HEALTHCHECK="/diagnostic"'],
     };
 
-    const results = await deploymentLineCheck(orders);
+    const results = await deploymentLineCheck(deployment);
 
     expect(results[0].problems.length).to.equal(1);
     expect(results[0].problems[0]).to.equal(
-      `**${orders.path}** - Missing deployment. Must include either an \`autodeploy\` line, a \`dockerdeploy\` line, or a \`jobdeploy\` line.`
+      `**${deployment.ordersPath}** - Missing deployment. Must include either an \`autodeploy\` line, a \`dockerdeploy\` line, or a \`jobdeploy\` line.`
     );
   });
 
   it("rejects repository names with invalid characters", async () => {
     // works with autodeploy
-    let orders = {
-      path: "streamliner/orders",
-      contents: ["autodeploy git@github.com:glg/PriceService.git#main"],
+    let deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ["autodeploy git@github.com:glg/PriceService.git#main"],
     };
 
-    let results = await deploymentLineCheck(orders);
+    let results = await deploymentLineCheck(deployment);
 
     expect(results[0].problems.length).to.equal(1);
     expect(results[0].problems[0]).to.equal(
@@ -105,12 +105,12 @@ describe("Deployment Line Check", () => {
     );
 
     // works with dockerdeploy
-    orders = {
-      path: "streamliner/orders",
-      contents: ["dockerdeploy github/glg/PriceService/main:latest"],
+    deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ["dockerdeploy github/glg/PriceService/main:latest"],
     };
 
-    results = await deploymentLineCheck(orders);
+    results = await deploymentLineCheck(deployment);
 
     expect(results[0].problems.length).to.equal(1);
     expect(results[0].problems[0]).to.equal(
@@ -120,14 +120,14 @@ describe("Deployment Line Check", () => {
 
   it("rejects branch names with invalid characters", async () => {
     // works with autodeploy
-    let orders = {
-      path: "streamliner/orders",
-      contents: [
+    let deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [
         "autodeploy git@github.com:glg/price-service.git#Wrong_Branch!",
       ],
     };
 
-    let results = await deploymentLineCheck(orders);
+    let results = await deploymentLineCheck(deployment);
 
     expect(results[0].problems.length).to.equal(1);
     expect(results[0].problems[0]).to.equal(
@@ -135,12 +135,12 @@ describe("Deployment Line Check", () => {
     );
 
     // works with dockerdeploy
-    orders = {
-      path: "streamliner/orders",
-      contents: ["dockerdeploy github/glg/price-service/Wrong_Branch!:latest"],
+    deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ["dockerdeploy github/glg/price-service/Wrong_Branch!:latest"],
     };
 
-    results = await deploymentLineCheck(orders);
+    results = await deploymentLineCheck(deployment);
 
     expect(results[0].problems.length).to.equal(1);
     expect(results[0].problems[0]).to.equal(
@@ -150,12 +150,12 @@ describe("Deployment Line Check", () => {
 
   it("rejects branch names that contain --", async () => {
     // works with autodeploy
-    let orders = {
-      path: "streamliner/orders",
-      contents: ["autodeploy git@github.com:glg/price-service.git#too--many"],
+    let deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ["autodeploy git@github.com:glg/price-service.git#too--many"],
     };
 
-    let results = await deploymentLineCheck(orders);
+    let results = await deploymentLineCheck(deployment);
 
     expect(results[0].problems.length).to.equal(1);
     expect(results[0].problems[0]).to.equal(
@@ -163,12 +163,12 @@ describe("Deployment Line Check", () => {
     );
 
     // works with dockerdeploy
-    orders = {
-      path: "streamliner/orders",
-      contents: ["dockerdeploy github/glg/price-service/too--many:latest"],
+    deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: ["dockerdeploy github/glg/price-service/too--many:latest"],
     };
 
-    results = await deploymentLineCheck(orders);
+    results = await deploymentLineCheck(deployment);
 
     expect(results[0].problems.length).to.equal(1);
     expect(results[0].problems[0]).to.equal(

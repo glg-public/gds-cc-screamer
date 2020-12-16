@@ -10,11 +10,11 @@ const exportLine = /^export\s(?<variable>.*?)\s*=\s*(?<value>.*)/i;
  * @returns {Array<Result>}
  */
 async function noSpacesInExports(deployment) {
-  core.info(`No Spaces in Exports - ${deployment.path}`);
+  core.info(`No Spaces in Exports - ${deployment.ordersPath}`);
   const results = [];
 
-  for (let i = 0; i < deployment.contents.length; i++) {
-    const line = deployment.contents[i];
+  for (let i = 0; i < deployment.ordersContents.length; i++) {
+    const line = deployment.ordersContents[i];
     const match = exportLine.exec(line);
     if (!match) {
       continue;

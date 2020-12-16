@@ -47,7 +47,7 @@ const secretArn = /arn:(?<partition>[\w\*\-]*):secretsmanager:(?<region>[\w-]*):
 async function policyJsonIsValid(deployment) {
   // policy.json is not required
   if (!deployment.policyContents) {
-    core.info(`No policy.json present, skipping - ${deployment.path}`);
+    core.info(`No policy.json present, skipping - ${deployment.ordersPath}`);
     return [];
   }
   core.info(`policy.json is valid - ${deployment.policyPath}`);

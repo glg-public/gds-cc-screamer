@@ -4,12 +4,12 @@ const serviceNameCheck = require("../checks/service-name");
 describe("Service Name Check", () => {
   it("works with a valid service name", async () => {
     const serviceName = "streamliner";
-    const orders = {
-      path: `${serviceName}/orders`,
-      contents: [],
+    const deployment = {
+      ordersPath: `${serviceName}/orders`,
+      ordersContents: [],
     };
 
-    const results = await serviceNameCheck(orders);
+    const results = await serviceNameCheck(deployment);
 
     expect(results[0].problems.length).to.equal(0);
   });
@@ -17,12 +17,12 @@ describe("Service Name Check", () => {
   it("rejects service names longer than 28 characters", async () => {
     const serviceName =
       "thisservicenameismuchtoolongwayovertwentyeightcharacters";
-    const orders = {
-      path: `${serviceName}/orders`,
-      contents: [],
+    const deployment = {
+      ordersPath: `${serviceName}/orders`,
+      ordersContents: [],
     };
 
-    const results = await serviceNameCheck(orders);
+    const results = await serviceNameCheck(deployment);
 
     expect(results[0].problems.length).to.equal(1);
     expect(results[0].problems[0]).to.equal(
@@ -32,12 +32,12 @@ describe("Service Name Check", () => {
 
   it("rejects service names with invalid characters", async () => {
     const serviceName = "ThisServiceName_is_invalid";
-    const orders = {
-      path: `${serviceName}/orders`,
-      contents: [],
+    const deployment = {
+      ordersPath: `${serviceName}/orders`,
+      ordersContents: [],
     };
 
-    const results = await serviceNameCheck(orders);
+    const results = await serviceNameCheck(deployment);
 
     expect(results[0].problems.length).to.equal(1);
     expect(results[0].problems[0]).to.equal(
@@ -47,12 +47,12 @@ describe("Service Name Check", () => {
 
   it("rejects service names that contain --", async () => {
     const serviceName = "too--many--hyphens";
-    const orders = {
-      path: `${serviceName}/orders`,
-      contents: [],
+    const deployment = {
+      ordersPath: `${serviceName}/orders`,
+      ordersContents: [],
     };
 
-    const results = await serviceNameCheck(orders);
+    const results = await serviceNameCheck(deployment);
 
     expect(results[0].problems.length).to.equal(1);
     expect(results[0].problems[0]).to.equal(

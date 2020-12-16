@@ -22,14 +22,14 @@ const removeLineSuggestion = "Remove this line\n```suggestion\n```";
  * @returns {Array<Result>}
  */
 async function secretsInOrders(deployment, context, inputs) {
-  core.info(`Secrets in Orders File - ${deployment.path}`);
+  core.info(`Secrets in Orders File - ${deployment.ordersPath}`);
   const { awsAccount, secretsPrefix, awsRegion, awsPartition } = inputs;
   const results = [];
   const secretsJson = [];
   const { owner, repo, branch } = getOwnerRepoBranch(context);
-  const secretsJsonPath = path.join(path.dirname(deployment.path), "secrets.json");
+  const secretsJsonPath = path.join(path.dirname(deployment.ordersPath), "secrets.json");
 
-  deployment.contents
+  deployment.ordersContents
     .map((line, i) => {
       return { match: secretsUse.exec(line), index: i };
     })
@@ -52,7 +52,7 @@ async function secretsInOrders(deployment, context, inputs) {
         });
 
         let hasKeys = false;
-        deployment.contents
+        deployment.ordersContents
           .slice(i + 1) // References to this secret must be below it in the orders file
           .map((line, j) => {
             return { match: fromJsonUse.exec(line), index: i + j + 1 };
@@ -90,7 +90,7 @@ async function secretsInOrders(deployment, context, inputs) {
             }
           );
 
-        if (!hasKeys || deployment.contents[i].startsWith("export ")) {
+        if (!hasKeys || deployment.ordersContents[i].startsWith("export ")) {
           secretsJson.push({
             name: secretVar,
             valueFrom: `arn:${awsPartition}:secretsmanager:${awsRegion}:${awsAccount}:secret:${secretsPrefix}${secretName}:::`,
@@ -155,7 +155,7 @@ async function secretsInOrders(deployment, context, inputs) {
     // If there's not already a secrets.json, we should
     // recommend that user create one
     const isAutodeploy =
-      deployment.contents.filter((line) => autodeploy.test(line)).length > 0;
+      deployment.ordersContents.filter((line) => autodeploy.test(line)).length > 0;
     const level = isAutodeploy ? "warning" : "failure"; // autodeploy doesn't require this
     const secretsFile = JSON.stringify(secretsJson, null, 2);
     results.unshift({

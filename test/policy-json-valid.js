@@ -7,12 +7,12 @@ const resourceFmtError = '"Resource" must be either a valid [ARN](https://docs.a
 
 describe("policy.json is valid", () => {
   it("skips if there is no policy.json", async () => {
-    const orders = {
-      path: "streamliner/orders",
-      contents: [],
+    const deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
     };
 
-    const results = await policyJsonIsValid(orders);
+    const results = await policyJsonIsValid(deployment);
     expect(results.length).to.equal(0);
   });
 
@@ -40,32 +40,32 @@ describe("policy.json is valid", () => {
       null,
       2
     );
-    const orders = {
-      path: "streamliner/orders",
-      contents: [],
+    const deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
       policyPath: "streamliner/policy.json",
       policyContents: policyJson.split("\n"),
     };
 
-    const results = await policyJsonIsValid(orders);
+    const results = await policyJsonIsValid(deployment);
     expect(results.length).to.equal(0);
   });
 
   it("rejects policy.json that is not valid JSON", async () => {
-    const orders = {
-      path: "streamliner/orders",
-      contents: [],
+    const deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
       policyPath: "streamliner/policy.json",
       policyContents: ["not valid json"],
     };
 
-    const results = await policyJsonIsValid(orders);
+    const results = await policyJsonIsValid(deployment);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: "policy.json is not valid JSON",
-      path: orders.policyPath,
+      path: deployment.policyPath,
       problems: [
-        `An error was encountered while trying to JSON parse ${orders.policyPath}`,
+        `An error was encountered while trying to JSON parse ${deployment.policyPath}`,
       ],
       line: 0,
       level: "failure",
@@ -90,18 +90,18 @@ describe("policy.json is valid", () => {
       null,
       2
     );
-    const orders = {
-      path: "streamliner/orders",
-      contents: [],
+    const deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
       policyPath: "streamliner/policy.json",
       policyContents: policyJson.split("\n"),
     };
 
-    const results = await policyJsonIsValid(orders);
+    const results = await policyJsonIsValid(deployment);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: `Invalid policy.json`,
-      path: orders.policyPath,
+      path: deployment.policyPath,
       problems: ["policy.json must be a valid AWS IAM Policy"],
       line: 1,
       level: "failure",
@@ -132,21 +132,21 @@ describe("policy.json is valid", () => {
       null,
       2
     );
-    const orders = {
-      path: "streamliner/orders",
-      contents: [],
+    const deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
       policyPath: "streamliner/policy.json",
       policyContents: policyJson.split("\n"),
     };
 
-    const results = await policyJsonIsValid(orders);
+    const results = await policyJsonIsValid(deployment);
     expect(results.length).to.equal(5);
 
     const [version, statement, effect, action, resource] = results;
 
     expect(version).to.deep.equal({
       title: "Statement must be capitalized",
-      path: orders.policyPath,
+      path: deployment.policyPath,
       problems: [suggest("Capitalize this key", '  "Version": "2012-10-17",')],
       line: 2,
       level: "failure",
@@ -154,7 +154,7 @@ describe("policy.json is valid", () => {
 
     expect(statement).to.deep.equal({
       title: "Statement must be capitalized",
-      path: orders.policyPath,
+      path: deployment.policyPath,
       problems: [suggest("Capitalize this key", '  "Statement": [')],
       line: 3,
       level: "failure",
@@ -162,7 +162,7 @@ describe("policy.json is valid", () => {
 
     expect(effect).to.deep.equal({
       title: "Statement must be capitalized",
-      path: orders.policyPath,
+      path: deployment.policyPath,
       problems: [suggest("Capitalize this key", '      "Effect": "Allow",')],
       line: 5,
       level: "failure",
@@ -170,7 +170,7 @@ describe("policy.json is valid", () => {
 
     expect(action).to.deep.equal({
       title: "Statement must be capitalized",
-      path: orders.policyPath,
+      path: deployment.policyPath,
       problems: [suggest("Capitalize this key", '      "Action": [')],
       line: 6,
       level: "failure",
@@ -178,7 +178,7 @@ describe("policy.json is valid", () => {
 
     expect(resource).to.deep.equal({
       title: "Statement must be capitalized",
-      path: orders.policyPath,
+      path: deployment.policyPath,
       problems: [
         suggest(
           "Capitalize this key",
@@ -213,18 +213,18 @@ describe("policy.json is valid", () => {
       null,
       2
     );
-    const orders = {
-      path: "streamliner/orders",
-      contents: [],
+    const deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
       policyPath: "streamliner/policy.json",
       policyContents: policyJson.split("\n"),
     };
 
-    const results = await policyJsonIsValid(orders);
+    const results = await policyJsonIsValid(deployment);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: 'Policy must have a "Version" field',
-      path: orders.policyPath,
+      path: deployment.policyPath,
       problems: ['"Version" is a required field.'],
       line: 0,
       level: "failure",
@@ -255,18 +255,18 @@ describe("policy.json is valid", () => {
       null,
       2
     );
-    const orders = {
-      path: "streamliner/orders",
-      contents: [],
+    const deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
       policyPath: "streamliner/policy.json",
       policyContents: policyJson.split("\n"),
     };
 
-    const results = await policyJsonIsValid(orders);
+    const results = await policyJsonIsValid(deployment);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: "Invalid Version",
-      path: orders.policyPath,
+      path: deployment.policyPath,
       problems: ["Version must be one of: 2008-10-17, 2012-10-17"],
       line: 2,
       level: "failure",
@@ -281,18 +281,18 @@ describe("policy.json is valid", () => {
       null,
       2
     );
-    const orders = {
-      path: "streamliner/orders",
-      contents: [],
+    const deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
       policyPath: "streamliner/policy.json",
       policyContents: policyJson.split("\n"),
     };
 
-    const results = await policyJsonIsValid(orders);
+    const results = await policyJsonIsValid(deployment);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: 'Policy must have a "Statement" block.',
-      path: orders.policyPath,
+      path: deployment.policyPath,
       problems: ['"Statement" is a required field'],
       line: 0,
       level: "failure",
@@ -328,14 +328,14 @@ describe("policy.json is valid", () => {
       null,
       2
     );
-    const orders = {
-      path: "streamliner/orders",
-      contents: [],
+    const deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
       policyPath: "streamliner/policy.json",
       policyContents: policyJson.split("\n"),
     };
 
-    const results = await policyJsonIsValid(orders);
+    const results = await policyJsonIsValid(deployment);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: "Statement is missing required fields.",
@@ -378,14 +378,14 @@ describe("policy.json is valid", () => {
       null,
       2
     );
-    const orders = {
-      path: "streamliner/orders",
-      contents: [],
+    const deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
       policyPath: "streamliner/policy.json",
       policyContents: policyJson.split("\n"),
     };
 
-    const results = await policyJsonIsValid(orders);
+    const results = await policyJsonIsValid(deployment);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: 'Invalid value for "Effect"',
@@ -426,14 +426,14 @@ describe("policy.json is valid", () => {
       null,
       2
     );
-    let orders = {
-      path: "streamliner/orders",
-      contents: [],
+    let deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
       policyPath: "streamliner/policy.json",
       policyContents: policyJson.split("\n"),
     };
 
-    let results = await policyJsonIsValid(orders);
+    let results = await policyJsonIsValid(deployment);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: 'Invalid value for "Action"',
@@ -477,14 +477,14 @@ describe("policy.json is valid", () => {
       2
     );
 
-    orders = {
-      path: "streamliner/orders",
-      contents: [],
+    deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
       policyPath: "streamliner/policy.json",
       policyContents: policyJson.split("\n"),
     };
 
-    results = (await policyJsonIsValid(orders)).filter(({ level }) => level === 'failure');
+    results = (await policyJsonIsValid(deployment)).filter(({ level }) => level === 'failure');
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: 'Invalid value for "Action"',
@@ -526,18 +526,18 @@ describe("policy.json is valid", () => {
       null,
       2
     );
-    let orders = {
-      path: "streamliner/orders",
-      contents: [],
+    let deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
       policyPath: "streamliner/policy.json",
       policyContents: policyJson.split("\n"),
     };
 
-    let results = await policyJsonIsValid(orders);
+    let results = await policyJsonIsValid(deployment);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: 'Invalid value for "Resource"',
-      path: orders.policyPath,
+      path: deployment.policyPath,
       problems: [
         resourceFmtError,
       ],
@@ -577,18 +577,18 @@ describe("policy.json is valid", () => {
       2
     );
 
-    orders = {
-      path: "streamliner/orders",
-      contents: [],
+    deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
       policyPath: "streamliner/policy.json",
       policyContents: policyJson.split("\n"),
     };
 
-    results = (await policyJsonIsValid(orders)).filter(({ level }) => level === 'failure');
+    results = (await policyJsonIsValid(deployment)).filter(({ level }) => level === 'failure');
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: 'Invalid value for "Resource"',
-      path: orders.policyPath,
+      path: deployment.policyPath,
       problems: [
         resourceFmtError,
       ],
@@ -626,14 +626,14 @@ describe("policy.json is valid", () => {
       null,
       2
     );
-    let orders = {
-      path: "streamliner/orders",
-      contents: [],
+    let deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
       policyPath: "streamliner/policy.json",
       policyContents: policyJson.split("\n"),
     };
 
-    let results = await policyJsonIsValid(orders);
+    let results = await policyJsonIsValid(deployment);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: "Policy is missing required actions",
@@ -671,15 +671,15 @@ describe("policy.json is valid", () => {
       null,
       2
     );
-    let orders = {
-      path: "streamliner/orders",
-      contents: [],
+    let deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
       policyPath: "streamliner/policy.json",
       policyContents: policyJson.split("\n"),
       secretsContents: [], // indicates presence of a secrets.json
     };
 
-    let results = (await policyJsonIsValid(orders)).filter(({ level }) => level === 'failure');
+    let results = (await policyJsonIsValid(deployment)).filter(({ level }) => level === 'failure');
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: "Policy is missing required actions",
@@ -716,9 +716,9 @@ describe("policy.json is valid", () => {
       null,
       2
     );
-    let orders = {
-      path: "streamliner/orders",
-      contents: [],
+    let deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
       policyPath: "streamliner/policy.json",
       policyContents: policyJson.split("\n"),
       secretsContents: [], // indicates presence of a secrets.json
@@ -735,7 +735,7 @@ describe("policy.json is valid", () => {
         },
       ],
     };
-    let results = (await policyJsonIsValid(orders)).filter(({ level }) => level === 'failure');
+    let results = (await policyJsonIsValid(deployment)).filter(({ level }) => level === 'failure');
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: "Policy is missing required secrets",
@@ -782,9 +782,9 @@ describe("policy.json is valid", () => {
       null,
       2
     );
-    orders = {
-      path: "streamliner/orders",
-      contents: [],
+    deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
       policyPath: "streamliner/policy.json",
       policyContents: policyJson.split("\n"),
       secretsContents: [], // indicates presence of a secrets.json
@@ -801,7 +801,7 @@ describe("policy.json is valid", () => {
         },
       ],
     };
-    results = (await policyJsonIsValid(orders)).filter(({ level }) => level === 'failure');
+    results = (await policyJsonIsValid(deployment)).filter(({ level }) => level === 'failure');
     expect(results.length).to.equal(0);
   });
 
@@ -828,9 +828,9 @@ describe("policy.json is valid", () => {
       null,
       2
     );
-    const orders = {
-      path: "streamliner/orders",
-      contents: [],
+    const deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
       policyPath: "streamliner/policy.json",
       policyContents: policyJson.split("\n"),
       secretsContents: [], // indicates presence of a secrets.json
@@ -847,7 +847,7 @@ describe("policy.json is valid", () => {
         },
       ],
     };
-    const results = (await policyJsonIsValid(orders)).filter(({ level }) => level === 'warning');
+    const results = (await policyJsonIsValid(deployment)).filter(({ level }) => level === 'warning');
     expect(results.length).to.equal(3);
     const problem = 'It is best practice to be as specific as possible with your IAM Policies. Overly broad policies can lead to unintentional vulnerabilities.';
     
@@ -855,7 +855,7 @@ describe("policy.json is valid", () => {
       title: 'Broad Permissions',
       level: 'warning',
       line: 12,
-      path: orders.policyPath,
+      path: deployment.policyPath,
       problems: [problem]
     });
 
@@ -863,7 +863,7 @@ describe("policy.json is valid", () => {
       title: 'Broad Permissions',
       level: 'warning',
       line: 13,
-      path: orders.policyPath,
+      path: deployment.policyPath,
       problems: [problem]
     });
 
@@ -871,7 +871,7 @@ describe("policy.json is valid", () => {
       title: 'Broad Permissions',
       level: 'warning',
       line: 15,
-      path: orders.policyPath,
+      path: deployment.policyPath,
       problems: [problem]
     });
   });
@@ -898,9 +898,9 @@ describe("policy.json is valid", () => {
       null,
       2
     );
-    const orders = {
-      path: "streamliner/orders",
-      contents: [],
+    const deployment = {
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
       policyPath: "streamliner/policy.json",
       policyContents: policyJson.split("\n"),
       secretsContents: [], // indicates presence of a secrets.json
@@ -917,7 +917,7 @@ describe("policy.json is valid", () => {
         },
       ],
     };
-    const results = (await policyJsonIsValid(orders)).filter(({ level }) => level === 'warning');
+    const results = (await policyJsonIsValid(deployment)).filter(({ level }) => level === 'warning');
     expect(results.length).to.equal(1);
     const problem = 'It is extremeley rare that a service needs Delete access. Make sure you have discussed this with SRE before merging.';
 
@@ -925,7 +925,7 @@ describe("policy.json is valid", () => {
       title: 'Delete Access',
       level: 'warning',
       line: 12,
-      path: orders.policyPath,
+      path: deployment.policyPath,
       problems: [problem]
     });
   });

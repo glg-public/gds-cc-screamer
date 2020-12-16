@@ -17,11 +17,11 @@ const reBadURLs = new RegExp(
  * @returns {Array<Result>}
  */
 async function httpsOnly(deployment) {
-  core.info(`HTTPS Only - ${deployment.path}`);
+  core.info(`HTTPS Only - ${deployment.ordersPath}`);
   const results = [];
 
-  for (let i = 0; i < deployment.contents.length; i++) {
-    const line = deployment.contents[i];
+  for (let i = 0; i < deployment.ordersContents.length; i++) {
+    const line = deployment.ordersContents[i];
 
     if (reBadURLs.test(line)) {
       const result = {

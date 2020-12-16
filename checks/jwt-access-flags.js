@@ -8,11 +8,11 @@ const core = require("@actions/core");
  * @returns {Array<Result>}
  */
 async function jwtAccessFlags(deployment) {
-  core.info(`JWT Access Flags - ${deployment.path}`);
+  core.info(`JWT Access Flags - ${deployment.ordersPath}`);
   const results = [];
 
-  for (let i = 0; i < deployment.contents.length; i++) {
-    const line = deployment.contents[i];
+  for (let i = 0; i < deployment.ordersContents.length; i++) {
+    const line = deployment.ordersContents[i];
     const accessFlags = getExportValue(line, "JWT_ACCESS_FLAGS");
     if (accessFlags && accessFlags.includes("+")) {
       results.push({

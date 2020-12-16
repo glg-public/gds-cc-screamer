@@ -13,7 +13,7 @@ const checks = require("./checks");
  */
 async function getContents(filePath) {
   const contents = await fs.readFile(filePath, "utf8");
-  const result = { path: filePath, contents: contents.split("\n") };
+  const result = { ordersPath: filePath, ordersContents: contents.split("\n") };
   const secretsJsonPath = path.join(path.dirname(filePath), "secrets.json");
   const policyJsonPath = path.join(path.dirname(filePath), "policy.json");
 
@@ -181,7 +181,7 @@ async function run() {
                   repo,
                   pull_number,
                   commit_id: sha,
-                  path: result.path || deployment.path,
+                  path: result.path || deployment.ordersPath,
                   body: comment,
                   side: "RIGHT",
                   start_line: result.line.start,
@@ -196,7 +196,7 @@ async function run() {
                   repo,
                   pull_number,
                   commit_id: sha,
-                  path: result.path || deployment.path,
+                  path: result.path || deployment.ordersPath,
                   body: comment,
                   side: "RIGHT",
                   line: result.line,

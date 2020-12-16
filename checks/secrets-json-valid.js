@@ -15,7 +15,7 @@ async function secretsJsonIsValid(deployment) {
 
   // secrets.json is not required
   if (!deployment.secretsContents) {
-    core.info(`No secrets.json present, skipping - ${deployment.path}`);
+    core.info(`No secrets.json present, skipping - ${deployment.ordersPath}`);
     return results;
   }
 
