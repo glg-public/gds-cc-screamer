@@ -254,3 +254,13 @@
  * policyContents: (Array<string>|undefined)
  * }} Deployment
  */
+
+/**
+ * @typedef {{
+ * title: string,
+ * problems: Array<string>,
+ * level: ( 'failure' | 'warning' | 'notice' | 'success')
+ * line: ( number | { start: number, end: number}),
+ * path: (string | undefined)
+ * }} Result
+ */

@@ -15,6 +15,8 @@ const core = require("@actions/core");
  * awsRegion: string,
  * awsPartition: string
  * }} inputs The inputs (excluding the token) from the github action
+ * 
+ * @returns {Result}
  */
 async function templateCheck(deployment, context, inputs) {
   core.info(`Template Check - ${deployment.path}`);
