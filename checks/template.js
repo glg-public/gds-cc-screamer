@@ -7,7 +7,7 @@ const core = require("@actions/core");
  * @param {GitHubContext} context The context object provided by github
  * @param {ActionInputs} inputs The inputs (excluding the token) from the github action
  * 
- * @returns {Result}
+ * @returns {Array<Result>}
  */
 async function templateCheck(deployment, context, inputs) {
   core.info(`Template Check - ${deployment.path}`);
