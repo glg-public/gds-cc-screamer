@@ -19,7 +19,7 @@ const removeLineSuggestion = "Remove this line\n```suggestion\n```";
  */
 async function secretsInOrders(orders, context, inputs) {
   core.info(`Secrets in Orders File - ${orders.path}`);
-  const { awsAccount, secretsPrefix, awsRegion } = inputs;
+  const { awsAccount, secretsPrefix, awsRegion, awsPartition } = inputs;
   const results = [];
   const secretsJson = [];
   const { owner, repo, branch } = getOwnerRepoBranch(context);
@@ -81,7 +81,7 @@ async function secretsInOrders(orders, context, inputs) {
               hasKeys = true;
               secretsJson.push({
                 name: variable,
-                valueFrom: `arn:aws:secretsmanager:${awsRegion}:${awsAccount}:secret:${secretsPrefix}${secretName}:${jsonKey}::`,
+                valueFrom: `arn:${awsPartition}:secretsmanager:${awsRegion}:${awsAccount}:secret:${secretsPrefix}${secretName}:${jsonKey}::`,
               });
             }
           );
@@ -89,7 +89,7 @@ async function secretsInOrders(orders, context, inputs) {
         if (!hasKeys || orders.contents[i].startsWith("export ")) {
           secretsJson.push({
             name: secretVar,
-            valueFrom: `arn:aws:secretsmanager:${awsRegion}:${awsAccount}:secret:${secretsPrefix}${secretName}:::`,
+            valueFrom: `arn:${awsPartition}:secretsmanager:${awsRegion}:${awsAccount}:secret:${secretsPrefix}${secretName}:::`,
           });
         }
       }

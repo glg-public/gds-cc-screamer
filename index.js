@@ -101,7 +101,8 @@ async function run() {
     const awsAccount = core.getInput("aws_account_id");
     const secretsPrefix = core.getInput("aws_secrets_prefix");
     const awsRegion = core.getInput("aws_region");
-    const inputs = { awsAccount, secretsPrefix, awsRegion };
+    const awsPartition = core.getInput("aws_partition");
+    const inputs = { awsAccount, secretsPrefix, awsRegion, awsPartition };
 
     const octokit = github.getOctokit(token);
 

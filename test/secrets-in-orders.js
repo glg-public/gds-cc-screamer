@@ -6,6 +6,7 @@ const inputs = {
   awsAccount: 12345678,
   secretsPrefix: "us-east-1/production/",
   awsRegion: "us-east-1",
+  awsPartition: "aws"
 };
 
 const context = {

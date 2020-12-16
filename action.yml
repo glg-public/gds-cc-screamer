@@ -16,6 +16,10 @@ inputs:
     description: Your AWS region. Used to generate certain comments
     required: false
     default: "us-east-1"
+  aws_partition:
+    description: Your AWS partition. Like 'aws', 'aws-china', etc.
+    required: false
+    default: aws
 runs:
   using: 'node12'
   main: 'index.js'
