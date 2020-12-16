@@ -1,5 +1,15 @@
 require('./typedefs');
 
+/**
+ * 
+ * @param {Array<string>} fileLines 
+ * @param {Object} jsonObj 
+ * 
+ * @returns {{
+ * start: number,
+ * end: number
+ * }}
+ */
 function getLinesForJSON(fileLines, jsonObj) {
   let start = 0;
   let end = 0;
@@ -52,23 +62,46 @@ function getLinesForJSON(fileLines, jsonObj) {
   return { start, end };
 }
 
+/**
+ * 
+ * @param {string} title 
+ * @param {string} suggestion 
+ * 
+ * @returns {string}
+ */
 function suggest(title, suggestion) {
   return `${title}\n\`\`\`suggestion
 ${suggestion}
 \`\`\``;
 }
 
+/**
+ * 
+ * @param {Array<string>} fileLines 
+ * @param {RegExp} regex 
+ * 
+ * @return {(number | null)}
+ */
 function getLineNumber(fileLines, regex) {
   for (let i = 0; i < fileLines.length; i++) {
     if (regex.test(fileLines[i])) {
       return i + 1;
     }
   }
+  return null;
 }
 
+/**
+ * 
+ * @param {Array<string>} fileLines 
+ * @param {Object} jsonObj 
+ * @param {RegExp} regex
+ * 
+ * @returns {(number | null)}
+ */
 function getLineWithinObject(fileLines, jsonObj, regex) {
   const blockLineNums = getLinesForJSON(fileLines, jsonObj);
-  let line;
+  let line = null;
   if (blockLineNums.start === blockLineNums.end) {
     line = blockLineNums.start;
   } else {
@@ -82,17 +115,25 @@ function getLineWithinObject(fileLines, jsonObj, regex) {
   return line;
 }
 
-function getFileLink({ owner, repo, branch, filename, value, type = 'new' }) {
-  return `https://github.com/${owner}/${repo}/${type}/${branch}?filename=${encodeURIComponent(filename)}&value=${encodeURIComponent(value)}`;
+/**
+ * 
+ * @param {{
+ * owner: string,
+ * repo: string,
+ * branch: string,
+ * filename: string,
+ * value: string
+ * }} params
+ * 
+ * @returns {URI} 
+ */
+function getNewFileLink({ owner, repo, branch, filename, value }) {
+  return `https://github.com/${owner}/${repo}/new/${branch}?filename=${encodeURIComponent(filename)}&value=${encodeURIComponent(value)}`;
 }
 
 /**
  * Get the owner, repo, and branch for this PR
- * @param {{
- * payload: {
-  *  pull_request: PullRequest
-  * }
-  * }} context The Github Pull Request Context Object
+ * @param {GitHubContext} context The Github Pull Request Context Object
  */
 function getOwnerRepoBranch(context) {
   const pr = context.payload.pull_request;
@@ -103,10 +144,14 @@ function getOwnerRepoBranch(context) {
   return { owner, repo, branch };
 }
 
-const jobdeploy = new RegExp(
-  "^jobdeploy (?<source>\\w+)/(?<org>[\\w-]+)/(?<repo>.+?)/(?<branch>.+?):(?<tag>\\w+)"
-);
+const jobdeploy = /^jobdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\w+)/;
 
+/**
+ * 
+ * @param {Array<string>} fileLines
+ * 
+ * @returns {boolean}
+ */
 function isAJob(fileLines) {
   const isJobDeploy =
     fileLines.filter((line) => jobdeploy.test(line)).length > 0;
@@ -116,7 +161,12 @@ function isAJob(fileLines) {
     return isJobDeploy || isUnpublished;
 }
 
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Escaping
+/**
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Escaping
+ * @param {string} string
+ * 
+ * @returns {string}
+ */
 function escapeRegExp(string) {
   return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
@@ -126,7 +176,7 @@ module.exports = {
   suggest,
   getLineNumber,
   getLineWithinObject,
-  getFileLink,
+  getNewFileLink,
   getOwnerRepoBranch,
   isAJob,
   escapeRegExp,

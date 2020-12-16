@@ -4,7 +4,7 @@ const path = require("path");
 const {
   suggest,
   getLinesForJSON,
-  getFileLink,
+  getNewFileLink,
   getOwnerRepoBranch,
 } = require("../util");
 
@@ -164,7 +164,7 @@ async function secretsInOrders(deployment, context, inputs) {
         `Add a new file, ${secretsJsonPath}, that contains the following:\n\`\`\`json
 ${secretsFile}
 \`\`\``,
-        `[Click to add file](${getFileLink({
+        `[Click to add file](${getNewFileLink({
           owner,
           repo,
           branch,

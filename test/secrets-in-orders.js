@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const secretsInOrders = require("../checks/secrets-in-orders");
-const { getFileLink, getOwnerRepoBranch } = require('../util');
+const { getNewFileLink, getOwnerRepoBranch } = require('../util');
 
 const inputs = {
   awsAccount: 12345678,
@@ -86,7 +86,7 @@ describe("Secrets in orders file", () => {
       title: "Create a secrets.json",
       problems: [
         `Add a new file, streamliner/secrets.json, that contains the following:\n\`\`\`json\n${secretsFile}\n\`\`\``,
-        `[Click to add file](${getFileLink({
+        `[Click to add file](${getNewFileLink({
           owner,
           repo,
           branch,
