@@ -33,7 +33,7 @@ const warnResources = [
   /arn:aws:\\*?:.*/
 ];
 
-const secretArn = /arn:aws:secretsmanager:(?<region>[\w-]*):(?<account>\d*):secret:(?<secretName>[\w-\/]*)(:(?<jsonKey>\S*?):(?<versionStage>\S*?):(?<versionId>\w*)|)/;
+const secretArn = /arn:(?<partition>[\w\*\-]*):secretsmanager:(?<region>[\w-]*):(?<account>\d*):secret:(?<secretName>[\w-\/]*)(:(?<jsonKey>\S*?):(?<versionStage>\S*?):(?<versionId>\w*)|)/;
 
 
 
@@ -77,8 +77,8 @@ async function policyJsonIsValid(orders, context) {
 
   function _getSimpleSecret(secret) {
     const match = secretArn.exec(secret);
-    const { region, account, secretName } = match.groups;
-    return `arn:aws:secretsmanager:${region}:${account}:secret:${secretName}`;
+    const { partition, region, account, secretName } = match.groups;
+    return `arn:${partition}:secretsmanager:${region}:${account}:secret:${secretName}`;
   }
 
   function _toggleRequiredAction(item) {
