@@ -5,7 +5,8 @@ const {
   suggest,
   getLineNumber,
   getLineWithinObject,
-  escapeRegExp
+  escapeRegExp,
+  detectIndentation
 } = require("../util");
 
 const lowerVersion = /"version"/;
@@ -272,9 +273,10 @@ async function policyJsonIsValid(deployment) {
       };
 
       // This lets us indent more correctly
+      const { indent } = detectIndentation(deployment.policyContents.join('\n'));
       const newPolicy = Object.assign({}, document);
       newPolicy.Statement = statementBlock.concat([newStatementBlock]);
-      const newPolicyLines = JSON.stringify(newPolicy, null, 2).split("\n");
+      const newPolicyLines = JSON.stringify(newPolicy, null, indent).split("\n");
       const { start, end } = getLinesForJSON(newPolicyLines, newStatementBlock);
       const stringifiedStatement = `\n${newPolicyLines
         .slice(start - 1, end)

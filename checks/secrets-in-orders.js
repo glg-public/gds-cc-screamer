@@ -6,6 +6,7 @@ const {
   getLinesForJSON,
   getNewFileLink,
   getOwnerRepoBranch,
+  detectIndentation
 } = require("../util");
 
 const secretsUse = /^(export +|)(?<variable>\w+)=\$\(\s*secrets\s*(?<secretName>\w*)\s*\)$/;
@@ -120,9 +121,11 @@ async function secretsInOrders(deployment, context, inputs) {
         level: "failure",
       };
 
+      const { indent } = detectIndentation(deployment.secretsContents.join('\n'));
+
       // This lets us indent more correctly
       const newSecretsJson = deployment.secretsJson.concat(secretsToAdd);
-      const newSecretsLines = JSON.stringify(newSecretsJson, null, 2).split(
+      const newSecretsLines = JSON.stringify(newSecretsJson, null, indent).split(
         "\n"
       );
       let stringifiedStatement = "";

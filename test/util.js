@@ -1,5 +1,7 @@
 const { expect } = require("chai");
-const { getLinesForJSON } = require("../util");
+const { getLinesForJSON, detectIndentation } = require("../util");
+const fs = require('fs');
+const path = require('path');
 
 describe("getLinesForJSON", () => {
   it("returns a range of lines for multiline JSON objects", () => {
@@ -101,5 +103,47 @@ describe("getLinesForJSON", () => {
     const lines = getLinesForJSON(policyLines, jsonObj);
     expect(lines.start).to.equal(9);
     expect(lines.end).to.equal(16);
+  });
+});
+
+describe('detect-indent', () => {
+  const spaces1 = fs.readFileSync(path.join(__dirname, 'fixtures/1space.json'), 'utf8');
+  const spaces2 = fs.readFileSync(path.join(__dirname, 'fixtures/2space.json'), 'utf8');
+  const spaces4 = fs.readFileSync(path.join(__dirname, 'fixtures/4space.json'), 'utf8');
+  const tabs1 = fs.readFileSync(path.join(__dirname, 'fixtures/1tab.json'), 'utf8');
+  it('works with 1 space', () => {
+    const result = detectIndentation(spaces1);
+    expect(result).to.deep.equal({
+      amount: 1,
+      type: 'spaces',
+      indent: ' '
+    });
+  });
+
+  it('works with 2 spaces', () => {
+    const result = detectIndentation(spaces2);
+    expect(result).to.deep.equal({
+      amount: 2,
+      type: 'spaces',
+      indent: '  '
+    });
+  });
+
+  it('works with 4 spaces', () => {
+    const result = detectIndentation(spaces4);
+    expect(result).to.deep.equal({
+      amount: 4,
+      type: 'spaces',
+      indent: '    '
+    });
+  });
+
+  it('works with 1 tab', () => {
+    const result = detectIndentation(tabs1);
+    expect(result).to.deep.equal({
+      amount: 1,
+      type: 'tabs',
+      indent: '\t'
+    });
   });
 });

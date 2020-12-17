@@ -1,0 +1,8 @@
+{
+  "key": "something",
+  "otherKey": {
+    "further-indentation": {
+      "final": "something"
+    }
+  }
+}

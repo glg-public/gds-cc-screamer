@@ -178,7 +178,7 @@ describe("Secrets in orders file", () => {
         "dockerdeploy github/glg/streamliner/master:latest",
       ],
       secretsJson,
-      secretsContents: JSON.stringify(secretsJson, null, 2).split("\n"),
+      secretsContents: JSON.stringify(secretsJson, null, 4).split("\n"),
       secretsPath: "streamliner/secrets.json",
     };
 
@@ -186,15 +186,15 @@ describe("Secrets in orders file", () => {
     expect(results.length).to.equal(6);
     const suggestion = `Add the following secrets
 \`\`\`suggestion
-  },
-  {
-    "name": "MORE_KEY",
-    "valueFrom": "arn:aws:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}PANTS:belt::"
-  },
-  {
-    "name": "ONE_MORE",
-    "valueFrom": "arn:aws:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}PANTS:::"
-  }
+    },
+    {
+        "name": "MORE_KEY",
+        "valueFrom": "arn:aws:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}PANTS:belt::"
+    },
+    {
+        "name": "ONE_MORE",
+        "valueFrom": "arn:aws:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}PANTS:::"
+    }
 \`\`\``;
     expect(results[0]).to.deep.equal({
       title: "Missing Secrets in secrets.json",
