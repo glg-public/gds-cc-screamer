@@ -173,7 +173,13 @@ function escapeRegExp(string) {
 
 /**
  * Takes in a JSON file, and determines it's indentation
- * @param {string} file 
+ * @param {string} file
+ * 
+ * @returns {{
+ * amount: number,
+ * type: ( 'spaces' | 'tabs' ),
+ * indent: string
+ * }}
  */
 function detectIndentation(file) {
   const lines = file.split('\n');
