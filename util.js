@@ -221,17 +221,13 @@ function detectIndentation(fileLines) {
   }
 
   const type = tokenTypes.spaces > tokenTypes.tabs ? "spaces" : "tabs";
-  const characters = {
-    spaces: " ",
-    tabs: "\t",
-  };
-
+  const character = type === 'spaces' ? ' ' : '\t';
   const amount = _mode(differences);
 
   return {
     amount,
     type,
-    indent: characters[type].repeat(amount),
+    indent: character.repeat(amount),
   };
 }
 
