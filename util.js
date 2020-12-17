@@ -1,10 +1,10 @@
-require('./typedefs');
+require("./typedefs");
 
 /**
- * 
- * @param {Array<string>} fileLines 
- * @param {Object} jsonObj 
- * 
+ *
+ * @param {Array<string>} fileLines
+ * @param {Object} jsonObj
+ *
  * @returns {{
  * start: number,
  * end: number
@@ -63,10 +63,10 @@ function getLinesForJSON(fileLines, jsonObj) {
 }
 
 /**
- * 
- * @param {string} title 
- * @param {string} suggestion 
- * 
+ *
+ * @param {string} title
+ * @param {string} suggestion
+ *
  * @returns {string}
  */
 function suggest(title, suggestion) {
@@ -76,10 +76,10 @@ ${suggestion}
 }
 
 /**
- * 
- * @param {Array<string>} fileLines 
- * @param {RegExp} regex 
- * 
+ *
+ * @param {Array<string>} fileLines
+ * @param {RegExp} regex
+ *
  * @return {(number | null)}
  */
 function getLineNumber(fileLines, regex) {
@@ -92,11 +92,11 @@ function getLineNumber(fileLines, regex) {
 }
 
 /**
- * 
- * @param {Array<string>} fileLines 
- * @param {Object} jsonObj 
+ *
+ * @param {Array<string>} fileLines
+ * @param {Object} jsonObj
  * @param {RegExp} regex
- * 
+ *
  * @returns {(number | null)}
  */
 function getLineWithinObject(fileLines, jsonObj, regex) {
@@ -116,7 +116,7 @@ function getLineWithinObject(fileLines, jsonObj, regex) {
 }
 
 /**
- * 
+ *
  * @param {{
  * owner: string,
  * repo: string,
@@ -124,11 +124,13 @@ function getLineWithinObject(fileLines, jsonObj, regex) {
  * filename: string,
  * value: string
  * }} params
- * 
- * @returns {URI} 
+ *
+ * @returns {URI}
  */
 function getNewFileLink({ owner, repo, branch, filename, value }) {
-  return `https://github.com/${owner}/${repo}/new/${branch}?filename=${encodeURIComponent(filename)}&value=${encodeURIComponent(value)}`;
+  return `https://github.com/${owner}/${repo}/new/${branch}?filename=${encodeURIComponent(
+    filename
+  )}&value=${encodeURIComponent(value)}`;
 }
 
 /**
@@ -147,54 +149,53 @@ function getOwnerRepoBranch(context) {
 const jobdeploy = /^jobdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\w+)/;
 
 /**
- * 
+ *
  * @param {Array<string>} fileLines
- * 
+ *
  * @returns {boolean}
  */
 function isAJob(fileLines) {
   const isJobDeploy =
     fileLines.filter((line) => jobdeploy.test(line)).length > 0;
-  const isUnpublished = 
-    fileLines.filter((line) => line === 'unpublished').length > 0;
+  const isUnpublished =
+    fileLines.filter((line) => line === "unpublished").length > 0;
 
-    return isJobDeploy || isUnpublished;
+  return isJobDeploy || isUnpublished;
 }
 
 /**
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Escaping
  * @param {string} string
- * 
+ *
  * @returns {string}
  */
 function escapeRegExp(string) {
-  return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+  return string.replace(/[.*+\-?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
 }
 
 /**
  * Takes in a JSON file, and determines it's indentation
- * @param {string} file
- * 
+ * @param {Array<string>} file
+ *
  * @returns {{
  * amount: number,
  * type: ( 'spaces' | 'tabs' ),
  * indent: string
  * }}
  */
-function detectIndentation(file) {
-  const lines = file.split('\n');
+function detectIndentation(fileLines) {
   const tokenTypes = {
     spaces: 0,
-    tabs: 0
+    tabs: 0,
   };
   const numIndentation = [];
 
-  lines.forEach((line) => {
+  fileLines.forEach((line) => {
     for (let i = 0; i < line.length; i++) {
       const char = line[i];
-      if (char === ' ') {
+      if (char === " ") {
         tokenTypes.spaces += 1;
-      } else if (char === '\t') {
+      } else if (char === "\t") {
         tokenTypes.tabs += 1;
       } else {
         numIndentation.push(i);
@@ -205,22 +206,24 @@ function detectIndentation(file) {
 
   const differences = [];
   for (let i = 1; i < numIndentation.length; i++) {
-    if (numIndentation[i] > numIndentation[i-1]) {
-      differences.push(numIndentation[i] - numIndentation[i-1]);
+    if (numIndentation[i] > numIndentation[i - 1]) {
+      differences.push(numIndentation[i] - numIndentation[i - 1]);
     }
   }
 
-  function _mode(arr){
-    return arr.sort((a,b) =>
-          arr.filter(v => v===a).length
-        - arr.filter(v => v===b).length
-    ).pop();
+  function _mode(arr) {
+    return arr
+      .sort(
+        (a, b) =>
+          arr.filter((v) => v === a).length - arr.filter((v) => v === b).length
+      )
+      .pop();
   }
 
-  const type = tokenTypes.spaces > tokenTypes.tabs ? 'spaces' : 'tabs';
+  const type = tokenTypes.spaces > tokenTypes.tabs ? "spaces" : "tabs";
   const characters = {
-    'spaces': ' ',
-    'tabs': '\t'
+    spaces: " ",
+    tabs: "\t",
   };
 
   const amount = _mode(differences);
@@ -228,8 +231,8 @@ function detectIndentation(file) {
   return {
     amount,
     type,
-    indent: characters[type].repeat(amount)
-  }
+    indent: characters[type].repeat(amount),
+  };
 }
 
 module.exports = {
@@ -241,6 +244,5 @@ module.exports = {
   getOwnerRepoBranch,
   isAJob,
   escapeRegExp,
-  detectIndentation
+  detectIndentation,
 };
-

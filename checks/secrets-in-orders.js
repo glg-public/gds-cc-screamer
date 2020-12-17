@@ -121,7 +121,7 @@ async function secretsInOrders(deployment, context, inputs) {
         level: "failure",
       };
 
-      const { indent } = detectIndentation(deployment.secretsContents.join('\n'));
+      const { indent } = detectIndentation(deployment.secretsContents);
 
       // This lets us indent more correctly
       const newSecretsJson = deployment.secretsJson.concat(secretsToAdd);

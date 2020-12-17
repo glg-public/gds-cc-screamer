@@ -273,7 +273,7 @@ async function policyJsonIsValid(deployment) {
       };
 
       // This lets us indent more correctly
-      const { indent } = detectIndentation(deployment.policyContents.join('\n'));
+      const { indent } = detectIndentation(deployment.policyContents);
       const newPolicy = Object.assign({}, document);
       newPolicy.Statement = statementBlock.concat([newStatementBlock]);
       const newPolicyLines = JSON.stringify(newPolicy, null, indent).split("\n");
