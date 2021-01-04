@@ -2,7 +2,7 @@ require('../typedefs');
 const core = require("@actions/core");
 const { getLinesForJSON, suggest, getLineWithinObject } = require("../util");
 
-const secretArn = /arn:(?<partition>[\w\*\-]*):secretsmanager:(?<region>[\w-]*):(?<account>\d*):secret:(?<secretName>[\w-\/]*):(?<jsonKey>\S*?):(?<versionStage>\S*?):(?<versionId>\w*)/;
+const secretArn = /arn:(?<partition>[\w\*\-]*):secretsmanager:(?<region>[\w-]*):(?<account>\d*):secret:(?<secretName>[\w-\/]*):?(?<jsonKey>\S*?):?(?<versionStage>\S*?):?(?<versionId>\w*)/;
 
 /**
  * Accepts a deployment object, and does some kind of check

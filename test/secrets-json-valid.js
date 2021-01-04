@@ -21,6 +21,10 @@ describe("secrets.json is valid check", () => {
       {
         "name": "OTHER_VALUE",
         "valueFrom": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:newkey::"
+      },
+      {
+        "name": "MORE_PLAIN",
+        "valueFrom": "arn:aws:secretsmanager:us-east-1:988857891049:secret:us-east-1/prototype/GDS_INSTANCES_PRIVATE_KEY-46S5sl"
       }
     ]`;
 
