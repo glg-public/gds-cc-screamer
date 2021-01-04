@@ -27,7 +27,7 @@ describe("No Carriage Return", () => {
     expect(results[0]).to.deep.equal({
       title: "No Carriage Return Characters",
       problems: [
-        `${deployment.ordersPath} contains invalid newline characters.`,
+        `\`${deployment.ordersPath}\` contains invalid newline characters.`,
         "You must use Unix-type newlines (`LF`). Windows-type newlines (`CRLF`) are not permitted.",
       ],
       line: 0,
@@ -60,7 +60,7 @@ describe("No Carriage Return", () => {
     expect(results[0]).to.deep.equal({
       title: "No Carriage Return Characters",
       problems: [
-        `${deployment.secretsPath} contains invalid newline characters.`,
+        `\`${deployment.secretsPath}\` contains invalid newline characters.`,
         "You must use Unix-type newlines (`LF`). Windows-type newlines (`CRLF`) are not permitted.",
       ],
       line: 0,
@@ -106,7 +106,7 @@ describe("No Carriage Return", () => {
     expect(results[0]).to.deep.equal({
       title: "No Carriage Return Characters",
       problems: [
-        `${deployment.policyPath} contains invalid newline characters.`,
+        `\`${deployment.policyPath}\` contains invalid newline characters.`,
         "You must use Unix-type newlines (`LF`). Windows-type newlines (`CRLF`) are not permitted.",
       ],
       line: 0,
