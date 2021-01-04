@@ -15,6 +15,7 @@ module.exports = [
   require("./no-debug-in-prod"),
   require("./secrets-json-valid"),
   require("./secrets-in-orders"),
+  require("./no-carriage-return"),
 
   /**
    *  This should probably always be last, because it verifies that the
