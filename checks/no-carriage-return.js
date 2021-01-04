@@ -19,7 +19,7 @@ async function noCarriageReturn(deployment, context, inputs) {
       title: 'No Carriage Return Characters',
       problems: [
         'You must use Unix-type newlines (`\\n`). Windows-type newlines (`\\r\\n`) are not permitted.',
-        suggest('Delete the carriage return character', line.replace(/\r/g, '\n'))
+        suggest('Delete the carriage return character', line.replace(/\r/g, ''))
       ],
       line: lineNumber,
       level: 'failure',
