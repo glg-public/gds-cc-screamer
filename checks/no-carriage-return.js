@@ -18,6 +18,7 @@ async function noCarriageReturn(deployment, context, inputs) {
     return {
       title: "No Carriage Return Characters",
       problems: [
+        `${path} contains invalid newline characters.`,
         "You must use Unix-type newlines (`LF`). Windows-type newlines (`CRLF`) are not permitted.",
       ],
       line: 0,
