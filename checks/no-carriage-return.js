@@ -1,6 +1,5 @@
 require("../typedefs");
 const core = require("@actions/core");
-const { suggest } = require("../util");
 
 /**
  * Checks for windows-type carriage return characters, and suggests removing them.
