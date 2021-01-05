@@ -5,6 +5,7 @@ describe("Service Name Check", () => {
   it("works with a valid service name", async () => {
     const serviceName = "streamliner";
     const deployment = {
+      serviceName,
       ordersPath: `${serviceName}/orders`,
       ordersContents: [],
     };
@@ -18,6 +19,7 @@ describe("Service Name Check", () => {
     const serviceName =
       "thisservicenameismuchtoolongwayovertwentyeightcharacters";
     const deployment = {
+      serviceName,
       ordersPath: `${serviceName}/orders`,
       ordersContents: [],
     };
@@ -33,6 +35,7 @@ describe("Service Name Check", () => {
   it("rejects service names with invalid characters", async () => {
     const serviceName = "ThisServiceName_is_invalid";
     const deployment = {
+      serviceName,
       ordersPath: `${serviceName}/orders`,
       ordersContents: [],
     };
@@ -48,6 +51,7 @@ describe("Service Name Check", () => {
   it("rejects service names that contain --", async () => {
     const serviceName = "too--many--hyphens";
     const deployment = {
+      serviceName,
       ordersPath: `${serviceName}/orders`,
       ordersContents: [],
     };

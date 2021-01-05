@@ -4,6 +4,7 @@ const noCarriageReturn = require("../checks/no-carriage-return");
 describe("No Carriage Return", () => {
   it("accepts a file with no carriage returns", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["export VAR=value", "# A comment", "export VARZ=valuez"],
     };
@@ -14,6 +15,7 @@ describe("No Carriage Return", () => {
 
   it("Rejects Orders file with CRLF", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [
         "export VAR=value\r",
@@ -49,10 +51,11 @@ describe("No Carriage Return", () => {
     ]`;
 
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["export VAR=value", "# A comment", "export VARZ=valuez"],
-      secretsPath: "streamliner/secrets.json",
-      secretsContents: secretsJson.split("\n"),
+      secretsJsonPath: "streamliner/secrets.json",
+      secretsJsonContents: secretsJson.split("\n"),
     };
 
     const results = await noCarriageReturn(deployment);
@@ -60,12 +63,12 @@ describe("No Carriage Return", () => {
     expect(results[0]).to.deep.equal({
       title: "No Carriage Return Characters",
       problems: [
-        `\`${deployment.secretsPath}\` contains invalid newline characters.`,
+        `\`${deployment.secretsJsonPath}\` contains invalid newline characters.`,
         "You must use Unix-type newlines (`LF`). Windows-type newlines (`CRLF`) are not permitted.",
       ],
       line: 0,
       level: "failure",
-      path: deployment.secretsPath,
+      path: deployment.secretsJsonPath,
     });
   });
 
@@ -95,10 +98,11 @@ describe("No Carriage Return", () => {
     ).replace(/\n/g, "\r\n");
 
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["export VAR=value", "# A comment", "export VARZ=valuez"],
-      policyPath: "streamliner/policy.json",
-      policyContents: policyJson.split("\n"),
+      policyJsonPath: "streamliner/policy.json",
+      policyJsonContents: policyJson.split("\n"),
     };
 
     const results = await noCarriageReturn(deployment);
@@ -106,12 +110,12 @@ describe("No Carriage Return", () => {
     expect(results[0]).to.deep.equal({
       title: "No Carriage Return Characters",
       problems: [
-        `\`${deployment.policyPath}\` contains invalid newline characters.`,
+        `\`${deployment.policyJsonPath}\` contains invalid newline characters.`,
         "You must use Unix-type newlines (`LF`). Windows-type newlines (`CRLF`) are not permitted.",
       ],
       line: 0,
       level: "failure",
-      path: deployment.policyPath,
+      path: deployment.policyJsonPath,
     });
   });
 });

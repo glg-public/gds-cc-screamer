@@ -26,6 +26,10 @@ function getDeployment(match) {
  * @returns {Array<Result>}
  */
 async function validateDeploymentLine(deployment) {
+  if (!deployment.ordersContents) {
+    core.info(`No Orders Present - Skipping ${deployment.serviceName}`);
+    return [];
+  }
   core.info(`Valid Deployment Line - ${deployment.ordersPath}`);
 
   const problems = [];

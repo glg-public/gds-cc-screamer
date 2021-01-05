@@ -8,6 +8,7 @@ const resourceFmtError = '"Resource" must be either a valid [ARN](https://docs.a
 describe("policy.json is valid", () => {
   it("skips if there is no policy.json", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
     };
@@ -41,10 +42,11 @@ describe("policy.json is valid", () => {
       2
     );
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
-      policyPath: "streamliner/policy.json",
-      policyContents: policyJson.split("\n"),
+      policyJsonPath: "streamliner/policy.json",
+      policyJsonContents: policyJson.split("\n"),
     };
 
     const results = await policyJsonIsValid(deployment);
@@ -53,19 +55,20 @@ describe("policy.json is valid", () => {
 
   it("rejects policy.json that is not valid JSON", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
-      policyPath: "streamliner/policy.json",
-      policyContents: ["not valid json"],
+      policyJsonPath: "streamliner/policy.json",
+      policyJsonContents: ["not valid json"],
     };
 
     const results = await policyJsonIsValid(deployment);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: "policy.json is not valid JSON",
-      path: deployment.policyPath,
+      path: deployment.policyJsonPath,
       problems: [
-        `An error was encountered while trying to JSON parse ${deployment.policyPath}`,
+        `An error was encountered while trying to JSON parse ${deployment.policyJsonPath}`,
       ],
       line: 0,
       level: "failure",
@@ -91,17 +94,18 @@ describe("policy.json is valid", () => {
       2
     );
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
-      policyPath: "streamliner/policy.json",
-      policyContents: policyJson.split("\n"),
+      policyJsonPath: "streamliner/policy.json",
+      policyJsonContents: policyJson.split("\n"),
     };
 
     const results = await policyJsonIsValid(deployment);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: `Invalid policy.json`,
-      path: deployment.policyPath,
+      path: deployment.policyJsonPath,
       problems: ["policy.json must be a valid AWS IAM Policy"],
       line: 1,
       level: "failure",
@@ -133,10 +137,11 @@ describe("policy.json is valid", () => {
       2
     );
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
-      policyPath: "streamliner/policy.json",
-      policyContents: policyJson.split("\n"),
+      policyJsonPath: "streamliner/policy.json",
+      policyJsonContents: policyJson.split("\n"),
     };
 
     const results = await policyJsonIsValid(deployment);
@@ -146,7 +151,7 @@ describe("policy.json is valid", () => {
 
     expect(version).to.deep.equal({
       title: "Statement must be capitalized",
-      path: deployment.policyPath,
+      path: deployment.policyJsonPath,
       problems: [suggest("Capitalize this key", '  "Version": "2012-10-17",')],
       line: 2,
       level: "failure",
@@ -154,7 +159,7 @@ describe("policy.json is valid", () => {
 
     expect(statement).to.deep.equal({
       title: "Statement must be capitalized",
-      path: deployment.policyPath,
+      path: deployment.policyJsonPath,
       problems: [suggest("Capitalize this key", '  "Statement": [')],
       line: 3,
       level: "failure",
@@ -162,7 +167,7 @@ describe("policy.json is valid", () => {
 
     expect(effect).to.deep.equal({
       title: "Statement must be capitalized",
-      path: deployment.policyPath,
+      path: deployment.policyJsonPath,
       problems: [suggest("Capitalize this key", '      "Effect": "Allow",')],
       line: 5,
       level: "failure",
@@ -170,7 +175,7 @@ describe("policy.json is valid", () => {
 
     expect(action).to.deep.equal({
       title: "Statement must be capitalized",
-      path: deployment.policyPath,
+      path: deployment.policyJsonPath,
       problems: [suggest("Capitalize this key", '      "Action": [')],
       line: 6,
       level: "failure",
@@ -178,7 +183,7 @@ describe("policy.json is valid", () => {
 
     expect(resource).to.deep.equal({
       title: "Statement must be capitalized",
-      path: deployment.policyPath,
+      path: deployment.policyJsonPath,
       problems: [
         suggest(
           "Capitalize this key",
@@ -214,17 +219,18 @@ describe("policy.json is valid", () => {
       2
     );
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
-      policyPath: "streamliner/policy.json",
-      policyContents: policyJson.split("\n"),
+      policyJsonPath: "streamliner/policy.json",
+      policyJsonContents: policyJson.split("\n"),
     };
 
     const results = await policyJsonIsValid(deployment);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: 'Policy must have a "Version" field',
-      path: deployment.policyPath,
+      path: deployment.policyJsonPath,
       problems: ['"Version" is a required field.'],
       line: 0,
       level: "failure",
@@ -256,17 +262,18 @@ describe("policy.json is valid", () => {
       2
     );
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
-      policyPath: "streamliner/policy.json",
-      policyContents: policyJson.split("\n"),
+      policyJsonPath: "streamliner/policy.json",
+      policyJsonContents: policyJson.split("\n"),
     };
 
     const results = await policyJsonIsValid(deployment);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: "Invalid Version",
-      path: deployment.policyPath,
+      path: deployment.policyJsonPath,
       problems: ["Version must be one of: 2008-10-17, 2012-10-17"],
       line: 2,
       level: "failure",
@@ -282,17 +289,18 @@ describe("policy.json is valid", () => {
       2
     );
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
-      policyPath: "streamliner/policy.json",
-      policyContents: policyJson.split("\n"),
+      policyJsonPath: "streamliner/policy.json",
+      policyJsonContents: policyJson.split("\n"),
     };
 
     const results = await policyJsonIsValid(deployment);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: 'Policy must have a "Statement" block.',
-      path: deployment.policyPath,
+      path: deployment.policyJsonPath,
       problems: ['"Statement" is a required field'],
       line: 0,
       level: "failure",
@@ -329,10 +337,11 @@ describe("policy.json is valid", () => {
       2
     );
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
-      policyPath: "streamliner/policy.json",
-      policyContents: policyJson.split("\n"),
+      policyJsonPath: "streamliner/policy.json",
+      policyJsonContents: policyJson.split("\n"),
     };
 
     const results = await policyJsonIsValid(deployment);
@@ -379,10 +388,11 @@ describe("policy.json is valid", () => {
       2
     );
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
-      policyPath: "streamliner/policy.json",
-      policyContents: policyJson.split("\n"),
+      policyJsonPath: "streamliner/policy.json",
+      policyJsonContents: policyJson.split("\n"),
     };
 
     const results = await policyJsonIsValid(deployment);
@@ -427,10 +437,11 @@ describe("policy.json is valid", () => {
       2
     );
     let deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
-      policyPath: "streamliner/policy.json",
-      policyContents: policyJson.split("\n"),
+      policyJsonPath: "streamliner/policy.json",
+      policyJsonContents: policyJson.split("\n"),
     };
 
     let results = await policyJsonIsValid(deployment);
@@ -478,10 +489,11 @@ describe("policy.json is valid", () => {
     );
 
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
-      policyPath: "streamliner/policy.json",
-      policyContents: policyJson.split("\n"),
+      policyJsonPath: "streamliner/policy.json",
+      policyJsonContents: policyJson.split("\n"),
     };
 
     results = (await policyJsonIsValid(deployment)).filter(({ level }) => level === 'failure');
@@ -527,17 +539,18 @@ describe("policy.json is valid", () => {
       2
     );
     let deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
-      policyPath: "streamliner/policy.json",
-      policyContents: policyJson.split("\n"),
+      policyJsonPath: "streamliner/policy.json",
+      policyJsonContents: policyJson.split("\n"),
     };
 
     let results = await policyJsonIsValid(deployment);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: 'Invalid value for "Resource"',
-      path: deployment.policyPath,
+      path: deployment.policyJsonPath,
       problems: [
         resourceFmtError,
       ],
@@ -578,17 +591,18 @@ describe("policy.json is valid", () => {
     );
 
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
-      policyPath: "streamliner/policy.json",
-      policyContents: policyJson.split("\n"),
+      policyJsonPath: "streamliner/policy.json",
+      policyJsonContents: policyJson.split("\n"),
     };
 
     results = (await policyJsonIsValid(deployment)).filter(({ level }) => level === 'failure');
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: 'Invalid value for "Resource"',
-      path: deployment.policyPath,
+      path: deployment.policyJsonPath,
       problems: [
         resourceFmtError,
       ],
@@ -627,10 +641,11 @@ describe("policy.json is valid", () => {
       2
     );
     let deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
-      policyPath: "streamliner/policy.json",
-      policyContents: policyJson.split("\n"),
+      policyJsonPath: "streamliner/policy.json",
+      policyJsonContents: policyJson.split("\n"),
     };
 
     let results = await policyJsonIsValid(deployment);
@@ -672,11 +687,12 @@ describe("policy.json is valid", () => {
       2
     );
     let deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
-      policyPath: "streamliner/policy.json",
-      policyContents: policyJson.split("\n"),
-      secretsContents: [], // indicates presence of a secrets.json
+      policyJsonPath: "streamliner/policy.json",
+      policyJsonContents: policyJson.split("\n"),
+      secretsJsonContents: [], // indicates presence of a secrets.json
     };
 
     let results = (await policyJsonIsValid(deployment)).filter(({ level }) => level === 'failure');
@@ -701,7 +717,7 @@ describe("policy.json is valid", () => {
             Effect: "Allow",
             Action: "secretsmanager:GetSecretValue",
             Resource:
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
+              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret-??????",
           },
           {
             Effect: "Allow",
@@ -717,11 +733,12 @@ describe("policy.json is valid", () => {
       2
     );
     let deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
-      policyPath: "streamliner/policy.json",
-      policyContents: policyJson.split("\n"),
-      secretsContents: [], // indicates presence of a secrets.json
+      policyJsonPath: "streamliner/policy.json",
+      policyJsonContents: policyJson.split("\n"),
+      secretsJsonContents: [], // indicates presence of a secrets.json
       secretsJson: [
         {
           name: "MY_SECRET",
@@ -741,7 +758,7 @@ describe("policy.json is valid", () => {
       title: "Policy is missing required secrets",
       path: "streamliner/policy.json",
       problems: [
-        "Your secrets.json requests arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else, but your policy does not allow access.",
+        "Your secrets.json requests arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else-??????, but your policy does not allow access.",
         "Add the following statement block\n" +
           "```suggestion\n" +
           "    },\n" + 
@@ -750,7 +767,7 @@ describe("policy.json is valid", () => {
           '      "Effect": "Allow",\n' +
           '      "Action": "secretsmanager:GetSecretValue",\n' +
           '      "Resource": [\n' +
-          '        "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else"\n' +
+          '        "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else-??????"\n' +
           "      ]\n" +
           "    }\n" +
           "```",
@@ -767,7 +784,10 @@ describe("policy.json is valid", () => {
           {
             Effect: "Allow",
             Action: "secretsmanager:GetSecretValue",
-            Resource: "arn:aws:secretsmanager:us-east-1:868468680417:secret:*", // supports wildcards
+            Resource: [
+              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret-??????",
+              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else-??????"
+            ], // supports wildcards
           },
           {
             Effect: "Allow",
@@ -783,11 +803,12 @@ describe("policy.json is valid", () => {
       2
     );
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
-      policyPath: "streamliner/policy.json",
-      policyContents: policyJson.split("\n"),
-      secretsContents: [], // indicates presence of a secrets.json
+      policyJsonPath: "streamliner/policy.json",
+      policyJsonContents: policyJson.split("\n"),
+      secretsJsonContents: [], // indicates presence of a secrets.json
       secretsJson: [
         {
           name: "MY_SECRET",
@@ -829,11 +850,12 @@ describe("policy.json is valid", () => {
       2
     );
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
-      policyPath: "streamliner/policy.json",
-      policyContents: policyJson.split("\n"),
-      secretsContents: [], // indicates presence of a secrets.json
+      policyJsonPath: "streamliner/policy.json",
+      policyJsonContents: policyJson.split("\n"),
+      secretsJsonContents: [], // indicates presence of a secrets.json
       secretsJson: [
         {
           name: "MY_SECRET",
@@ -855,7 +877,7 @@ describe("policy.json is valid", () => {
       title: 'Broad Permissions',
       level: 'warning',
       line: 12,
-      path: deployment.policyPath,
+      path: deployment.policyJsonPath,
       problems: [problem]
     });
 
@@ -863,7 +885,7 @@ describe("policy.json is valid", () => {
       title: 'Broad Permissions',
       level: 'warning',
       line: 13,
-      path: deployment.policyPath,
+      path: deployment.policyJsonPath,
       problems: [problem]
     });
 
@@ -871,7 +893,7 @@ describe("policy.json is valid", () => {
       title: 'Broad Permissions',
       level: 'warning',
       line: 15,
-      path: deployment.policyPath,
+      path: deployment.policyJsonPath,
       problems: [problem]
     });
   });
@@ -899,11 +921,12 @@ describe("policy.json is valid", () => {
       2
     );
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
-      policyPath: "streamliner/policy.json",
-      policyContents: policyJson.split("\n"),
-      secretsContents: [], // indicates presence of a secrets.json
+      policyJsonPath: "streamliner/policy.json",
+      policyJsonContents: policyJson.split("\n"),
+      secretsJsonContents: [], // indicates presence of a secrets.json
       secretsJson: [
         {
           name: "MY_SECRET",
@@ -925,7 +948,7 @@ describe("policy.json is valid", () => {
       title: 'Delete Access',
       level: 'warning',
       line: 12,
-      path: deployment.policyPath,
+      path: deployment.policyJsonPath,
       problems: [problem]
     });
   });

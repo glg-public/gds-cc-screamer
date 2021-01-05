@@ -4,6 +4,7 @@ const jwtAccessFlags = require("../checks/jwt-access-flags");
 describe("Valid bitwise operations in JWT_ACCESS_FLAGS", () => {
   it("allows orders with no JWT_ACCESS_FLAGS declaration", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
     };
@@ -14,6 +15,7 @@ describe("Valid bitwise operations in JWT_ACCESS_FLAGS", () => {
 
   it("allows orders where JWT_ACCESS_FLAGS uses a | to combine roles", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [
         "export JWT_ACCESS_FLAGS=$(($JWT_ROLE_GLG_USER | $JWT_ROLE_GLG_CLIENT))",
@@ -26,6 +28,7 @@ describe("Valid bitwise operations in JWT_ACCESS_FLAGS", () => {
 
   it("rejects orders where JWT_ACCESS_FLAGS uses a + to combine roles", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [
         "export JWT_ACCESS_FLAGS=$(($JWT_ROLE_GLG_USER + $JWT_ROLE_GLG_CLIENT))",

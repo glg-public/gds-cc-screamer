@@ -5,6 +5,7 @@ describe("Deployment Line Check", () => {
   it("works with a valid deployment line", async () => {
     // works with autodeploy
     let deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["autodeploy git@github.com:glg/price-service.git#main"],
     };
@@ -15,6 +16,7 @@ describe("Deployment Line Check", () => {
 
     // works with dockerdeploy
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["dockerdeploy github/glg/price-service/main:latest"],
     };
@@ -25,6 +27,7 @@ describe("Deployment Line Check", () => {
 
     // works with jobdeploy
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["jobdeploy github/glg/price-service/main:latest"],
     };
@@ -36,6 +39,7 @@ describe("Deployment Line Check", () => {
 
   it("rejects an improperly formatted dockerdeploy line", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["dockerdeploy git@github:glg/streamliner.git:latest"],
     };
@@ -50,6 +54,7 @@ describe("Deployment Line Check", () => {
 
   it("rejects an improperly formatted jobdeploy line", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["jobdeploy git@github:glg/streamliner.git:latest"],
     };
@@ -64,6 +69,7 @@ describe("Deployment Line Check", () => {
 
   it("rejects an improperly formatted autodeploy line", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["autodeploy git@github/glg/streamliner.git#main"],
     };
@@ -78,6 +84,7 @@ describe("Deployment Line Check", () => {
 
   it("requires either a dockerdeploy or an autodeploy line", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ['export HEALTHCHECK="/diagnostic"'],
     };
@@ -93,6 +100,7 @@ describe("Deployment Line Check", () => {
   it("rejects repository names with invalid characters", async () => {
     // works with autodeploy
     let deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["autodeploy git@github.com:glg/PriceService.git#main"],
     };
@@ -106,6 +114,7 @@ describe("Deployment Line Check", () => {
 
     // works with dockerdeploy
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["dockerdeploy github/glg/PriceService/main:latest"],
     };
@@ -121,6 +130,7 @@ describe("Deployment Line Check", () => {
   it("rejects branch names with invalid characters", async () => {
     // works with autodeploy
     let deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [
         "autodeploy git@github.com:glg/price-service.git#Wrong_Branch!",
@@ -136,8 +146,11 @@ describe("Deployment Line Check", () => {
 
     // works with dockerdeploy
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
-      ordersContents: ["dockerdeploy github/glg/price-service/Wrong_Branch!:latest"],
+      ordersContents: [
+        "dockerdeploy github/glg/price-service/Wrong_Branch!:latest",
+      ],
     };
 
     results = await deploymentLineCheck(deployment);
@@ -151,8 +164,11 @@ describe("Deployment Line Check", () => {
   it("rejects branch names that contain --", async () => {
     // works with autodeploy
     let deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
-      ordersContents: ["autodeploy git@github.com:glg/price-service.git#too--many"],
+      ordersContents: [
+        "autodeploy git@github.com:glg/price-service.git#too--many",
+      ],
     };
 
     let results = await deploymentLineCheck(deployment);
@@ -164,8 +180,11 @@ describe("Deployment Line Check", () => {
 
     // works with dockerdeploy
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
-      ordersContents: ["dockerdeploy github/glg/price-service/too--many:latest"],
+      ordersContents: [
+        "dockerdeploy github/glg/price-service/too--many:latest",
+      ],
     };
 
     results = await deploymentLineCheck(deployment);

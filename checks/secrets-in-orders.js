@@ -23,12 +23,16 @@ const removeLineSuggestion = "Remove this line\n```suggestion\n```";
  * @returns {Array<Result>}
  */
 async function secretsInOrders(deployment, context, inputs) {
+  if (!deployment.ordersContents) {
+    core.info(`No Orders Present - Skipping ${deployment.serviceName}`);
+    return [];
+  }
   core.info(`Secrets in Orders File - ${deployment.ordersPath}`);
   const { awsAccount, secretsPrefix, awsRegion, awsPartition } = inputs;
   const results = [];
   const secretsJson = [];
   const { owner, repo, branch } = getOwnerRepoBranch(context);
-  const secretsJsonPath = path.join(path.dirname(deployment.ordersPath), "secrets.json");
+  const secretsJsonPath = path.join(deployment.serviceName, "secrets.json");
 
   deployment.ordersContents
     .map((line, i) => {
@@ -116,12 +120,12 @@ async function secretsInOrders(deployment, context, inputs) {
     if (secretsToAdd.length > 0) {
       const result = {
         title: "Missing Secrets in secrets.json",
-        path: deployment.secretsPath,
+        path: deployment.secretsJsonPath,
         problems: [],
         level: "failure",
       };
 
-      const { indent } = detectIndentation(deployment.secretsContents);
+      const { indent } = detectIndentation(deployment.secretsJsonContents);
 
       // This lets us indent more correctly
       const newSecretsJson = deployment.secretsJson.concat(secretsToAdd);
@@ -137,13 +141,13 @@ async function secretsInOrders(deployment, context, inputs) {
       });
 
       const { end: lineToAnnotate } = getLinesForJSON(
-        deployment.secretsContents,
+        deployment.secretsJsonContents,
         deployment.secretsJson[deployment.secretsJson.length - 1]
       );
 
       result.line = lineToAnnotate;
 
-      const oldLine = deployment.secretsContents[lineToAnnotate - 1];
+      const oldLine = deployment.secretsJsonContents[lineToAnnotate - 1];
       let newLine = oldLine;
       if (!oldLine.endsWith(",")) {
         newLine += ",";

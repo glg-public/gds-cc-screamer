@@ -4,6 +4,7 @@ const noSpaces = require("../checks/no-spaces-in-exports");
 describe("No Spaces in Exports Check", () => {
   it("allows orders where all exports have proper spacing", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [
         "export HEALTHCHECK=/diagnostic",
@@ -18,6 +19,7 @@ describe("No Spaces in Exports Check", () => {
 
   it("rejects orders if they include exports with incorrect spacing", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [
         "export HEALTHCHECK =/diagnostic",

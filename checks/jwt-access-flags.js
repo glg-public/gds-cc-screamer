@@ -8,6 +8,10 @@ const core = require("@actions/core");
  * @returns {Array<Result>}
  */
 async function jwtAccessFlags(deployment) {
+  if (!deployment.ordersContents) {
+    core.info(`No Orders Present - Skipping ${deployment.serviceName}`);
+    return [];
+  }
   core.info(`JWT Access Flags - ${deployment.ordersPath}`);
   const results = [];
 

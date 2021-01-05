@@ -4,6 +4,7 @@ const noDupes = require("../checks/no-duplicate-exports");
 describe("No Duplicate Exports Check", () => {
   it("allows orders with no duplicate exports", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [
         "export THREE=something",
@@ -19,6 +20,7 @@ describe("No Duplicate Exports Check", () => {
 
   it("rejects orders that contain duplicate exports", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [
         "export DUPED=something",

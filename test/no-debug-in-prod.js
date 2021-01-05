@@ -4,7 +4,8 @@ const noDebugInProd = require('../checks/no-debug-in-prod');
 describe('No Debug In Prod', async () => {
   it('accepts orders file with no known debug flags', async () => {
     const deployment = {
-      path: 'streamliner/orders',
+      serviceName: "streamliner",
+      ordersPath: 'streamliner/orders',
       ordersContents: [
         'export HEALTHCHECK=/diagnostic'
       ]
@@ -16,7 +17,8 @@ describe('No Debug In Prod', async () => {
 
   it('warns about known debug flags', async () => {
     const deployment = {
-      path: 'streamliner/orders',
+      serviceName: "streamliner",
+      ordersPath: 'streamliner/orders',
       ordersContents: [
         'export ENABLE_DEBUG="true"',
         'export DEBUG=know*',

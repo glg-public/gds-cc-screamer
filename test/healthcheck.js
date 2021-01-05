@@ -4,6 +4,7 @@ const healthcheckCheck = require("../checks/healthcheck");
 describe("Healthcheck Check", () => {
   it("works with a valid healthcheck", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["export HEALTHCHECK=/diagnostic"],
     };
@@ -15,6 +16,7 @@ describe("Healthcheck Check", () => {
 
   it("Requires the presence of a healthcheck", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["export NOT_A_HEALTHCHECK=nothing"],
     };
@@ -30,6 +32,7 @@ describe("Healthcheck Check", () => {
   it("rejects healthchecks at /", async () => {
     // works with a bare /
     let deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["export HEALTHCHECK=/"],
     };
@@ -43,6 +46,7 @@ describe("Healthcheck Check", () => {
 
     // works with '/'
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["export HEALTHCHECK='/'"],
     };
@@ -56,6 +60,7 @@ describe("Healthcheck Check", () => {
 
     // works with "/"
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ['export HEALTHCHECK="/"'],
     };
@@ -71,6 +76,7 @@ describe("Healthcheck Check", () => {
   it("rejects an empty healthcheck", async () => {
     // works with unset variable
     let deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["export HEALTHCHECK="],
     };
@@ -84,6 +90,7 @@ describe("Healthcheck Check", () => {
 
     // works with ""
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ['export HEALTHCHECK=""'],
     };
@@ -97,6 +104,7 @@ describe("Healthcheck Check", () => {
 
     // works with ''
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["export HEALTHCHECK=''"],
     };

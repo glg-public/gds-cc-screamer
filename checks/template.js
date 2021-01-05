@@ -19,7 +19,7 @@ async function templateCheck(deployment, context, inputs) {
     problems: ['This code sucks'],
     line: lineNumber,
     level: 'failure' // must be "failure", "warning", "notice", or "success"
-    [path]: deployment.secretsPath // This defaults to the deployment path, but you can override for different files.
+    [path]: deployment.secretsJsonPath // This defaults to the deployment path, but you can override for different files.
    }
    */
 

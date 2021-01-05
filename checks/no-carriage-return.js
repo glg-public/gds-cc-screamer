@@ -27,23 +27,24 @@ async function noCarriageReturn(deployment, context, inputs) {
   }
 
   if (
+    deployment.ordersContents &&
     deployment.ordersContents.filter((line) => line.includes("\r")).length > 0
   ) {
     results.push(_removeCR(deployment.ordersPath));
   }
 
   if (
-    deployment.secretsContents &&
-    deployment.secretsContents.filter((line) => line.includes("\r")).length > 0
+    deployment.secretsJsonContents &&
+    deployment.secretsJsonContents.filter((line) => line.includes("\r")).length > 0
   ) {
-    results.push(_removeCR(deployment.secretsPath));
+    results.push(_removeCR(deployment.secretsJsonPath));
   }
 
   if (
-    deployment.policyContents &&
-    deployment.policyContents.filter((line) => line.includes("\r")).length > 0
+    deployment.policyJsonContents &&
+    deployment.policyJsonContents.filter((line) => line.includes("\r")).length > 0
   ) {
-    results.push(_removeCR(deployment.policyPath));
+    results.push(_removeCR(deployment.policyJsonPath));
   }
 
   return results;

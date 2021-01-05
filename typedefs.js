@@ -246,12 +246,13 @@
 
 /**
  * @typedef {{
- * ordersPath: string,
- * ordersContents: Array<string>,
- * secretsPath: (string|undefined),
- * secretsContents: (Array<string>|undefined),
- * policyPath: (string|undefined),
- * policyContents: (Array<string>|undefined)
+ * serviceName: string,
+ * ordersPath: (string|undefined),
+ * ordersContents: (Array<string>|undefined),
+ * secretsJsonPath: (string|undefined),
+ * secretsJsonContents: (Array<string>|undefined),
+ * policyJsonPath: (string|undefined),
+ * policyJsonContents: (Array<string>|undefined)
  * }} Deployment
  */
 

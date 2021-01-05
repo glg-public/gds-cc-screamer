@@ -47,15 +47,15 @@ const secretArn = /arn:(?<partition>[\w\*\-]*):secretsmanager:(?<region>[\w-]*):
  */
 async function policyJsonIsValid(deployment) {
   // policy.json is not required
-  if (!deployment.policyContents) {
-    core.info(`No policy.json present, skipping - ${deployment.ordersPath}`);
+  if (!deployment.policyJsonContents) {
+    core.info(`No policy.json present, skipping - ${deployment.serviceName}`);
     return [];
   }
-  core.info(`policy.json is valid - ${deployment.policyPath}`);
+  core.info(`policy.json is valid - ${deployment.policyJsonPath}`);
 
   let { results, document } = validateGenericIamPolicy(
-    deployment.policyContents.join("\n"),
-    deployment.policyPath
+    deployment.policyJsonContents.join("\n"),
+    deployment.policyJsonPath
   );
 
   if (!document) {
@@ -74,14 +74,22 @@ async function policyJsonIsValid(deployment) {
 
   // Secrets access is only needed for services that use secrets
   const secretsAction = "secretsmanager:GetSecretValue";
-  if (deployment.secretsContents) {
+  if (deployment.secretsJsonContents) {
     requiredActions[secretsAction] = false;
   }
 
   function _getSimpleSecret(secret) {
     const match = secretArn.exec(secret);
-    const { partition, region, account, secretName } = match.groups;
-    return `arn:${partition}:secretsmanager:${region}:${account}:secret:${secretName}`;
+    const { partition, region, account, secretName, versionId } = match.groups;
+    let arn = `arn:${partition}:secretsmanager:${region}:${account}:secret:${secretName}`;
+
+    if (versionId) {
+      arn += `-${versionId}`;
+    } else {
+      arn += '-??????';
+    }
+
+    return arn
   }
 
   function _toggleRequiredAction(item) {
@@ -167,8 +175,8 @@ async function policyJsonIsValid(deployment) {
     }
     return {
       title,
-      path: deployment.policyPath,
-      line: getLineWithinObject(deployment.policyContents, searchBlock, regex),
+      path: deployment.policyJsonPath,
+      line: getLineWithinObject(deployment.policyJsonContents, searchBlock, regex),
       level: 'warning',
       problems: [
         problem
@@ -222,7 +230,11 @@ async function policyJsonIsValid(deployment) {
 
     function _toggleRequiredSecret(resource) {
       // We need to account for wildcards
-      const keyRegex = new RegExp(resource.replace(/\*/g, "[\\w\\-\\/\\:]+") + "$");
+      const keyRegex = new RegExp(
+        resource
+          .replace(/\*/g, "[\\w\\-\\/\\:]+")
+          .replace(/\?/g, "[\\w\\?]")
+      + "$");
       Object.keys(requiredSecrets)
         .filter((key) => keyRegex.test(key))
         .forEach((key) => (requiredSecrets[key] = true));
@@ -247,11 +259,17 @@ async function policyJsonIsValid(deployment) {
     ) {
       const result = {
         title: "Policy is missing required secrets",
-        path: deployment.policyPath,
+        path: deployment.policyJsonPath,
         problems: [],
         line: 0,
         level: "failure",
       };
+
+      function _getSids() {
+        return statementBlock
+          .map(statement => statement.Sid)
+          .filter(sid => sid)
+      }
 
       Object.keys(requiredSecrets)
         .filter((key) => !requiredSecrets[key])
@@ -261,19 +279,27 @@ async function policyJsonIsValid(deployment) {
           )
         );
 
+      // Sids must be unique within a policy
+      let Sid = "AllowRequiredSecrets";
+      let i = 0;
+      const allSids = _getSids();
+      while(allSids.includes(Sid)) {
+        i += 1;
+        Sid = `AllowRequiredSecrets${i}`;
+      }
+
       const newStatementBlock = {
-        Sid: "AllowRequiredSecrets",
+        Sid,
         Effect: "Allow",
         Action: secretsAction,
         Resource: Array.from(new Set(
           Object.keys(requiredSecrets)
             .filter((s) => !requiredSecrets[s])
-            .map(_getSimpleSecret)
           ))
       };
 
       // This lets us indent more correctly
-      const { indent } = detectIndentation(deployment.policyContents);
+      const { indent } = detectIndentation(deployment.policyJsonContents);
       const newPolicy = Object.assign({}, document);
       newPolicy.Statement = statementBlock.concat([newStatementBlock]);
       const newPolicyLines = JSON.stringify(newPolicy, null, indent).split("\n");
@@ -283,13 +309,13 @@ async function policyJsonIsValid(deployment) {
         .join("\n")}`;
 
       const { end: lineToAnnotate } = getLinesForJSON(
-        deployment.policyContents,
+        deployment.policyJsonContents,
         statementBlock[statementBlock.length - 1]
       );
 
       result.line = lineToAnnotate;
 
-      const oldLine = deployment.policyContents[lineToAnnotate - 1];
+      const oldLine = deployment.policyJsonContents[lineToAnnotate - 1];
       let newLine = oldLine;
       if (!oldLine.endsWith(",")) {
         newLine += ",";
@@ -310,7 +336,7 @@ async function policyJsonIsValid(deployment) {
   ) {
     const result = {
       title: "Policy is missing required actions",
-      path: deployment.policyPath,
+      path: deployment.policyJsonPath,
       problems: [],
       line: 0,
       level: "failure",
@@ -335,13 +361,13 @@ function maybeFixCapitalization({
   lineNumber,
   regex,
   correct,
-  policyPath,
+  policyJsonPath,
   title = "Capitalize this key",
 }) {
   if (regex.test(line)) {
     return {
       title: "Statement must be capitalized",
-      path: policyPath,
+      path: policyJsonPath,
       problems: [suggest(title, line.replace(regex, correct))],
       line: lineNumber,
       level: "failure",
@@ -404,49 +430,49 @@ function validateGenericIamPolicy(file, filePath) {
         lineNumber,
         regex: lowerId,
         correct: '"Id"',
-        policyPath: filePath,
+        policyJsonPath: filePath,
       },
       {
         line,
         lineNumber,
         regex: lowerVersion,
         correct: '"Version"',
-        policyPath: filePath,
+        policyJsonPath: filePath,
       },
       {
         line,
         lineNumber,
         regex: lowerStatement,
         correct: '"Statement"',
-        policyPath: filePath,
+        policyJsonPath: filePath,
       },
       {
         line,
         lineNumber,
         regex: lowerSid,
         correct: '"Sid"',
-        policyPath: filePath,
+        policyJsonPath: filePath,
       },
       {
         line,
         lineNumber,
         regex: lowerEffect,
         correct: '"Effect"',
-        policyPath: filePath,
+        policyJsonPath: filePath,
       },
       {
         line,
         lineNumber,
         regex: lowerPrincipal,
         correct: '"Principal"',
-        policyPath: filePath,
+        policyJsonPath: filePath,
       },
       {
         line,
         lineNumber,
         regex: wrongPrinciple,
         correct: '"Principal"',
-        policyPath: filePath,
+        policyJsonPath: filePath,
         title: "Wrong spelling of Principal",
       },
       {
@@ -454,35 +480,35 @@ function validateGenericIamPolicy(file, filePath) {
         lineNumber,
         regex: lowerAction,
         correct: '"Action"',
-        policyPath: filePath,
+        policyJsonPath: filePath,
       },
       {
         line,
         lineNumber,
         regex: lowerNotAction,
         correct: '"NotAction"',
-        policyPath: filePath,
+        policyJsonPath: filePath,
       },
       {
         line,
         lineNumber,
         regex: lowerResource,
         correct: '"Resource"',
-        policyPath: filePath,
+        policyJsonPath: filePath,
       },
       {
         line,
         lineNumber,
         regex: lowerNotResource,
         correct: '"NotResource"',
-        policyPath: filePath,
+        policyJsonPath: filePath,
       },
       {
         line,
         lineNumber,
         regex: lowerCondition,
         correct: '"Condition"',
-        policyPath: filePath,
+        policyJsonPath: filePath,
       },
     ]
       .map(maybeFixCapitalization)

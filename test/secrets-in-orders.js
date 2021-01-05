@@ -34,6 +34,7 @@ const context = {
 describe("Secrets in orders file", () => {
   it("accepts an orders file with no use of secrets", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [
         "export SOMEVAR=notasecret",
@@ -47,6 +48,7 @@ describe("Secrets in orders file", () => {
 
   it("recommends creating a secrets.json if one is not present and there are secrets in the orders", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [
         "export SOMEVAR=notasecret",
@@ -167,6 +169,7 @@ describe("Secrets in orders file", () => {
       },
     ];
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [
         "export SOMEVAR=notasecret",
@@ -178,8 +181,8 @@ describe("Secrets in orders file", () => {
         "dockerdeploy github/glg/streamliner/master:latest",
       ],
       secretsJson,
-      secretsContents: JSON.stringify(secretsJson, null, 4).split("\n"),
-      secretsPath: "streamliner/secrets.json",
+      secretsJsonContents: JSON.stringify(secretsJson, null, 4).split("\n"),
+      secretsJsonPath: "streamliner/secrets.json",
     };
 
     const results = await secretsInOrders(deployment, context, inputs);

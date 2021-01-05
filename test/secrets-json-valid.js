@@ -4,6 +4,7 @@ const secretsJsonIsValid = require("../checks/secrets-json-valid");
 describe("secrets.json is valid check", () => {
   it("skips when there is no secrets.json", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
     };
@@ -29,10 +30,11 @@ describe("secrets.json is valid check", () => {
     ]`;
 
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
-      secretsPath: "streamliner/secrets.json",
-      secretsContents: secretsJson.split("\n"),
+      secretsJsonPath: "streamliner/secrets.json",
+      secretsJsonContents: secretsJson.split("\n"),
     };
 
     const results = await secretsJsonIsValid(deployment);
@@ -47,19 +49,20 @@ describe("secrets.json is valid check", () => {
     const secretsJson = "invalid json";
 
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
-      secretsPath: "streamliner/secrets.json",
-      secretsContents: secretsJson.split("\n"),
+      secretsJsonPath: "streamliner/secrets.json",
+      secretsJsonContents: secretsJson.split("\n"),
     };
 
     const results = await secretsJsonIsValid(deployment);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: "secrets.json is not valid JSON",
-      path: deployment.secretsPath,
+      path: deployment.secretsJsonPath,
       problems: [
-        `An error was encountered while trying to JSON parse ${deployment.secretsPath}`,
+        `An error was encountered while trying to JSON parse ${deployment.secretsJsonPath}`,
       ],
       line: 0,
       level: "failure",
@@ -72,17 +75,18 @@ describe("secrets.json is valid check", () => {
     }`;
 
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
-      secretsPath: "streamliner/secrets.json",
-      secretsContents: secretsJson.split("\n"),
+      secretsJsonPath: "streamliner/secrets.json",
+      secretsJsonContents: secretsJson.split("\n"),
     };
 
     const results = await secretsJsonIsValid(deployment);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: `Invalid secrets.json`,
-      path: deployment.secretsPath,
+      path: deployment.secretsJsonPath,
       problems: [
         "secrets.json must be an array of objects like `[{ name, valueFrom }]`",
       ],
@@ -105,17 +109,18 @@ describe("secrets.json is valid check", () => {
     ]`;
 
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
-      secretsPath: "streamliner/secrets.json",
-      secretsContents: secretsJson.split("\n"),
+      secretsJsonPath: "streamliner/secrets.json",
+      secretsJsonContents: secretsJson.split("\n"),
     };
 
     const results = await secretsJsonIsValid(deployment);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: `Invalid secrets.json`,
-      path: deployment.secretsPath,
+      path: deployment.secretsJsonPath,
       problems: [
         "secrets.json must be an array of objects like `[{ name, valueFrom }]`",
       ],
@@ -136,17 +141,18 @@ describe("secrets.json is valid check", () => {
     ]`;
 
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
-      secretsPath: "streamliner/secrets.json",
-      secretsContents: secretsJson.split("\n"),
+      secretsJsonPath: "streamliner/secrets.json",
+      secretsJsonContents: secretsJson.split("\n"),
     };
 
     const results = await secretsJsonIsValid(deployment);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: "Invalid Secret Structure",
-      path: deployment.secretsPath,
+      path: deployment.secretsJsonPath,
       problems: ["Each secret must be an object like { name, valueFrom }"],
       line: {
         start: 2,
@@ -170,17 +176,18 @@ describe("secrets.json is valid check", () => {
     ]`;
 
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
-      secretsPath: "streamliner/secrets.json",
-      secretsContents: secretsJson.split("\n"),
+      secretsJsonPath: "streamliner/secrets.json",
+      secretsJsonContents: secretsJson.split("\n"),
     };
 
     const results = await secretsJsonIsValid(deployment);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: "Invalid Secret Structure",
-      path: deployment.secretsPath,
+      path: deployment.secretsJsonPath,
       problems: [
         'Each secret must **only** contain the keys "name" and "valueFrom".',
       ],
@@ -205,17 +212,18 @@ describe("secrets.json is valid check", () => {
     ]`;
 
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
-      secretsPath: "streamliner/secrets.json",
-      secretsContents: secretsJson.split("\n"),
+      secretsJsonPath: "streamliner/secrets.json",
+      secretsJsonContents: secretsJson.split("\n"),
     };
 
     const results = await secretsJsonIsValid(deployment);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: "Invalid Secret: OTHER_VALUE",
-      path: deployment.secretsPath,
+      path: deployment.secretsJsonPath,
       problems: ["Invalid secret ARN: dev/json_secret"],
       line: {
         start: 6,
