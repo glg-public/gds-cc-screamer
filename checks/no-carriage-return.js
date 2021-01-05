@@ -10,10 +10,6 @@ const core = require("@actions/core");
  * @returns {Array<Result>}
  */
 async function noCarriageReturn(deployment, context, inputs) {
-  if (!deployment.ordersContents) {
-    core.info(`No Orders Present - Skipping ${deployment.serviceName}`);
-    return [];
-  }
   core.info(`No Carriage Return Character - ${deployment.ordersPath}`);
   const results = [];
 
@@ -31,6 +27,7 @@ async function noCarriageReturn(deployment, context, inputs) {
   }
 
   if (
+    deployment.ordersContents &&
     deployment.ordersContents.filter((line) => line.includes("\r")).length > 0
   ) {
     results.push(_removeCR(deployment.ordersPath));
