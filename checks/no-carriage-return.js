@@ -44,10 +44,10 @@ async function noCarriageReturn(deployment, context, inputs) {
   }
 
   if (
-    deployment.policyContents &&
-    deployment.policyContents.filter((line) => line.includes("\r")).length > 0
+    deployment.policyJsonContents &&
+    deployment.policyJsonContents.filter((line) => line.includes("\r")).length > 0
   ) {
-    results.push(_removeCR(deployment.policyPath));
+    results.push(_removeCR(deployment.policyJsonPath));
   }
 
   return results;
