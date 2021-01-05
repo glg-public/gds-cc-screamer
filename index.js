@@ -36,7 +36,7 @@ async function getContents(serviceName) {
     const filepath = path.join(serviceName, filename);
     try {
       await fs.stat(filepath);
-      const contents = await fs.readFile(filePath, "utf8");
+      const contents = await fs.readFile(filepath, "utf8");
       result[`${_camelCaseFileName(filename)}Path`] = filepath;
       result[`${_camelCaseFileName(filename)}Contents`] = contents.split('\n');
     } catch (e) {
