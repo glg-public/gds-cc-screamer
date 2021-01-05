@@ -80,8 +80,16 @@ async function policyJsonIsValid(deployment) {
 
   function _getSimpleSecret(secret) {
     const match = secretArn.exec(secret);
-    const { partition, region, account, secretName } = match.groups;
-    return `arn:${partition}:secretsmanager:${region}:${account}:secret:${secretName}`;
+    const { partition, region, account, secretName, versionId } = match.groups;
+    let arn = `arn:${partition}:secretsmanager:${region}:${account}:secret:${secretName}`;
+
+    if (versionId) {
+      arn += `-${versionId}`;
+    } else {
+      arn += '-??????';
+    }
+
+    return arn
   }
 
   function _toggleRequiredAction(item) {
@@ -222,7 +230,11 @@ async function policyJsonIsValid(deployment) {
 
     function _toggleRequiredSecret(resource) {
       // We need to account for wildcards
-      const keyRegex = new RegExp(resource.replace(/\*/g, "[\\w\\-\\/\\:]+") + "$");
+      const keyRegex = new RegExp(
+        resource
+          .replace(/\*/g, "[\\w\\-\\/\\:]+")
+          .replace(/\?/g, "[\\w\\?]")
+      + "$");
       Object.keys(requiredSecrets)
         .filter((key) => keyRegex.test(key))
         .forEach((key) => (requiredSecrets[key] = true));
@@ -268,7 +280,7 @@ async function policyJsonIsValid(deployment) {
         Resource: Array.from(new Set(
           Object.keys(requiredSecrets)
             .filter((s) => !requiredSecrets[s])
-            .map(_getSimpleSecret)
+            // .map(_getSimpleSecret)
           ))
       };
 

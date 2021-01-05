@@ -17,6 +17,7 @@ function getLinesForJSON(fileLines, jsonObj) {
   // Convert the object into a regex
   const regex = new RegExp(
     JSON.stringify(jsonObj)
+      .replace(/\?/g, "\\?")
       .replace(/\*/g, "\\*")
       .replace(/{/g, "{\\s*")
       .replace(/:"/g, ':\\s*"')

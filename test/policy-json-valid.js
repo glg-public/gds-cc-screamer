@@ -701,7 +701,7 @@ describe("policy.json is valid", () => {
             Effect: "Allow",
             Action: "secretsmanager:GetSecretValue",
             Resource:
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
+              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret-??????",
           },
           {
             Effect: "Allow",
@@ -741,7 +741,7 @@ describe("policy.json is valid", () => {
       title: "Policy is missing required secrets",
       path: "streamliner/policy.json",
       problems: [
-        "Your secrets.json requests arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else, but your policy does not allow access.",
+        "Your secrets.json requests arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else-??????, but your policy does not allow access.",
         "Add the following statement block\n" +
           "```suggestion\n" +
           "    },\n" + 
@@ -750,7 +750,7 @@ describe("policy.json is valid", () => {
           '      "Effect": "Allow",\n' +
           '      "Action": "secretsmanager:GetSecretValue",\n' +
           '      "Resource": [\n' +
-          '        "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else"\n' +
+          '        "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else-??????"\n' +
           "      ]\n" +
           "    }\n" +
           "```",
@@ -767,7 +767,10 @@ describe("policy.json is valid", () => {
           {
             Effect: "Allow",
             Action: "secretsmanager:GetSecretValue",
-            Resource: "arn:aws:secretsmanager:us-east-1:868468680417:secret:*", // supports wildcards
+            Resource: [
+              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret-??????",
+              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else-??????"
+            ], // supports wildcards
           },
           {
             Effect: "Allow",
