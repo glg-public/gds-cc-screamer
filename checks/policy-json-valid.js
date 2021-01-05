@@ -265,6 +265,12 @@ async function policyJsonIsValid(deployment) {
         level: "failure",
       };
 
+      function _getSids() {
+        return statementBlock
+          .map(statement => statement.Sid)
+          .filter(sid => sid)
+      }
+
       Object.keys(requiredSecrets)
         .filter((key) => !requiredSecrets[key])
         .forEach((key) =>
@@ -273,14 +279,22 @@ async function policyJsonIsValid(deployment) {
           )
         );
 
+      // Sids must be unique within a policy
+      let Sid = "AllowRequiredSecrets";
+      let i = 0;
+      const allSids = _getSids();
+      while(allSids.includes(Sid)) {
+        i += 1;
+        Sid = `AllowRequiredSecrets${i}`;
+      }
+
       const newStatementBlock = {
-        Sid: "AllowRequiredSecrets",
+        Sid,
         Effect: "Allow",
         Action: secretsAction,
         Resource: Array.from(new Set(
           Object.keys(requiredSecrets)
             .filter((s) => !requiredSecrets[s])
-            // .map(_getSimpleSecret)
           ))
       };
 
