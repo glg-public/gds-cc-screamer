@@ -32,7 +32,7 @@ function _camelCaseFileName(filename) {
  */
 async function getContents(serviceName) {
   const result = { serviceName };
-  filesToCheck.forEach((filename) => {
+  filesToCheck.forEach(async (filename) => {
     const filepath = path.join(serviceName, filename);
     try {
       await fs.stat(filepath);
