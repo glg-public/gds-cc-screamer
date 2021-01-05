@@ -181,8 +181,8 @@ describe("Secrets in orders file", () => {
         "dockerdeploy github/glg/streamliner/master:latest",
       ],
       secretsJson,
-      secretsContents: JSON.stringify(secretsJson, null, 4).split("\n"),
-      secretsPath: "streamliner/secrets.json",
+      secretsJsonContents: JSON.stringify(secretsJson, null, 4).split("\n"),
+      secretsJsonPath: "streamliner/secrets.json",
     };
 
     const results = await secretsInOrders(deployment, context, inputs);

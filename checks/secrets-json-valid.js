@@ -14,24 +14,24 @@ async function secretsJsonIsValid(deployment) {
   const results = [];
 
   // secrets.json is not required
-  if (!deployment.secretsContents) {
+  if (!deployment.secretsJsonContents) {
     core.info(`No secrets.json present, skipping - ${deployment.serviceName}`);
     return results;
   }
 
-  core.info(`secrets.json is valid - ${deployment.secretsPath}`);
+  core.info(`secrets.json is valid - ${deployment.secretsJsonPath}`);
 
   // secrets.json must be valid json
   let secretsJson;
   try {
-    secretsJson = JSON.parse(deployment.secretsContents.join("\n"));
+    secretsJson = JSON.parse(deployment.secretsJsonContents.join("\n"));
   } catch (e) {
     return [
       {
         title: "secrets.json is not valid JSON",
-        path: deployment.secretsPath,
+        path: deployment.secretsJsonPath,
         problems: [
-          `An error was encountered while trying to JSON parse ${deployment.secretsPath}`,
+          `An error was encountered while trying to JSON parse ${deployment.secretsJsonPath}`,
         ],
         line: 0,
         level: "failure",
@@ -44,7 +44,7 @@ async function secretsJsonIsValid(deployment) {
     return [
       {
         title: `Invalid secrets.json`,
-        path: deployment.secretsPath,
+        path: deployment.secretsJsonPath,
         problems: [
           "secrets.json must be an array of objects like `[{ name, valueFrom }]`",
         ],
@@ -59,7 +59,7 @@ async function secretsJsonIsValid(deployment) {
       return [
         {
           title: `Invalid secrets.json`,
-          path: deployment.secretsPath,
+          path: deployment.secretsJsonPath,
           problems: [
             "secrets.json must be an array of objects like `[{ name, valueFrom }]`",
           ],
@@ -73,10 +73,10 @@ async function secretsJsonIsValid(deployment) {
       title: "Invalid Secret Structure",
       problems: [],
       level: "failure",
-      path: deployment.secretsPath,
+      path: deployment.secretsJsonPath,
     };
 
-    const lines = getLinesForJSON(deployment.secretsContents, secret);
+    const lines = getLinesForJSON(deployment.secretsJsonContents, secret);
     if (lines.start === lines.end) {
       result.line = lines.start;
     } else {
@@ -95,19 +95,19 @@ async function secretsJsonIsValid(deployment) {
       if (wrongCaseForName) {
         const regex = new RegExp(`"${key}":`);
         const lineNumber = getLineWithinObject(
-          deployment.secretsContents,
+          deployment.secretsJsonContents,
           secret,
           regex
         );
         results.push({
           title: "Incorrect Casing",
           level: "failure",
-          path: deployment.secretsPath,
+          path: deployment.secretsJsonPath,
           line: lineNumber,
           problems: [
             suggest(
               "Lowercase this key:",
-              deployment.secretsContents[lineNumber - 1].replace(regex, '"name":')
+              deployment.secretsJsonContents[lineNumber - 1].replace(regex, '"name":')
             ),
           ],
         });
@@ -115,19 +115,19 @@ async function secretsJsonIsValid(deployment) {
       } else if (wrongCaseForValueFrom) {
         const regex = new RegExp(`"${key}":`);
         const lineNumber = getLineWithinObject(
-          deployment.secretsContents,
+          deployment.secretsJsonContents,
           secret,
           regex
         );
         results.push({
           title: "Incorrect Casing",
           level: "failure",
-          path: deployment.secretsPath,
+          path: deployment.secretsJsonPath,
           line: lineNumber,
           problems: [
             suggest(
               "Lowercase this key:",
-              deployment.secretsContents[lineNumber - 1].replace(
+              deployment.secretsJsonContents[lineNumber - 1].replace(
                 regex,
                 '"valueFrom":'
               )

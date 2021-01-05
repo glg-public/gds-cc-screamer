@@ -34,10 +34,10 @@ async function noCarriageReturn(deployment, context, inputs) {
   }
 
   if (
-    deployment.secretsContents &&
-    deployment.secretsContents.filter((line) => line.includes("\r")).length > 0
+    deployment.secretsJsonContents &&
+    deployment.secretsJsonContents.filter((line) => line.includes("\r")).length > 0
   ) {
-    results.push(_removeCR(deployment.secretsPath));
+    results.push(_removeCR(deployment.secretsJsonPath));
   }
 
   if (

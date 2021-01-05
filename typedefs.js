@@ -249,8 +249,8 @@
  * serviceName: string,
  * ordersPath: (string|undefined),
  * ordersContents: (Array<string>|undefined),
- * secretsPath: (string|undefined),
- * secretsContents: (Array<string>|undefined),
+ * secretsJsonPath: (string|undefined),
+ * secretsJsonContents: (Array<string>|undefined),
  * policyJsonPath: (string|undefined),
  * policyJsonContents: (Array<string>|undefined)
  * }} Deployment

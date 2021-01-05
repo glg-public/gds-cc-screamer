@@ -692,7 +692,7 @@ describe("policy.json is valid", () => {
       ordersContents: [],
       policyJsonPath: "streamliner/policy.json",
       policyJsonContents: policyJson.split("\n"),
-      secretsContents: [], // indicates presence of a secrets.json
+      secretsJsonContents: [], // indicates presence of a secrets.json
     };
 
     let results = (await policyJsonIsValid(deployment)).filter(({ level }) => level === 'failure');
@@ -738,7 +738,7 @@ describe("policy.json is valid", () => {
       ordersContents: [],
       policyJsonPath: "streamliner/policy.json",
       policyJsonContents: policyJson.split("\n"),
-      secretsContents: [], // indicates presence of a secrets.json
+      secretsJsonContents: [], // indicates presence of a secrets.json
       secretsJson: [
         {
           name: "MY_SECRET",
@@ -808,7 +808,7 @@ describe("policy.json is valid", () => {
       ordersContents: [],
       policyJsonPath: "streamliner/policy.json",
       policyJsonContents: policyJson.split("\n"),
-      secretsContents: [], // indicates presence of a secrets.json
+      secretsJsonContents: [], // indicates presence of a secrets.json
       secretsJson: [
         {
           name: "MY_SECRET",
@@ -855,7 +855,7 @@ describe("policy.json is valid", () => {
       ordersContents: [],
       policyJsonPath: "streamliner/policy.json",
       policyJsonContents: policyJson.split("\n"),
-      secretsContents: [], // indicates presence of a secrets.json
+      secretsJsonContents: [], // indicates presence of a secrets.json
       secretsJson: [
         {
           name: "MY_SECRET",
@@ -926,7 +926,7 @@ describe("policy.json is valid", () => {
       ordersContents: [],
       policyJsonPath: "streamliner/policy.json",
       policyJsonContents: policyJson.split("\n"),
-      secretsContents: [], // indicates presence of a secrets.json
+      secretsJsonContents: [], // indicates presence of a secrets.json
       secretsJson: [
         {
           name: "MY_SECRET",

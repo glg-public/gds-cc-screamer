@@ -74,7 +74,7 @@ async function policyJsonIsValid(deployment) {
 
   // Secrets access is only needed for services that use secrets
   const secretsAction = "secretsmanager:GetSecretValue";
-  if (deployment.secretsContents) {
+  if (deployment.secretsJsonContents) {
     requiredActions[secretsAction] = false;
   }
 
