@@ -43,7 +43,7 @@ async function getContents(serviceName) {
       // No particular file is required in order to run the check suite
     }
   }
-    
+  console.log(result);  
   return result;
 }
 
