@@ -246,8 +246,9 @@
 
 /**
  * @typedef {{
- * ordersPath: string,
- * ordersContents: Array<string>,
+ * serviceName: string,
+ * ordersPath: (string|undefined),
+ * ordersContents: (Array<string>|undefined),
  * secretsPath: (string|undefined),
  * secretsContents: (Array<string>|undefined),
  * policyPath: (string|undefined),

@@ -9,7 +9,10 @@ const { isAJob } = require('../util');
  * @returns {Array<Result>}
  */
 async function validateHealthcheck(deployment) {
-  
+  if (!deployment.ordersContents) {
+    core.info(`No Orders Present - Skipping ${deployment.serviceName}`);
+    return [];
+  }
 
   const problems = [];
   let lineNumber = 0;

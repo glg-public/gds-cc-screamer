@@ -10,6 +10,10 @@ const exportLine = /^export\s(?<variable>.*?)\s*=\s*(?<value>.*)/i;
  * @returns {Array<Result>}
  */
 async function noSpacesInExports(deployment) {
+  if (!deployment.ordersContents) {
+    core.info(`No Orders Present - Skipping ${deployment.serviceName}`);
+    return [];
+  }
   core.info(`No Spaces in Exports - ${deployment.ordersPath}`);
   const results = [];
 

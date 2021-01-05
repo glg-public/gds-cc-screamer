@@ -4,6 +4,7 @@ const noSourcing = require("../checks/no-sourcing");
 describe("No Sourcing Check", () => {
   it("allows orders with no external sourcing", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
     };
@@ -14,6 +15,7 @@ describe("No Sourcing Check", () => {
 
   it("rejects orders that source another file", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["source /var/starphleet/headquarters/cookie-beta/orders"],
     };

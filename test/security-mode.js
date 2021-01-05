@@ -17,6 +17,7 @@ describe("Security Mode Check", () => {
 
     // Bare jwt
     let deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["export SECURITY_MODE=jwt"],
     };
@@ -26,6 +27,7 @@ describe("Security Mode Check", () => {
 
     // single quote jwt
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["export SECURITY_MODE='jwt'"],
     };
@@ -35,6 +37,7 @@ describe("Security Mode Check", () => {
 
     // double quote jwt
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ['export SECURITY_MODE="jwt"'],
     };
@@ -44,6 +47,7 @@ describe("Security Mode Check", () => {
 
     // bare verfifiedSession
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["export SECURITY_MODE=verifiedSession"],
     };
@@ -53,6 +57,7 @@ describe("Security Mode Check", () => {
 
     // single quote verifiedSession
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["export SECURITY_MODE='verifiedSession'"],
     };
@@ -62,6 +67,7 @@ describe("Security Mode Check", () => {
 
     // double quote verifiedSession
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ['export SECURITY_MODE="verifiedSession"'],
     };
@@ -71,6 +77,7 @@ describe("Security Mode Check", () => {
 
     // And this fails as an invalid security mode
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["export SECURITY_MODE=public"],
     };
@@ -98,6 +105,7 @@ describe("Security Mode Check", () => {
 
     // Bare public
     let deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["export SECURITY_MODE=public"],
     };
@@ -107,6 +115,7 @@ describe("Security Mode Check", () => {
 
     // single quote public
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["export SECURITY_MODE='public'"],
     };
@@ -116,6 +125,7 @@ describe("Security Mode Check", () => {
 
     // double quote public
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ['export SECURITY_MODE="public"'],
     };
@@ -125,6 +135,7 @@ describe("Security Mode Check", () => {
 
     // And this fails as an invalid security mode
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["export SECURITY_MODE=jwt"],
     };
@@ -152,6 +163,7 @@ describe("Security Mode Check", () => {
 
     // Bare public
     let deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["export SECURITY_MODE=public"],
     };
@@ -161,6 +173,7 @@ describe("Security Mode Check", () => {
 
     // single quote public
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["export SECURITY_MODE='public'"],
     };
@@ -170,12 +183,17 @@ describe("Security Mode Check", () => {
 
     // double quote public
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ['export SECURITY_MODE="public"'],
     };
 
+    results = await securityMode(deployment, context);
+    expect(results.length).to.equal(0);
+
     // And this fails as an invalid security mode
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["export SECURITY_MODE=jwt"],
     };
@@ -203,6 +221,7 @@ describe("Security Mode Check", () => {
 
     // Bare public
     let deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
     };

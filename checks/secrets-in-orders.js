@@ -23,12 +23,16 @@ const removeLineSuggestion = "Remove this line\n```suggestion\n```";
  * @returns {Array<Result>}
  */
 async function secretsInOrders(deployment, context, inputs) {
+  if (!deployment.ordersContents) {
+    core.info(`No Orders Present - Skipping ${deployment.serviceName}`);
+    return [];
+  }
   core.info(`Secrets in Orders File - ${deployment.ordersPath}`);
   const { awsAccount, secretsPrefix, awsRegion, awsPartition } = inputs;
   const results = [];
   const secretsJson = [];
   const { owner, repo, branch } = getOwnerRepoBranch(context);
-  const secretsJsonPath = path.join(path.dirname(deployment.ordersPath), "secrets.json");
+  const secretsJsonPath = path.join(deployment.serviceName, "secrets.json");
 
   deployment.ordersContents
     .map((line, i) => {

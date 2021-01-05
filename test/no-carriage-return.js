@@ -4,6 +4,7 @@ const noCarriageReturn = require("../checks/no-carriage-return");
 describe("No Carriage Return", () => {
   it("accepts a file with no carriage returns", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["export VAR=value", "# A comment", "export VARZ=valuez"],
     };
@@ -14,6 +15,7 @@ describe("No Carriage Return", () => {
 
   it("Rejects Orders file with CRLF", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [
         "export VAR=value\r",
@@ -49,6 +51,7 @@ describe("No Carriage Return", () => {
     ]`;
 
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["export VAR=value", "# A comment", "export VARZ=valuez"],
       secretsPath: "streamliner/secrets.json",
@@ -95,6 +98,7 @@ describe("No Carriage Return", () => {
     ).replace(/\n/g, "\r\n");
 
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["export VAR=value", "# A comment", "export VARZ=valuez"],
       policyPath: "streamliner/policy.json",

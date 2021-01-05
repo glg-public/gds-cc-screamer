@@ -5,36 +5,45 @@ const path = require("path");
 const fs = require("fs").promises;
 const checks = require("./checks");
 
+// These are all of the files that, if changed, will trigger the check suite
+const filesToCheck = [
+  "orders",
+  "secrets.json",
+  "policy.json"
+];
+
+function _camelCaseFileName(filename) {
+  const words = filename.split('.');
+  
+  let result = words[0];
+
+  if (words.length > 1) {
+    result += words.slice(1).map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join();
+  }
+
+  return result;
+}
+
 /**
  * Read orders, secrets.json, and policy.json from the directory,
  * and split them by \n.
  * @param {String} filePath the path for the orders file
  * @returns {Deployment}
  */
-async function getContents(filePath) {
-  const contents = await fs.readFile(filePath, "utf8");
-  const result = { ordersPath: filePath, ordersContents: contents.split("\n") };
-  const secretsJsonPath = path.join(path.dirname(filePath), "secrets.json");
-  const policyJsonPath = path.join(path.dirname(filePath), "policy.json");
-
-  try {
-    await fs.stat(secretsJsonPath);
-    const secretsJson = await fs.readFile(secretsJsonPath, "utf8");
-    result.secretsContents = secretsJson.split("\n");
-    result.secretsPath = secretsJsonPath;
-  } catch (e) {
-    // secrets.json is not required
-  }
-
-  try {
-    await fs.stat(policyJsonPath);
-    const policyJson = await fs.readFile(policyJsonPath, "utf8");
-    result.policyContents = policyJson.split("\n");
-    result.policyPath = policyJsonPath;
-  } catch (e) {
-    // policy.json is not required
-  }
-
+async function getContents(serviceName) {
+  const result = { serviceName };
+  filesToCheck.forEach((filename) => {
+    const filepath = path.join(serviceName, filename);
+    try {
+      await fs.stat(filepath);
+      const contents = await fs.readFile(filePath, "utf8");
+      result[`${_camelCaseFileName(filename)}Path`] = filepath;
+      result[`${_camelCaseFileName(filename)}Contents`] = contents.split('\n');
+    } catch (e) {
+      // No particular file is required in order to run the check suite
+    }
+  });
+  
   return result;
 }
 
@@ -114,11 +123,11 @@ async function run() {
       pull_number,
     });
 
-    const deployments = await Promise.all(
+    const deployments = await Promise.all(Array.from(new Set(
       files
-        .filter((f) => path.basename(f.filename).toLowerCase() === "orders")
+        .filter((f) => filesToCheck.includes(path.basename(f.filename).toLowerCase()))
         .filter((f) => f.status !== "removed")
-        .map((f) => f.filename)
+        .map((f) => path.dirname(f.filename))))
         .map((fn) => getContents(fn))
     );
 

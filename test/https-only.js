@@ -4,6 +4,7 @@ const httpsOnly = require("../checks/https-only");
 describe("HTTPS Only Check", () => {
   it("rejects exported insecure glg domains", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [
         "export SEARCH=http://search.glgresearch.com/mosaic",
@@ -37,6 +38,7 @@ export MORE='https://services.glgresearch.com/streamliner'
 
   it("accepts secure glg domains", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [
         "export SEARCH=https://search.glgresearch.com/mosaic",

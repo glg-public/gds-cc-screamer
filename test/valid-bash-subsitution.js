@@ -4,6 +4,7 @@ const validSubstitutionCheck = require("../checks/valid-bash-substitution");
 describe("Valid Bash Substitution Checker", async () => {
   it("accepts valid bash substitutions", async () => {
     let deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [
         'export SOME_VAR="first-${SOME_OTHER_VALUE}-and-more-text"',
@@ -18,6 +19,7 @@ describe("Valid Bash Substitution Checker", async () => {
 
   it("rejects bash subsitutions contained in single quotes", async () => {
     let deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [
         "export SOME_VAR='first-${SOME_OTHER_VALUE}-and-more-text'",

@@ -10,6 +10,11 @@ const { isAJob } = require('../util');
  * @returns {Array<Result>}
  */
 async function templateCheck(deployment, context) {
+  if (!deployment.ordersContents) {
+    core.info(`No Orders Present - Skipping ${deployment.serviceName}`);
+    return [];
+  }
+
   if (isAJob(deployment.ordersContents)) {
     core.info('Jobs do not require a security mode, skipping.');
     return [];

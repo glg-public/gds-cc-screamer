@@ -17,6 +17,10 @@ const reBadURLs = new RegExp(
  * @returns {Array<Result>}
  */
 async function httpsOnly(deployment) {
+  if (!deployment.ordersContents) {
+    core.info(`No Orders Present - Skipping ${deployment.serviceName}`);
+    return [];
+  }
   core.info(`HTTPS Only - ${deployment.ordersPath}`);
   const results = [];
 

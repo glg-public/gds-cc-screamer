@@ -11,9 +11,14 @@ const validCharacters = /^[a-z][a-z0-9-]*$/;
  * @returns {Array<Result>}
  */
 async function validateServiceName(deployment) {
+  if (!deployment.ordersContents) {
+    core.info(`No Orders Present - Skipping ${deployment.serviceName}`);
+    return [];
+  }
+
   core.info(`Valid Service Name - ${deployment.ordersPath}`);
 
-  const serviceName = path.dirname(deployment.ordersPath);
+  const { serviceName } = deployment;
 
   const problems = [];
 

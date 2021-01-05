@@ -8,6 +8,7 @@ const resourceFmtError = '"Resource" must be either a valid [ARN](https://docs.a
 describe("policy.json is valid", () => {
   it("skips if there is no policy.json", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
     };
@@ -41,6 +42,7 @@ describe("policy.json is valid", () => {
       2
     );
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
       policyPath: "streamliner/policy.json",
@@ -53,6 +55,7 @@ describe("policy.json is valid", () => {
 
   it("rejects policy.json that is not valid JSON", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
       policyPath: "streamliner/policy.json",
@@ -91,6 +94,7 @@ describe("policy.json is valid", () => {
       2
     );
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
       policyPath: "streamliner/policy.json",
@@ -133,6 +137,7 @@ describe("policy.json is valid", () => {
       2
     );
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
       policyPath: "streamliner/policy.json",
@@ -214,6 +219,7 @@ describe("policy.json is valid", () => {
       2
     );
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
       policyPath: "streamliner/policy.json",
@@ -256,6 +262,7 @@ describe("policy.json is valid", () => {
       2
     );
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
       policyPath: "streamliner/policy.json",
@@ -282,6 +289,7 @@ describe("policy.json is valid", () => {
       2
     );
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
       policyPath: "streamliner/policy.json",
@@ -329,6 +337,7 @@ describe("policy.json is valid", () => {
       2
     );
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
       policyPath: "streamliner/policy.json",
@@ -379,6 +388,7 @@ describe("policy.json is valid", () => {
       2
     );
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
       policyPath: "streamliner/policy.json",
@@ -427,6 +437,7 @@ describe("policy.json is valid", () => {
       2
     );
     let deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
       policyPath: "streamliner/policy.json",
@@ -478,6 +489,7 @@ describe("policy.json is valid", () => {
     );
 
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
       policyPath: "streamliner/policy.json",
@@ -527,6 +539,7 @@ describe("policy.json is valid", () => {
       2
     );
     let deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
       policyPath: "streamliner/policy.json",
@@ -578,6 +591,7 @@ describe("policy.json is valid", () => {
     );
 
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
       policyPath: "streamliner/policy.json",
@@ -627,6 +641,7 @@ describe("policy.json is valid", () => {
       2
     );
     let deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
       policyPath: "streamliner/policy.json",
@@ -672,6 +687,7 @@ describe("policy.json is valid", () => {
       2
     );
     let deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
       policyPath: "streamliner/policy.json",
@@ -717,6 +733,7 @@ describe("policy.json is valid", () => {
       2
     );
     let deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
       policyPath: "streamliner/policy.json",
@@ -786,6 +803,7 @@ describe("policy.json is valid", () => {
       2
     );
     deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
       policyPath: "streamliner/policy.json",
@@ -832,6 +850,7 @@ describe("policy.json is valid", () => {
       2
     );
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
       policyPath: "streamliner/policy.json",
@@ -902,6 +921,7 @@ describe("policy.json is valid", () => {
       2
     );
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
       policyPath: "streamliner/policy.json",

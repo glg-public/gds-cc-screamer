@@ -10,6 +10,10 @@ const exportedVariable = /^export +(?<variable>\w+)=/;
  * @returns {Array<Result>}
  */
 async function noDuplicateExports(deployment) {
+  if (!deployment.ordersContents) {
+    core.info(`No Orders Present - Skipping ${deployment.serviceName}`);
+    return [];
+  }
   core.info(`No Duplicate Exports - ${deployment.ordersPath}`);
   const results = [];
 

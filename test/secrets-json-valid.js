@@ -4,6 +4,7 @@ const secretsJsonIsValid = require("../checks/secrets-json-valid");
 describe("secrets.json is valid check", () => {
   it("skips when there is no secrets.json", async () => {
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
     };
@@ -29,6 +30,7 @@ describe("secrets.json is valid check", () => {
     ]`;
 
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
       secretsPath: "streamliner/secrets.json",
@@ -47,6 +49,7 @@ describe("secrets.json is valid check", () => {
     const secretsJson = "invalid json";
 
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
       secretsPath: "streamliner/secrets.json",
@@ -72,6 +75,7 @@ describe("secrets.json is valid check", () => {
     }`;
 
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
       secretsPath: "streamliner/secrets.json",
@@ -105,6 +109,7 @@ describe("secrets.json is valid check", () => {
     ]`;
 
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
       secretsPath: "streamliner/secrets.json",
@@ -136,6 +141,7 @@ describe("secrets.json is valid check", () => {
     ]`;
 
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
       secretsPath: "streamliner/secrets.json",
@@ -170,6 +176,7 @@ describe("secrets.json is valid check", () => {
     ]`;
 
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
       secretsPath: "streamliner/secrets.json",
@@ -205,6 +212,7 @@ describe("secrets.json is valid check", () => {
     ]`;
 
     const deployment = {
+      serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [],
       secretsPath: "streamliner/secrets.json",
