@@ -190,7 +190,6 @@ async function leaveComment(
       result.line.hasOwnProperty("start") &&
       result.line.hasOwnProperty("end")
     ) {
-      
       await octokit.pulls.createReviewComment({
         owner,
         repo,
@@ -220,9 +219,20 @@ async function leaveComment(
   } catch (e) {
     // If the error is due to the problem existing outside the diff,
     // we still want to alert the user, so make a generic issue comment
-    if (errors.filter(err => err.resource === 'PullRequestReviewComment' && ["path", "line"].includes(e.field)).length > 0) {
+    if (
+      errors.filter(
+        (err) =>
+          err.resource === "PullRequestReviewComment" &&
+          ["path", "line"].includes(e.field)
+      ).length > 0
+    ) {
       result.line = 0;
-      await leaveComment(octokit, deployment, result, { owner, repo, pull_number, shall });
+      await leaveComment(octokit, deployment, result, {
+        owner,
+        repo,
+        pull_number,
+        shall,
+      });
     } else {
       console.log(e);
       console.log(result);
@@ -317,7 +327,11 @@ async function run() {
       core.setFailed("One or more checks has failed. See comments in PR.");
     }
   } catch (error) {
-    await suggestBugReport(octokit, error, "Error Running Check Suite", { owner, repo, pull_number});
+    await suggestBugReport(octokit, error, "Error Running Check Suite", {
+      owner,
+      repo,
+      pull_number,
+    });
     core.setFailed(error.message);
   }
 }
