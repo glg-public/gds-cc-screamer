@@ -611,56 +611,6 @@ describe("policy.json is valid", () => {
     });
   });
 
-  it("rejects policy.json that is missing required actions", async () => {
-    let policyJson = JSON.stringify(
-      {
-        Version: "2012-10-17",
-        Statement: [
-          {
-            Effect: "Allow",
-            Action: "resource:action",
-            Resource:
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
-          },
-          {
-            Effect: "Allow",
-            Action: [
-              "ecr:GetAuthorizationToken",
-              "ecr:BatchCheckLayerAvailability",
-              "ecr:GetDownloadUrlForLayer",
-              "logs:CreateLogStream",
-              "logs:PutLogEvents",
-              "secretsmanager:GetSecretValue",
-            ],
-            Resource:
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
-          },
-        ],
-      },
-      null,
-      2
-    );
-    let deployment = {
-      serviceName: "streamliner",
-      ordersPath: "streamliner/orders",
-      ordersContents: [],
-      policyJsonPath: "streamliner/policy.json",
-      policyJsonContents: policyJson.split("\n"),
-    };
-
-    let results = await policyJsonIsValid(deployment);
-    expect(results.length).to.equal(1);
-    expect(results[0]).to.deep.equal({
-      title: "Policy is missing required actions",
-      path: "streamliner/policy.json",
-      problems: [
-        "To run in GDS, your service requires the ecr:BatchGetImage action.",
-      ],
-      line: 0,
-      level: "failure",
-    });
-  });
-
   it('requires the "secretsmanager:GetSecretValue" action if a secrets.json is present', async () => {
     let policyJson = JSON.stringify(
       {

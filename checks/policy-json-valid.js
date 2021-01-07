@@ -63,14 +63,7 @@ async function policyJsonIsValid(deployment) {
   }
 
   // We will toggle these to true as we encounter them in the policy
-  const requiredActions = {
-    "ecr:GetAuthorizationToken": false,
-    "ecr:BatchCheckLayerAvailability": false,
-    "ecr:GetDownloadUrlForLayer": false,
-    "ecr:BatchGetImage": false,
-    "logs:CreateLogStream": false,
-    "logs:PutLogEvents": false,
-  };
+  const requiredActions = {};
 
   // Secrets access is only needed for services that use secrets
   const secretsAction = "secretsmanager:GetSecretValue";
