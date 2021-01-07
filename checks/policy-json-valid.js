@@ -233,15 +233,44 @@ async function policyJsonIsValid(deployment) {
         .forEach((key) => (requiredSecrets[key] = true));
     }
 
+    function _suggestSecretsSuffix(originalBlock, originalArn, newArn) {
+      const regex = new RegExp(escapeRegExp(originalArn))
+      const line = getLineWithinObject(deployment.policyJsonContents, originalBlock, regex);
+      return {
+        title: 'Add a version suffix to this secret ARN',
+        problems: [suggest(
+          'IAM policies should specifiy a version suffix for secrets. This can be `??????` when you always want the latest version.',
+          deployment.policyJsonContents[line - 1].replace(originalArn, newArn)
+        )],
+        line: line,
+        level: 'failure',
+        path: deployment.policyJsonPath
+      }
+    }
+
+    const secretsSuffix = /(-[\w\?]{6}$|-?\*$)/;
+
     statementBlock
       .map(_standardizeStatement)
       .filter(({ standard }) => _isAllowed(standard))
       .filter(({ standard }) => _isAboutSecrets(standard))
-      .forEach(({ standard: { resource }}) => {
+      .forEach(({ standard: { resource }, original }) => {
         if (typeof resource === "string") {
+          if (!secretsSuffix.test(resource)) {
+            const baseArn = resource;
+            resource += '-??????';
+            results.push(_suggestSecretsSuffix(original, baseArn, resource))
+          }
           _toggleRequiredSecret(resource);
         } else if (Array.isArray(resource)) {
-          resource.forEach(_toggleRequiredSecret);
+          resource.forEach((item) => {
+            if (!secretsSuffix.test(item)) {
+              const baseArn = item;
+              item += '-??????';
+              results.push(_suggestSecretsSuffix(original, baseArn, item))
+            }
+            _toggleRequiredSecret(item)
+          });
         }
       });
 
