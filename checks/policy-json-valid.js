@@ -1,4 +1,4 @@
-require('../typedefs');
+require("../typedefs");
 const core = require("@actions/core");
 const {
   getLinesForJSON,
@@ -26,16 +26,9 @@ const lowerCondition = /"condition"/;
 const actionString = /(^\*$|^\w+:[\w\*]+$)/;
 const arnRegex = /(arn:(?<partition>[\w\*\-]*):(?<service>[\w\*\-]*):(?<region>[\w\*\-]*):(?<accountId>[\d\*]*):(?<resourceId>[\w\*\-\/\:]*)|^\*$)/;
 
-const warnActions = [
-  /^\*$/,
-  /[\w\*]+:Delete[\w\*]/,
-  /[\w\*]+:\*/
-];
+const warnActions = [/^\*$/, /[\w\*]+:Delete[\w\*]/, /[\w\*]+:\*/];
 
-const warnResources = [
-  /^\*$/,
-  /arn:aws:\\*?:.*/
-];
+const warnResources = [/^\*$/, /arn:aws:\\*?:.*/];
 
 const secretArn = /arn:(?<partition>[\w\*\-]*):secretsmanager:(?<region>[\w-]*):(?<account>\d*):secret:(?<secretName>[\w-\/]*)(:(?<jsonKey>\S*?):(?<versionStage>\S*?):(?<versionId>\w*)|)/;
 
@@ -45,49 +38,53 @@ const secretsAction = "secretsmanager:GetSecretValue";
  * Accepts a deployment object, and does some kind of check
  * @param {Deployment} deployment
  * @param {GitHubContext} context The context object provided by github
- * 
+ *
  * @returns {Array<Result>}
  */
 async function policyJsonIsValid(deployment, context) {
   function _suggestNewPolicyFile(secretsJson) {
-    const policyDoc = JSON.stringify({
-      Version: "2012-10-17",
-      Statement: [
-        {
-          Sid: "AllowSecretsAccess",
-          Action: secretsAction,
-          Resource: Array.from(new Set(secretsJson
-            .map(s => s.valueFrom)
-            .map(_getSimpleSecret)
-          ))
-        }
-      ]
-    }, null, 2);
+    const policyDoc = JSON.stringify(
+      {
+        Version: "2012-10-17",
+        Statement: [
+          {
+            Sid: "AllowSecretsAccess",
+            Action: secretsAction,
+            Resource: Array.from(
+              new Set(secretsJson.map((s) => s.valueFrom).map(_getSimpleSecret))
+            ),
+          },
+        ],
+      },
+      null,
+      2
+    );
     const { owner, repo, branch } = getOwnerRepoBranch(context);
     const filename = path.join(deployment.serviceName, "policy.json");
     return {
-      title: 'Create a policy.json',
-      level: 'failure',
+      title: "Create a policy.json",
+      level: "failure",
       line: 0,
       problems: [
         `Add a new file, ${filename}, that contains the following:\n\`\`\`json
 ${policyDoc}
-\`\`\``
-        `[Click To Add File](${getNewFileLink({
+\`\`\```[Click To Add File](${getNewFileLink({
           owner,
           repo,
           branch,
           filename,
-          value: policyDoc
-        })})`
-      ]
+          value: policyDoc,
+        })})`,
+      ],
     };
   }
 
   // policy.json is not required, unless secrets.json is present
   if (!deployment.policyJsonContents && deployment.secretsJson) {
-    core.info(`policy.json is missing, but required - ${deployment.serviceName}`);
-    return [_suggestNewPolicyFile(deployment.secretsJson)]
+    core.info(
+      `policy.json is missing, but required - ${deployment.serviceName}`
+    );
+    return [_suggestNewPolicyFile(deployment.secretsJson)];
   }
 
   if (!deployment.policyJsonContents) {
@@ -121,10 +118,10 @@ ${policyDoc}
     if (versionId) {
       arn += `-${versionId}`;
     } else {
-      arn += '-??????';
+      arn += "-??????";
     }
 
-    return arn
+    return arn;
   }
 
   function _toggleRequiredAction(item) {
@@ -154,7 +151,7 @@ ${policyDoc}
 
     const effect = statement.Effect || statement.effect;
 
-    return { original: statement, standard: { effect, action, resource }};
+    return { original: statement, standard: { effect, action, resource } };
   }
 
   function _isAllowed(statement) {
@@ -201,24 +198,27 @@ ${policyDoc}
   }
 
   function _getWarnResult(searchBlock, line) {
-    const regex = new RegExp(`"${escapeRegExp(line)}"`, 'i');
-    let title = 'Broad Permissions';
-    let problem = 'It is best practice to be as specific as possible with your IAM Policies. Overly broad policies can lead to unintentional vulnerabilities.';
+    const regex = new RegExp(`"${escapeRegExp(line)}"`, "i");
+    let title = "Broad Permissions";
+    let problem =
+      "It is best practice to be as specific as possible with your IAM Policies. Overly broad policies can lead to unintentional vulnerabilities.";
     if (/delete/i.test(line)) {
-      title = 'Delete Access'
-      problem = 'It is extremeley rare that a service needs Delete access. Make sure you have discussed this with SRE before merging.';
+      title = "Delete Access";
+      problem =
+        "It is extremeley rare that a service needs Delete access. Make sure you have discussed this with SRE before merging.";
     }
     return {
       title,
       path: deployment.policyJsonPath,
-      line: getLineWithinObject(deployment.policyJsonContents, searchBlock, regex),
-      level: 'warning',
-      problems: [
-        problem
-      ]
-    }
+      line: getLineWithinObject(
+        deployment.policyJsonContents,
+        searchBlock,
+        regex
+      ),
+      level: "warning",
+      problems: [problem],
+    };
   }
-
 
   // Validate the presence of all required actions
   const statementBlock = document.Statement || document.statement || [];
@@ -243,17 +243,14 @@ ${policyDoc}
           });
       }
 
-      if (typeof resource === "string" && _isWarnResource(resource)){
+      if (typeof resource === "string" && _isWarnResource(resource)) {
         results.push(_getWarnResult(original, resource));
       } else if (Array.isArray(resource)) {
-        resource
-          .filter(_isWarnResource)
-          .forEach(item => {
-            results.push(_getWarnResult(original, item));
-          });
+        resource.filter(_isWarnResource).forEach((item) => {
+          results.push(_getWarnResult(original, item));
+        });
       }
     });
-
 
   // If there's a secrets.json, we should make sure this policy
   // grants access to those secrets
@@ -266,28 +263,33 @@ ${policyDoc}
     function _toggleRequiredSecret(resource) {
       // We need to account for wildcards
       const keyRegex = new RegExp(
-        resource
-          .replace(/\*/g, "[\\w\\-\\/\\:]+")
-          .replace(/\?/g, "[\\w\\?]")
-      + "$");
+        resource.replace(/\*/g, "[\\w\\-\\/\\:]+").replace(/\?/g, "[\\w\\?]") +
+          "$"
+      );
       Object.keys(requiredSecrets)
         .filter((key) => keyRegex.test(key))
         .forEach((key) => (requiredSecrets[key] = true));
     }
 
     function _suggestSecretsSuffix(originalBlock, originalArn, newArn) {
-      const regex = new RegExp(escapeRegExp(originalArn))
-      const line = getLineWithinObject(deployment.policyJsonContents, originalBlock, regex);
+      const regex = new RegExp(escapeRegExp(originalArn));
+      const line = getLineWithinObject(
+        deployment.policyJsonContents,
+        originalBlock,
+        regex
+      );
       return {
-        title: 'Add a version suffix to this secret ARN',
-        problems: [suggest(
-          'IAM policies should specifiy a version suffix for secrets. This can be `??????` when you always want the latest version.',
-          deployment.policyJsonContents[line - 1].replace(originalArn, newArn)
-        )],
+        title: "Add a version suffix to this secret ARN",
+        problems: [
+          suggest(
+            "IAM policies should specifiy a version suffix for secrets. This can be `??????` when you always want the latest version.",
+            deployment.policyJsonContents[line - 1].replace(originalArn, newArn)
+          ),
+        ],
         line: line,
-        level: 'failure',
-        path: deployment.policyJsonPath
-      }
+        level: "failure",
+        path: deployment.policyJsonPath,
+      };
     }
 
     const secretsSuffix = /(-[\w\?]{6}$|-?\*$)/;
@@ -300,18 +302,18 @@ ${policyDoc}
         if (typeof resource === "string") {
           if (!secretsSuffix.test(resource)) {
             const baseArn = resource;
-            resource += '-??????';
-            results.push(_suggestSecretsSuffix(original, baseArn, resource))
+            resource += "-??????";
+            results.push(_suggestSecretsSuffix(original, baseArn, resource));
           }
           _toggleRequiredSecret(resource);
         } else if (Array.isArray(resource)) {
           resource.forEach((item) => {
             if (!secretsSuffix.test(item)) {
               const baseArn = item;
-              item += '-??????';
-              results.push(_suggestSecretsSuffix(original, baseArn, item))
+              item += "-??????";
+              results.push(_suggestSecretsSuffix(original, baseArn, item));
             }
-            _toggleRequiredSecret(item)
+            _toggleRequiredSecret(item);
           });
         }
       });
@@ -331,8 +333,8 @@ ${policyDoc}
 
       function _getSids() {
         return statementBlock
-          .map(statement => statement.Sid)
-          .filter(sid => sid)
+          .map((statement) => statement.Sid)
+          .filter((sid) => sid);
       }
 
       Object.keys(requiredSecrets)
@@ -347,7 +349,7 @@ ${policyDoc}
       let Sid = "AllowRequiredSecrets";
       let i = 0;
       const allSids = _getSids();
-      while(allSids.includes(Sid)) {
+      while (allSids.includes(Sid)) {
         i += 1;
         Sid = `AllowRequiredSecrets${i}`;
       }
@@ -356,17 +358,20 @@ ${policyDoc}
         Sid,
         Effect: "Allow",
         Action: secretsAction,
-        Resource: Array.from(new Set(
-          Object.keys(requiredSecrets)
-            .filter((s) => !requiredSecrets[s])
-          ))
+        Resource: Array.from(
+          new Set(
+            Object.keys(requiredSecrets).filter((s) => !requiredSecrets[s])
+          )
+        ),
       };
 
       // This lets us indent more correctly
       const { indent } = detectIndentation(deployment.policyJsonContents);
       const newPolicy = Object.assign({}, document);
       newPolicy.Statement = statementBlock.concat([newStatementBlock]);
-      const newPolicyLines = JSON.stringify(newPolicy, null, indent).split("\n");
+      const newPolicyLines = JSON.stringify(newPolicy, null, indent).split(
+        "\n"
+      );
       const { start, end } = getLinesForJSON(newPolicyLines, newStatementBlock);
       const stringifiedStatement = `\n${newPolicyLines
         .slice(start - 1, end)
@@ -701,17 +706,19 @@ function validateGenericIamPolicy(file, filePath) {
       statement.notAction ||
       statement.notaction ||
       statement.Notaction; // we already suggested capitalization fixes
-    const actionFmtError = '"Action" must be either a valid [Action String](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_action.html), or an array of valid action strings. SRE recommends as specific of an Action String as possible.';
+    const actionFmtError =
+      '"Action" must be either a valid [Action String](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_action.html), or an array of valid action strings. SRE recommends as specific of an Action String as possible.';
     if (action && typeof action === "string" && !actionString.test(action)) {
-      const lineRegex = new RegExp(`"Action":\\s*"${escapeRegExp(action)}"`, "i");
+      const lineRegex = new RegExp(
+        `"Action":\\s*"${escapeRegExp(action)}"`,
+        "i"
+      );
       const line = getLineWithinObject(fileLines, statement, lineRegex);
 
       results.push({
         title: 'Invalid value for "Action"',
         path: filePath,
-        problems: [
-          actionFmtError,
-        ],
+        problems: [actionFmtError],
         line,
         level: "failure",
       });
@@ -725,9 +732,7 @@ function validateGenericIamPolicy(file, filePath) {
           results.push({
             title: 'Invalid value for "Action"',
             path: filePath,
-            problems: [
-              actionFmtError,
-            ],
+            problems: [actionFmtError],
             line,
             level: "failure",
           });
@@ -741,17 +746,19 @@ function validateGenericIamPolicy(file, filePath) {
       statement.notResource ||
       statement.notresource ||
       statement.Notresource; // we already suggested capitalization fixes
-    const resourceFmtError = '"Resource" must be either a valid [ARN](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html), or an array of valid ARNs. SRE recommends as specific of an ARN as possible.';
+    const resourceFmtError =
+      '"Resource" must be either a valid [ARN](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html), or an array of valid ARNs. SRE recommends as specific of an ARN as possible.';
     if (resource && typeof resource === "string" && !arnRegex.test(resource)) {
-      const lineRegex = new RegExp(`"Resource":\\s*"${escapeRegExp(resource)}"`, "i");
+      const lineRegex = new RegExp(
+        `"Resource":\\s*"${escapeRegExp(resource)}"`,
+        "i"
+      );
       const line = getLineWithinObject(fileLines, statement, lineRegex);
 
       results.push({
         title: 'Invalid value for "Resource"',
         path: filePath,
-        problems: [
-          resourceFmtError,
-        ],
+        problems: [resourceFmtError],
         line,
         level: "failure",
       });
@@ -765,9 +772,7 @@ function validateGenericIamPolicy(file, filePath) {
           results.push({
             title: 'Invalid value for "Resource"',
             path: filePath,
-            problems: [
-              resourceFmtError,
-            ],
+            problems: [resourceFmtError],
             line,
             level: "failure",
           });

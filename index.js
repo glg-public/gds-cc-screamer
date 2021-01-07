@@ -218,7 +218,11 @@ async function leaveComment(
   } catch (e) {
     console.log(e);
     console.log(result);
-    await suggestBugReport(octokit, e, 'Error while posting comment', { owner, repo, pull_number });
+    await suggestBugReport(octokit, e, "Error while posting comment", {
+      owner,
+      repo,
+      pull_number,
+    });
   }
 }
 
@@ -226,22 +230,21 @@ async function leaveComment(
  * Perform all checks on all deployments included in a PR
  */
 async function run() {
+  const token = core.getInput("token", { required: true });
+  const awsAccount = core.getInput("aws_account_id");
+  const secretsPrefix = core.getInput("aws_secrets_prefix");
+  const awsRegion = core.getInput("aws_region");
+  const awsPartition = core.getInput("aws_partition");
+  const inputs = { awsAccount, secretsPrefix, awsRegion, awsPartition };
+
+  const octokit = github.getOctokit(token);
+
+  const pr = github.context.payload.pull_request;
+  const owner = pr.base.repo.owner.login;
+  const repo = pr.base.repo.name;
+  const pull_number = pr.number;
+  const sha = pr.head.sha;
   try {
-    const token = core.getInput("token", { required: true });
-    const awsAccount = core.getInput("aws_account_id");
-    const secretsPrefix = core.getInput("aws_secrets_prefix");
-    const awsRegion = core.getInput("aws_region");
-    const awsPartition = core.getInput("aws_partition");
-    const inputs = { awsAccount, secretsPrefix, awsRegion, awsPartition };
-
-    const octokit = github.getOctokit(token);
-
-    const pr = github.context.payload.pull_request;
-    const owner = pr.base.repo.owner.login;
-    const repo = pr.base.repo.name;
-    const pull_number = pr.number;
-    const sha = pr.head.sha;
-
     await clearPreviousRunComments(octokit, { owner, repo, pull_number });
 
     const { data: files } = await octokit.pulls.listFiles({
@@ -271,7 +274,16 @@ async function run() {
         try {
           results = await check(deployment, github.context, inputs);
         } catch (e) {
-          await suggestBugReport(octokit, e, 'Error running check', { owner, repo, pull_number });
+          try {
+            await suggestBugReport(octokit, e, "Error running check", {
+              owner,
+              repo,
+              pull_number,
+            });
+          } catch (e2) {
+            console.log(e2);
+          }
+
           console.log(e);
           continue;
         }
