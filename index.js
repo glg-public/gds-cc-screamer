@@ -140,7 +140,7 @@ ${errorText}
 
 ${issueLink}
   `;
-  await octokit.issues.create({
+  await octokit.issues.createComment({
     owner,
     repo,
     issue_number,
@@ -312,7 +312,7 @@ async function run() {
       core.setFailed("One or more checks has failed. See comments in PR.");
     }
   } catch (error) {
-    await suggestBugReport(octokit, error, "Error Running Check Suite");
+    await suggestBugReport(octokit, error, "Error Running Check Suite", { owner, repo, pull_number});
     core.setFailed(error.message);
   }
 }
