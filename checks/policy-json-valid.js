@@ -50,6 +50,7 @@ async function policyJsonIsValid(deployment, context) {
         Statement: [
           {
             Sid: "AllowSecretsAccess",
+            Effect: "Allow",
             Action: secretsAction,
             Resource: Array.from(
               new Set(secretsJson.map((s) => s.valueFrom).map(_getSimpleSecret))
