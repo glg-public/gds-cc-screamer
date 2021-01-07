@@ -69,7 +69,7 @@ async function policyJsonIsValid(deployment, context) {
       problems: [
         `Add a new file, ${filename}, that contains the following:\n\`\`\`json
 ${policyDoc}
-\`\`\```[Click To Add File](${getNewFileLink({
+\`\`\`\n[Click To Add File](${getNewFileLink({
           owner,
           repo,
           branch,
