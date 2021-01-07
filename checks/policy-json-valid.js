@@ -6,7 +6,9 @@ const {
   getLineNumber,
   getLineWithinObject,
   escapeRegExp,
-  detectIndentation
+  detectIndentation,
+  getNewFileLink,
+  getOwnerRepoBranch,
 } = require("../util");
 
 const lowerVersion = /"version"/;
@@ -37,16 +39,57 @@ const warnResources = [
 
 const secretArn = /arn:(?<partition>[\w\*\-]*):secretsmanager:(?<region>[\w-]*):(?<account>\d*):secret:(?<secretName>[\w-\/]*)(:(?<jsonKey>\S*?):(?<versionStage>\S*?):(?<versionId>\w*)|)/;
 
-
+const secretsAction = "secretsmanager:GetSecretValue";
 
 /**
  * Accepts a deployment object, and does some kind of check
  * @param {Deployment} deployment
+ * @param {GitHubContext} context The context object provided by github
  * 
  * @returns {Array<Result>}
  */
-async function policyJsonIsValid(deployment) {
-  // policy.json is not required
+async function policyJsonIsValid(deployment, context) {
+  function _suggestNewPolicyFile(secretsJson) {
+    const policyDoc = JSON.stringify({
+      Version: "2012-10-17",
+      Statement: [
+        {
+          Sid: "AllowSecretsAccess",
+          Action: secretsAction,
+          Resource: Array.from(new Set(secretsJson
+            .map(s => s.valueFrom)
+            .map(_getSimpleSecret)
+          ))
+        }
+      ]
+    }, null, 2);
+    const { owner, repo, branch } = getOwnerRepoBranch(context);
+    const filename = path.join(deployment.serviceName, "policy.json");
+    return {
+      title: 'Create a policy.json',
+      level: 'failure',
+      line: 0,
+      problems: [
+        `Add a new file, ${filename}, that contains the following:\n\`\`\`json
+${policyDoc}
+\`\`\``
+        `[Click To Add File](${getNewFileLink({
+          owner,
+          repo,
+          branch,
+          filename,
+          value: policyDoc
+        })})`
+      ]
+    };
+  }
+
+  // policy.json is not required, unless secrets.json is present
+  if (!deployment.policyJsonContents && deployment.secretsJson) {
+    core.info(`policy.json is missing, but required - ${deployment.serviceName}`);
+    return [_suggestNewPolicyFile(deployment.secretsJson)]
+  }
+
   if (!deployment.policyJsonContents) {
     core.info(`No policy.json present, skipping - ${deployment.serviceName}`);
     return [];
@@ -66,7 +109,6 @@ async function policyJsonIsValid(deployment) {
   const requiredActions = {};
 
   // Secrets access is only needed for services that use secrets
-  const secretsAction = "secretsmanager:GetSecretValue";
   if (deployment.secretsJsonContents) {
     requiredActions[secretsAction] = false;
   }
