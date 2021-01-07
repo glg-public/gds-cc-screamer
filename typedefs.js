@@ -249,6 +249,7 @@
  * serviceName: string,
  * ordersPath: (string|undefined),
  * ordersContents: (Array<string>|undefined),
+ * secretsJson: (Array<Object>|undefined),
  * secretsJsonPath: (string|undefined),
  * secretsJsonContents: (Array<string>|undefined),
  * policyJsonPath: (string|undefined),
