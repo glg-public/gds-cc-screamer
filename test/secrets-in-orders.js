@@ -87,7 +87,7 @@ describe("Secrets in orders file", () => {
     expect(results[0]).to.deep.equal({
       title: "Create a secrets.json",
       problems: [
-        `Add a new file, streamliner/secrets.json, that contains the following:\n\`\`\`json\n${secretsFile}\n\`\`\``,
+        `Add a new file, \`streamliner/secrets.json\`, that contains the following:\n\`\`\`json\n${secretsFile}\n\`\`\``,
         `[Click to add file](${getNewFileLink({
           owner,
           repo,
