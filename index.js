@@ -226,7 +226,7 @@ async function leaveComment(
           ["path", "line"].includes(err.field)
       ).length > 0
     ) {
-      result.problems.unshift(`Problem existed outside of diff at ${result.path}, line ${result.line}`);
+      result.problems.unshift(`Problem existed outside of diff at \`${result.path}\`, line **${result.line}**`);
       result.line = 0;
       await leaveComment(octokit, deployment, result, {
         owner,
