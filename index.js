@@ -271,6 +271,7 @@ async function run() {
         try {
           results = await check(deployment, github.context, inputs);
         } catch (e) {
+          await suggestBugReport(octokit, e, 'Error running check', { owner, repo, pull_number });
           console.log(e);
           continue;
         }
