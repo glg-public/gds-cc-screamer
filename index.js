@@ -25,7 +25,7 @@ const icons = {
 
 /**
  * Takes a filename like secrets.json and returns secretsJson
- * @param {string} filename 
+ * @param {string} filename
  */
 function _camelCaseFileName(filename) {
   const words = filename.split(".");
@@ -67,12 +67,12 @@ async function getContents(serviceName) {
 /**
  * Clear any comments from this bot that are already on the PR.
  * This prevents excessive comment polution
- * @param {Octokit} octokit 
+ * @param {Octokit} octokit
  * @param {{
  * owner: string,
  * repo: string,
  * pull_number: number
- * }} options 
+ * }} options
  */
 async function clearPreviousRunComments(octokit, { owner, repo, pull_number }) {
   try {
@@ -125,11 +125,34 @@ async function clearPreviousRunComments(octokit, { owner, repo, pull_number }) {
   }
 }
 
+async function suggestBugReport(
+  octokit,
+  error,
+  title,
+  { owner, repo, pull_number: issue_number }
+) {
+  const errorText = `\`\`\`\n${error.message}\n\n${error.stack}\n\`\`\``;
+  const issueLink = `[Create an issue](https://github.com/glg-public/gds-cc-screamer/issues/new?title=${encodeURIComponent(
+    title
+  )}&value=${encodeURIComponent(errorText)})`;
+  const body = `## An error was encountered. Please submit a bug report
+${errorText}
+
+${issueLink}
+  `;
+  await octokit.issues.create({
+    owner,
+    repo,
+    issue_number,
+    body,
+  });
+}
+
 /**
  * Leaves the correct type of comment for a given result and deployment
  * @param {Octokit} octokit A configured octokit client
- * @param {Deployment} deployment 
- * @param {Result} result 
+ * @param {Deployment} deployment
+ * @param {Result} result
  * @param {{
  * owner: string,
  * repo: string,
@@ -195,6 +218,7 @@ async function leaveComment(
   } catch (e) {
     console.log(e);
     console.log(result);
+    await suggestBugReport(octokit, e, 'Error while posting comment', { owner, repo, pull_number });
   }
 }
 
@@ -275,6 +299,7 @@ async function run() {
       core.setFailed("One or more checks has failed. See comments in PR.");
     }
   } catch (error) {
+    await suggestBugReport(octokit, error, "Error Running Check Suite");
     core.setFailed(error.message);
   }
 }
