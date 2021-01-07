@@ -168,7 +168,7 @@ async function secretsInOrders(deployment, context, inputs) {
     results.unshift({
       title: "Create a secrets.json",
       problems: [
-        `Add a new file, ${secretsJsonPath}, that contains the following:\n\`\`\`json
+        `Add a new file, \`${secretsJsonPath}\`, that contains the following:\n\`\`\`json
 ${secretsFile}
 \`\`\``,
         `[Click to add file](${getNewFileLink({
