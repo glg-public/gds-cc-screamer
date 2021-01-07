@@ -7,7 +7,7 @@ const actionFmtError =
 const resourceFmtError =
   '"Resource" must be either a valid [ARN](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html), or an array of valid ARNs. SRE recommends as specific of an ARN as possible.';
 
-describe.only("policy.json is valid", () => {
+describe("policy.json is valid", () => {
   it("skips if there is no policy.json", async () => {
     const deployment = {
       serviceName: "streamliner",
