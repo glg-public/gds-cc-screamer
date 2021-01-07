@@ -218,14 +218,20 @@ async function leaveComment(
       });
     }
   } catch (e) {
-    console.log(e);
-    console.log(Object.keys(e));
-    console.log(result);
-    await suggestBugReport(octokit, e, "Error while posting comment", {
-      owner,
-      repo,
-      pull_number,
-    });
+    // If the error is due to the problem existing outside the diff,
+    // we still want to alert the user, so make a generic issue comment
+    if (errors.filter(err => err.resource === 'PullRequestReviewComment' && ["path", "line"].includes(e.field)).length > 0) {
+      result.line = 0;
+      await leaveComment(octokit, deployment, result, { owner, repo, pull_number, shall });
+    } else {
+      console.log(e);
+      console.log(result);
+      await suggestBugReport(octokit, e, "Error while posting comment", {
+        owner,
+        repo,
+        pull_number,
+      });
+    }
   }
 }
 
