@@ -166,6 +166,7 @@ async function leaveComment(
   result,
   { owner, repo, pull_number, sha }
 ) {
+  const { ordersPath, secretsPath, policyPath } = deployment;
   // Build a markdown comment to post
   let comment = `## ${icons[result.level]} ${result.title}\n`;
   for (const problem of result.problems) {
@@ -189,12 +190,13 @@ async function leaveComment(
       result.line.hasOwnProperty("start") &&
       result.line.hasOwnProperty("end")
     ) {
+      
       await octokit.pulls.createReviewComment({
         owner,
         repo,
         pull_number,
         commit_id: sha,
-        path: result.path || deployment.ordersPath,
+        path: result.path || ordersPath || secretsPath || policyPath,
         body: comment,
         side: "RIGHT",
         start_line: result.line.start,
@@ -209,7 +211,7 @@ async function leaveComment(
         repo,
         pull_number,
         commit_id: sha,
-        path: result.path || deployment.ordersPath,
+        path: result.path || ordersPath || secretsPath || policyPath,
         body: comment,
         side: "RIGHT",
         line: result.line,
