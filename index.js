@@ -8,6 +8,25 @@ const checks = require("./checks");
 // These are all of the files that, if changed, will trigger the check suite
 const filesToCheck = ["orders", "secrets.json", "policy.json"];
 
+// We want to track how all the checks go
+const counts = {
+  success: 0,
+  failure: 0,
+  warning: 0,
+  notice: 0,
+};
+
+// Emojis are fun
+const icons = {
+  failure: "💀",
+  warning: "⚠️",
+  notice: "👉",
+};
+
+/**
+ * Takes a filename like secrets.json and returns secretsJson
+ * @param {string} filename 
+ */
 function _camelCaseFileName(filename) {
   const words = filename.split(".");
 
@@ -45,6 +64,16 @@ async function getContents(serviceName) {
   return result;
 }
 
+/**
+ * Clear any comments from this bot that are already on the PR.
+ * This prevents excessive comment polution
+ * @param {Octokit} octokit 
+ * @param {{
+ * owner: string,
+ * repo: string,
+ * pull_number: number
+ * }} options 
+ */
 async function clearPreviousRunComments(octokit, { owner, repo, pull_number }) {
   try {
     const { data: reviewComments } = await octokit.pulls.listReviewComments({
@@ -96,19 +125,18 @@ async function clearPreviousRunComments(octokit, { owner, repo, pull_number }) {
   }
 }
 
-const counts = {
-  success: 0,
-  failure: 0,
-  warning: 0,
-  notice: 0,
-};
-
-const icons = {
-  failure: "💀",
-  warning: "⚠️",
-  notice: "👉",
-};
-
+/**
+ * Leaves the correct type of comment for a given result and deployment
+ * @param {Octokit} octokit A configured octokit client
+ * @param {Deployment} deployment 
+ * @param {Result} result 
+ * @param {{
+ * owner: string,
+ * repo: string,
+ * pull_number: number,
+ * sha: string
+ * }} options
+ */
 async function leaveComment(
   octokit,
   deployment,
@@ -170,6 +198,9 @@ async function leaveComment(
   }
 }
 
+/**
+ * Perform all checks on all deployments included in a PR
+ */
 async function run() {
   try {
     const token = core.getInput("token", { required: true });
