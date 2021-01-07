@@ -1,4 +1,4 @@
-require('./typedefs');
+require("./typedefs");
 const core = require("@actions/core");
 const github = require("@actions/github");
 const path = require("path");
@@ -6,19 +6,18 @@ const fs = require("fs").promises;
 const checks = require("./checks");
 
 // These are all of the files that, if changed, will trigger the check suite
-const filesToCheck = [
-  "orders",
-  "secrets.json",
-  "policy.json"
-];
+const filesToCheck = ["orders", "secrets.json", "policy.json"];
 
 function _camelCaseFileName(filename) {
-  const words = filename.split('.');
-  
+  const words = filename.split(".");
+
   let result = words[0];
 
   if (words.length > 1) {
-    result += words.slice(1).map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join();
+    result += words
+      .slice(1)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join();
   }
 
   return result;
@@ -38,7 +37,7 @@ async function getContents(serviceName) {
       await fs.stat(filepath);
       const contents = await fs.readFile(filepath, "utf8");
       result[`${_camelCaseFileName(filename)}Path`] = filepath;
-      result[`${_camelCaseFileName(filename)}Contents`] = contents.split('\n');
+      result[`${_camelCaseFileName(filename)}Contents`] = contents.split("\n");
     } catch (e) {
       // No particular file is required in order to run the check suite
     }
@@ -97,6 +96,80 @@ async function clearPreviousRunComments(octokit, { owner, repo, pull_number }) {
   }
 }
 
+const counts = {
+  success: 0,
+  failure: 0,
+  warning: 0,
+  notice: 0,
+};
+
+const icons = {
+  failure: "💀",
+  warning: "⚠️",
+  notice: "👉",
+};
+
+async function leaveComment(
+  octokit,
+  deployment,
+  result,
+  { owner, repo, pull_number, sha }
+) {
+  // Build a markdown comment to post
+  let comment = `## ${icons[result.level]} ${result.title}\n`;
+  for (const problem of result.problems) {
+    comment += `- ${problem}\n`;
+    core.error(`${result.title} - ${problem}`);
+  }
+  try {
+    // Line 0 means a general comment, not a line-specific comment
+    if (result.line === 0) {
+      await octokit.issues.createComment({
+        owner,
+        repo,
+        issue_number: pull_number,
+        body: comment,
+      });
+    }
+
+    // If result.line is a range object like { start, end }, make a multi-line comment
+    else if (
+      isNaN(result.line) &&
+      result.line.hasOwnProperty("start") &&
+      result.line.hasOwnProperty("end")
+    ) {
+      await octokit.pulls.createReviewComment({
+        owner,
+        repo,
+        pull_number,
+        commit_id: sha,
+        path: result.path || deployment.ordersPath,
+        body: comment,
+        side: "RIGHT",
+        start_line: result.line.start,
+        line: result.line.end,
+      });
+    }
+
+    // If line number is anything but 0, or a range object, we make a line-specific comment
+    else {
+      await octokit.pulls.createReviewComment({
+        owner,
+        repo,
+        pull_number,
+        commit_id: sha,
+        path: result.path || deployment.ordersPath,
+        body: comment,
+        side: "RIGHT",
+        line: result.line,
+      });
+    }
+  } catch (e) {
+    console.log(e);
+    console.log(result);
+  }
+}
+
 async function run() {
   try {
     const token = core.getInput("token", { required: true });
@@ -122,26 +195,18 @@ async function run() {
       pull_number,
     });
 
-    const deployments = await Promise.all(Array.from(new Set(
-      files
-        .filter((f) => filesToCheck.includes(path.basename(f.filename).toLowerCase()))
-        .filter((f) => f.status !== "removed")
-        .map((f) => path.dirname(f.filename))))
-        .map((fn) => getContents(fn))
+    const deployments = await Promise.all(
+      Array.from(
+        new Set(
+          files
+            .filter((f) =>
+              filesToCheck.includes(path.basename(f.filename).toLowerCase())
+            )
+            .filter((f) => f.status !== "removed")
+            .map((f) => path.dirname(f.filename))
+        )
+      ).map((fn) => getContents(fn))
     );
-
-    const counts = {
-      success: 0,
-      failure: 0,
-      warning: 0,
-      notice: 0,
-    };
-
-    const icons = {
-      failure: "💀",
-      warning: "⚠️",
-      notice: "👉",
-    };
 
     // Run every check against each deployment. Each check can have
     // multiple results.
@@ -156,64 +221,17 @@ async function run() {
         }
         if (results.length === 0) {
           core.info("...Passed");
+          counts.success += 1;
         }
         for (const result of results) {
           if (result.problems.length > 0) {
             counts[result.level] += 1;
-
-            // Build a markdown comment to post
-            let comment = `## ${icons[result.level]} ${result.title}\n`;
-            for (const problem of result.problems) {
-              comment += `- ${problem}\n`;
-              core.error(`${result.title} - ${problem}`);
-            }
-            try {
-              // Line 0 means a general comment, not a line-specific comment
-              if (result.line === 0) {
-                await octokit.issues.createComment({
-                  owner,
-                  repo,
-                  issue_number: pull_number,
-                  body: comment,
-                });
-              }
-
-              // If result.line is a range object like { start, end }, make a multi-line comment
-              else if (
-                isNaN(result.line) &&
-                result.line.hasOwnProperty("start") &&
-                result.line.hasOwnProperty("end")
-              ) {
-                await octokit.pulls.createReviewComment({
-                  owner,
-                  repo,
-                  pull_number,
-                  commit_id: sha,
-                  path: result.path || deployment.ordersPath,
-                  body: comment,
-                  side: "RIGHT",
-                  start_line: result.line.start,
-                  line: result.line.end,
-                });
-              }
-
-              // If line number is anything but 0, or a range object, we make a line-specific comment
-              else {
-                await octokit.pulls.createReviewComment({
-                  owner,
-                  repo,
-                  pull_number,
-                  commit_id: sha,
-                  path: result.path || deployment.ordersPath,
-                  body: comment,
-                  side: "RIGHT",
-                  line: result.line,
-                });
-              }
-            } catch (e) {
-              console.log(e);
-              console.log(result);
-            }
+            await leaveComment(octokit, deployment, result, {
+              owner,
+              repo,
+              pull_number,
+              sha,
+            });
           } else {
             counts.success += 1;
             core.info("...Passed");
