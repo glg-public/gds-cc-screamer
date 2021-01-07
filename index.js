@@ -219,6 +219,7 @@ async function leaveComment(
     }
   } catch (e) {
     console.log(e);
+    console.log(Object.keys(e));
     console.log(result);
     await suggestBugReport(octokit, e, "Error while posting comment", {
       owner,
