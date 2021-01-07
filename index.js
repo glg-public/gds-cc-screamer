@@ -134,7 +134,7 @@ async function suggestBugReport(
   const errorText = `\`\`\`\n${error.message}\n\n${error.stack}\n\`\`\``;
   const issueLink = `[Create an issue](https://github.com/glg-public/gds-cc-screamer/issues/new?title=${encodeURIComponent(
     title
-  )}&value=${encodeURIComponent(errorText)})`;
+  )}&body=${encodeURIComponent(errorText)})`;
   const body = `## An error was encountered. Please submit a bug report
 ${errorText}
 
