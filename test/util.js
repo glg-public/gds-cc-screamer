@@ -1,5 +1,10 @@
 const { expect } = require("chai");
-const { getLinesForJSON, detectIndentation, camelCaseFileName } = require("../util");
+const {
+  getLinesForJSON,
+  detectIndentation,
+  camelCaseFileName,
+  isAJob,
+} = require("../util");
 const fs = require("fs");
 const path = require("path");
 
@@ -157,15 +162,27 @@ describe("detect-indent", () => {
 });
 
 describe("camelCaseFilename", () => {
-  it('works', () => {
-    let result = camelCaseFileName('orders');
-    expect(result).to.equal('orders');
+  it("works", () => {
+    let result = camelCaseFileName("orders");
+    expect(result).to.equal("orders");
 
-    result = camelCaseFileName('secrets.json');
-    expect(result).to.equal('secretsJson');
+    result = camelCaseFileName("secrets.json");
+    expect(result).to.equal("secretsJson");
 
-    result = camelCaseFileName('policy.json');
-    expect(result).to.equal('policyJson');
-  })
+    result = camelCaseFileName("policy.json");
+    expect(result).to.equal("policyJson");
+  });
 });
 
+describe("isAJob", () => {
+  it("takes file lines, and determines if it is a job deployment", () => {
+    let filelines = ["dockerdeploy github/glg/echo/gds:latest"];
+    expect(isAJob(filelines)).to.be.false;
+
+    filelines.push("unpublished");
+    expect(isAJob(filelines)).to.be.true;
+
+    filelines = ["jobdeploy github/glg/echo/gds:latest"];
+    expect(isAJob(filelines)).to.be.true;
+  });
+});
