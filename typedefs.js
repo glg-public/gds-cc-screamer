@@ -72,27 +72,27 @@
  */
 
 /**
-* @typedef {{
-* login: string,
-* id: 1,
-* node_id: string,
-* avatar_url: URI,
-* gravatar_id: URI,
-* url: URI,
-* html_url: URI,
-* followers_url: URI,
-* following_url: URI,
-* gists_url: URI,
-* starred_url: URI,
-* subscriptions_url: URI,
-* organizations_url: URI,
-* repos_url: URI,
-* events_url: URI,
-* received_events_url: URI,
-* type: ('User' | 'Bot'),
-* site_admin: boolean
-* }} User
-*/
+ * @typedef {{
+ * login: string,
+ * id: 1,
+ * node_id: string,
+ * avatar_url: URI,
+ * gravatar_id: URI,
+ * url: URI,
+ * html_url: URI,
+ * followers_url: URI,
+ * following_url: URI,
+ * gists_url: URI,
+ * starred_url: URI,
+ * subscriptions_url: URI,
+ * organizations_url: URI,
+ * repos_url: URI,
+ * events_url: URI,
+ * received_events_url: URI,
+ * type: ('User' | 'Bot'),
+ * site_admin: boolean
+ * }} User
+ */
 
 /**
  * @typedef {{
@@ -107,25 +107,25 @@
  */
 
 /**
-  * @typedef {{
-  * url: URI,
-  * html_url: URI,
-  * labels_url: URI,
-  * id: number,
-  * node_id: string,
-  * number: number,
-  * state: ('open' | 'closed' | 'all'),
-  * title: string,
-  * description: string,
-  * creator: User,
-  * open_issues: number,
-  * closed_issues: number,
-  * created_at: DateTime,
-  * updated_at: DateTime,
-  * closed_at: DateTime,
-  * due_on: DateTime
-  * }} Milestone
-*/
+ * @typedef {{
+ * url: URI,
+ * html_url: URI,
+ * labels_url: URI,
+ * id: number,
+ * node_id: string,
+ * number: number,
+ * state: ('open' | 'closed' | 'all'),
+ * title: string,
+ * description: string,
+ * creator: User,
+ * open_issues: number,
+ * closed_issues: number,
+ * created_at: DateTime,
+ * updated_at: DateTime,
+ * closed_at: DateTime,
+ * due_on: DateTime
+ * }} Milestone
+ */
 
 /**
  * A ISO 8601 compliant datetime. YYYY-MM-DDTHH:MM:SSZ
