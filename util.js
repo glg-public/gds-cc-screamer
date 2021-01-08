@@ -481,6 +481,13 @@ async function leaveComment(
   }
 }
 
+/**
+ * 
+ * @param {Array<GitHubFile>} files 
+ * @param {Array<string>} filesToCheck
+ * 
+ * @returns {Array<Deployment>}
+ */
 async function getAllDeployments(files, filesToCheck) {
   return Promise.all(
     Array.from(

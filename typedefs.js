@@ -283,3 +283,19 @@
  * secretsPrefix: string
  * }} ActionInputs
  */
+
+/**
+ * An object describing a file in a pull request
+ * @typedef {{
+ *   sha: string
+ *   filename: string
+ *   status: string
+ *   additions: number
+ *   deletions: number
+ *   changes: number
+ *   blob_url: URI
+ *   raw_url: URI
+ *   contents_url: URI
+ *   patch: string
+ * }} GitHubFile
+ */
