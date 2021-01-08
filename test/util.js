@@ -4,6 +4,7 @@ const {
   detectIndentation,
   camelCaseFileName,
   isAJob,
+  getContents,
 } = require("../util");
 const fs = require("fs");
 const path = require("path");
@@ -184,5 +185,41 @@ describe("isAJob", () => {
 
     filelines = ["jobdeploy github/glg/echo/gds:latest"];
     expect(isAJob(filelines)).to.be.true;
+  });
+});
+
+describe("getContents", () => {
+  it("loads all important files from a directory, and returns a deployment object", async () => {
+    // Tests run from repo root, so have to specify the path
+    const serviceName = path.join("test", "test-service");
+    const deployment = await getContents(serviceName, [
+      "orders",
+      "secrets.json",
+      "policy.json",
+    ]);
+    const ordersPath = path.join(serviceName, "orders")
+    const ordersContents = fs
+      .readFileSync(ordersPath, "utf8")
+      .split("\n");
+
+    const secretsJsonPath = path.join(serviceName, "secrets.json");
+    const secretsJsonContents = fs
+      .readFileSync(secretsJsonPath, "utf8")
+      .split("\n");
+
+    const policyJsonPath = path.join(serviceName, "policy.json");
+    const policyJsonContents = fs
+      .readFileSync(policyJsonPath, "utf8")
+      .split("\n");
+    
+    expect(deployment).to.deep.equal({
+      serviceName,
+      ordersPath,
+      ordersContents,
+      secretsJsonPath,
+      secretsJsonContents,
+      policyJsonPath,
+      policyJsonContents
+    })
   });
 });
