@@ -1,4 +1,7 @@
 require("./typedefs");
+const core = require("@actions/core");
+const path = require("path");
+const fs = require("fs").promises;
 
 /**
  *
@@ -222,7 +225,7 @@ function detectIndentation(fileLines) {
   }
 
   const type = tokenTypes.spaces > tokenTypes.tabs ? "spaces" : "tabs";
-  const character = type === 'spaces' ? ' ' : '\t';
+  const character = type === "spaces" ? " " : "\t";
   const amount = _mode(differences);
 
   return {
@@ -230,6 +233,267 @@ function detectIndentation(fileLines) {
     type,
     indent: character.repeat(amount),
   };
+}
+
+/**
+ * Takes a filename like secrets.json and returns secretsJson
+ * @param {string} filename
+ */
+function camelCaseFileName(filename) {
+  const words = filename.split(".");
+
+  let result = words[0];
+
+  if (words.length > 1) {
+    result += words
+      .slice(1)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join();
+  }
+
+  return result;
+}
+
+/**
+ * Read orders, secrets.json, and policy.json from the directory,
+ * and split them by \n.
+ * @param {String} filePath the path for the orders file
+ * @returns {Deployment}
+ */
+async function getContents(serviceName, filesToCheck) {
+  const result = { serviceName };
+  for (let filename of filesToCheck) {
+    const filepath = path.join(serviceName, filename);
+    try {
+      await fs.stat(filepath);
+      const contents = await fs.readFile(filepath, "utf8");
+      result[`${camelCaseFileName(filename)}Path`] = filepath;
+      result[`${camelCaseFileName(filename)}Contents`] = contents.split("\n");
+    } catch (e) {
+      // No particular file is required in order to run the check suite
+    }
+  }
+  return result;
+}
+
+/**
+ * Clear any comments from this bot that are already on the PR.
+ * This prevents excessive comment polution
+ * @param {Octokit} octokit
+ * @param {{
+ * owner: string,
+ * repo: string,
+ * pull_number: number
+ * }} options
+ */
+async function clearPreviousRunComments(octokit, { owner, repo, pull_number }) {
+  try {
+    const { data: reviewComments } = await octokit.pulls.listReviewComments({
+      owner,
+      repo,
+      pull_number,
+    });
+
+    const { data: issueComments } = await octokit.issues.listComments({
+      owner,
+      repo,
+      issue_number: pull_number,
+    });
+
+    const allDeletions = [];
+
+    reviewComments
+      .filter(
+        (c) => c.user.login === "github-actions[bot]" && c.user.type === "Bot"
+      )
+      .forEach((comment) => {
+        allDeletions.push(
+          octokit.pulls.deleteReviewComment({
+            owner,
+            repo,
+            comment_id: comment.id,
+          })
+        );
+      });
+
+    issueComments
+      .filter(
+        (c) => c.user.login === "github-actions[bot]" && c.user.type === "Bot"
+      )
+      .forEach((comment) => {
+        allDeletions.push(
+          octokit.issues.deleteComment({
+            owner,
+            repo,
+            comment_id: comment.id,
+          })
+        );
+      });
+
+    await Promise.all(allDeletions);
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
+}
+
+/**
+ * Submits an issue comment on the PR which contains
+ * a link to a pre-populated bug report on this
+ * repository.
+ * @param {Octokit} octokit
+ * @param {Error} error
+ * @param {string} title
+ * @param {{
+ * owner: string,
+ * repo: string,
+ * pull_number: number,
+ * }} options
+ */
+async function suggestBugReport(
+  octokit,
+  error,
+  title,
+  { owner, repo, pull_number: issue_number }
+) {
+  const errorText = `\`\`\`\n${error.message}\n\n${error.stack}\n\`\`\``;
+  const issueLink = `[Create an issue](https://github.com/glg-public/gds-cc-screamer/issues/new?title=${encodeURIComponent(
+    title
+  )}&body=${encodeURIComponent(errorText)})`;
+  const body = `## An error was encountered. Please submit a bug report
+ ${errorText}
+ 
+ ${issueLink}
+   `;
+  await octokit.issues.createComment({
+    owner,
+    repo,
+    issue_number,
+    body,
+  });
+}
+
+/**
+ * Leaves the correct type of comment for a given result and deployment
+ * @param {Octokit} octokit A configured octokit client
+ * @param {Deployment} deployment
+ * @param {Result} result
+ * @param {{
+ * owner: string,
+ * repo: string,
+ * pull_number: number,
+ * sha: string
+ * }} options
+ */
+async function leaveComment(
+  octokit,
+  deployment,
+  result,
+  { owner, repo, pull_number, sha }
+) {
+  const { ordersPath, secretsPath, policyPath } = deployment;
+
+  // Emojis are fun
+  const icons = {
+    failure: "💀",
+    warning: "⚠️",
+    notice: "👉",
+  };
+
+  // Build a markdown comment to post
+  let comment = `## ${icons[result.level]} ${result.title}\n`;
+  for (const problem of result.problems) {
+    comment += `- ${problem}\n`;
+    core.error(`${result.title} - ${problem}`);
+  }
+  try {
+    // Line 0 means a general comment, not a line-specific comment
+    if (result.line === 0) {
+      await octokit.issues.createComment({
+        owner,
+        repo,
+        issue_number: pull_number,
+        body: comment,
+      });
+    }
+
+    // If result.line is a range object like { start, end }, make a multi-line comment
+    else if (
+      isNaN(result.line) &&
+      result.line.hasOwnProperty("start") &&
+      result.line.hasOwnProperty("end")
+    ) {
+      await octokit.pulls.createReviewComment({
+        owner,
+        repo,
+        pull_number,
+        commit_id: sha,
+        path: result.path || ordersPath || secretsPath || policyPath,
+        body: comment,
+        side: "RIGHT",
+        start_line: result.line.start,
+        line: result.line.end,
+      });
+    }
+
+    // If line number is anything but 0, or a range object, we make a line-specific comment
+    else {
+      await octokit.pulls.createReviewComment({
+        owner,
+        repo,
+        pull_number,
+        commit_id: sha,
+        path: result.path || ordersPath || secretsPath || policyPath,
+        body: comment,
+        side: "RIGHT",
+        line: result.line,
+      });
+    }
+  } catch (e) {
+    // If the error is due to the problem existing outside the diff,
+    // we still want to alert the user, so make a generic issue comment
+    if (
+      e.errors.filter(
+        (err) =>
+          err.resource === "PullRequestReviewComment" &&
+          ["path", "line"].includes(err.field)
+      ).length > 0
+    ) {
+      result.problems.unshift(
+        `Problem existed outside of diff at \`${result.path}\`, line **${result.line}**`
+      );
+      result.line = 0;
+      await leaveComment(octokit, deployment, result, {
+        owner,
+        repo,
+        pull_number,
+        sha,
+      });
+    } else {
+      console.log(e);
+      console.log(result);
+      await suggestBugReport(octokit, e, "Error while posting comment", {
+        owner,
+        repo,
+        pull_number,
+      });
+    }
+  }
+}
+
+async function getAllDeployments(files, filesToCheck) {
+  return Promise.all(
+    Array.from(
+      new Set(
+        files
+          .filter((f) =>
+            filesToCheck.includes(path.basename(f.filename).toLowerCase())
+          )
+          .filter((f) => f.status !== "removed")
+          .map((f) => path.dirname(f.filename))
+      )
+    ).map((serviceName) => getContents(serviceName, filesToCheck))
+  );
 }
 
 module.exports = {
@@ -242,4 +506,10 @@ module.exports = {
   isAJob,
   escapeRegExp,
   detectIndentation,
+  leaveComment,
+  suggestBugReport,
+  getAllDeployments,
+  clearPreviousRunComments,
+  getContents,
+  camelCaseFileName
 };

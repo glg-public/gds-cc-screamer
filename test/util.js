@@ -1,5 +1,5 @@
 const { expect } = require("chai");
-const { getLinesForJSON, detectIndentation } = require("../util");
+const { getLinesForJSON, detectIndentation, camelCaseFileName } = require("../util");
 const fs = require("fs");
 const path = require("path");
 
@@ -155,3 +155,17 @@ describe("detect-indent", () => {
     });
   });
 });
+
+describe("camelCaseFilename", () => {
+  it('works', () => {
+    let result = camelCaseFileName('orders');
+    expect(result).to.equal('orders');
+
+    result = camelCaseFileName('secrets.json');
+    expect(result).to.equal('secretsJson');
+
+    result = camelCaseFileName('policy.json');
+    expect(result).to.equal('policyJson');
+  })
+});
+
