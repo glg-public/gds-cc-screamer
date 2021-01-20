@@ -1,4 +1,4 @@
-require('../typedefs');
+require("../typedefs");
 const core = require("@actions/core");
 
 /**
@@ -6,7 +6,7 @@ const core = require("@actions/core");
  * @param {Deployment} deployment An object containing information about a deployment
  * @param {GitHubContext} context The context object provided by github
  * @param {ActionInputs} inputs The inputs (excluding the token) from the github action
- * 
+ *
  * @returns {Array<Result>}
  */
 async function templateCheck(deployment, context, inputs) {

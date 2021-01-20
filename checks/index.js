@@ -16,11 +16,11 @@ module.exports = [
   require("./secrets-json-valid"),
   require("./secrets-in-orders"),
   require("./no-carriage-return"),
-  require('./no-aws-secrets'),
+  require("./no-aws-secrets"),
 
   /**
    *  This should probably always be last, because it verifies that the
    *  policy includes permissions that are implied by orders and secrets.json
-   * */ 
+   * */
   require("./policy-json-valid"),
 ];

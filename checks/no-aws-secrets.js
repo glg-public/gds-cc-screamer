@@ -1,10 +1,10 @@
-require('../typedefs');
+require("../typedefs");
 const core = require("@actions/core");
 
 /**
  * These regular expressions for finding aws access key id
  * and secret access key are derived from this AWS blog:
- * 
+ *
  * https://aws.amazon.com/blogs/security/a-safer-way-to-distribute-aws-credentials-to-ec2/
  */
 const AKID = /(?<![A-Z0-9])[A-Z0-9]{20}(?![A-Z0-9])/;
@@ -15,7 +15,7 @@ const SAK_ENVVAR = /^export AWS_SECRET_ACCESS_KEY=/;
 /**
  * Checks for AWS Access Key ID and AWS Secret Access Key
  * @param {Deployment} deployment An object containing information about a deployment
- * 
+ *
  * @returns {Array<Result>}
  */
 async function noAWSSecrets(deployment) {
@@ -30,15 +30,17 @@ async function noAWSSecrets(deployment) {
     const lineNumber = i + 1;
 
     const result = {
-      title: 'Remove AWS Config from your orders file.',
+      title: "Remove AWS Config from your orders file.",
       line: lineNumber,
-      level: 'warning',
+      level: "warning",
       problems: [],
-      path: deployment.ordersPath
+      path: deployment.ordersPath,
     };
 
     if (AKID_ENVVAR.test(line) || SAK_ENVVAR.test(line)) {
-      result.problems.push("You should rely on the container's role, which you can define with `policy.json`, rather than explicitly declaring AWS credentials.")
+      result.problems.push(
+        "You should rely on the container's role, which you can define with `policy.json`, rather than explicitly declaring AWS credentials."
+      );
     }
 
     if (AKID.test(line)) {
@@ -48,13 +50,14 @@ async function noAWSSecrets(deployment) {
 
     if (SAK.test(line)) {
       result.level = "failure";
-      result.problems.push("Remove this Secret Access Key from your orders file.");
+      result.problems.push(
+        "Remove this Secret Access Key from your orders file."
+      );
     }
 
     if (result.problems.length > 0) {
       results.push(result);
     }
-    
   });
 
   return results;
