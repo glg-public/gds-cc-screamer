@@ -10,6 +10,13 @@ const core = require("@actions/core");
  * @returns {Array<Result>}
  */
 async function templateCheck(deployment, context, inputs) {
+  /**
+   * You should check the existance of any file you're trying to check
+   */
+  if (!deployment.ordersContents) {
+    core.info(`No Orders Present - Skipping ${deployment.serviceName}`);
+    return [];
+  }
   core.info(`Template Check - ${deployment.ordersPath}`);
   const results = [];
   /**
