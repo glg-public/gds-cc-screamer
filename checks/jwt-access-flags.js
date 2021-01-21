@@ -1,5 +1,6 @@
 require('../typedefs');
 const core = require("@actions/core");
+const { getExportValue, suggest } = require('../util');
 
 /**
  * Accepts a deployment object, and does some kind of check
@@ -21,11 +22,7 @@ async function jwtAccessFlags(deployment) {
     if (accessFlags && accessFlags.includes("+")) {
       results.push({
         title: "Syntax Error in JWT_ACCESS_FLAGS",
-        problems: [
-          `Use a \`|\` instead \n\`\`\`suggestion
-${line.replace(/\+/g, "|")}
-\`\`\``,
-        ],
+        problems: [suggest("Use a `|` instead", line.replace(/\+/g, "|"))],
         line: i + 1,
         level: "failure",
       });
@@ -33,16 +30,6 @@ ${line.replace(/\+/g, "|")}
   }
 
   return results;
-}
-
-function getExportValue(text, varName) {
-  const regex = new RegExp(`^export ${varName}=(.*)`, "mi");
-  const match = regex.exec(text);
-
-  if (!match || match.length < 2 || match[1].length < 1) return null;
-
-  const value = match[1].replace(/['|"]/gm, "");
-  return value && value.length > 0 ? value : null;
 }
 
 module.exports = jwtAccessFlags;

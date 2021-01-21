@@ -503,6 +503,16 @@ async function getAllDeployments(files, filesToCheck) {
   );
 }
 
+function getExportValue(text, varName) {
+  const regex = new RegExp(`^export ${varName}=(.*)`, "mi");
+  const match = regex.exec(text);
+
+  if (!match || match.length < 2 || match[1].length < 1) return null;
+
+  const value = match[1].replace(/['|"]/gm, "");
+  return value && value.length > 0 ? value : null;
+}
+
 module.exports = {
   getLinesForJSON,
   suggest,
@@ -518,5 +528,6 @@ module.exports = {
   getAllDeployments,
   clearPreviousRunComments,
   getContents,
-  camelCaseFileName
+  camelCaseFileName,
+  getExportValue,
 };
