@@ -1,6 +1,6 @@
 ![Screaming Goat](./screamer.png)
 
-# ClusterConfig Screamer for GDS
+# ClusterConfig Screamer for GLG Deployment System
 This is a github action for validating PRs to GDS Cluster Configs. It evaluates `orders`, `secrets.json`, and `policy.json` for known bugs, and comments on the PR with information and suggestions.
 
 ## Why are node_modules checked in?
