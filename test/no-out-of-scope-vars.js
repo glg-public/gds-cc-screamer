@@ -38,8 +38,8 @@ describe("No Out Of Scope Variables", () => {
       path: deployment.ordersPath,
       problems: [
         "GDS requires that all referenced variables be defined within the `orders` file. `.starphleet` has been deprecated.",
-        "Undefined Variable: `JWT_ROLE_GLG_USER`",
-        "Undefined Variable: `JWT_ROLE_GLG_CLIENT`",
+        "**Undefined Variable:** `JWT_ROLE_GLG_USER`",
+        "**Undefined Variable:** `JWT_ROLE_GLG_CLIENT`",
       ]
     })
   });

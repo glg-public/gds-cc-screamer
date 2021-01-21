@@ -45,7 +45,7 @@ async function noOutOfScopeVars(deployment) {
       const { variable } = match.groups;
 
       if (!exportedVars.has(variable)) {
-        result.problems.push(`Undefined Variable: \`${variable}\``,)
+        result.problems.push(`**Undefined Variable:** \`${variable}\``,)
       }
       match = bashVar.exec(line);
     }
