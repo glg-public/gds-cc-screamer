@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 const noOutOfScopeVars = require('../checks/no-out-of-scope-vars');
 
-describe.only("No Out Of Scope Variables", () => {
+describe("No Out Of Scope Variables", () => {
   it("accepts orders with no undefined variable use.", async () => {
     const deployment = {
       serviceName: "streamliner",

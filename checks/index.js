@@ -17,6 +17,7 @@ module.exports = [
   require("./secrets-in-orders"),
   require("./no-carriage-return"),
   require("./no-aws-secrets"),
+  require("./no-out-of-scope-vars"),
 
   /**
    *  This should probably always be last, because it verifies that the
