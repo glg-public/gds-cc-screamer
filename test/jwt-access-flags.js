@@ -39,7 +39,7 @@ describe("Valid bitwise operations in JWT_ACCESS_FLAGS", () => {
     expect(results.length).to.equal(1);
     expect(results[0].level).to.equal("failure");
     expect(results[0].problems[0]).to.equal(
-      `Use a \`|\` instead \n\`\`\`suggestion
+      `Use a \`|\` instead\n\`\`\`suggestion
 export JWT_ACCESS_FLAGS=$(($JWT_ROLE_GLG_USER | $JWT_ROLE_GLG_CLIENT))
 \`\`\``
     );
