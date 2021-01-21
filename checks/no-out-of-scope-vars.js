@@ -1,8 +1,7 @@
 require("../typedefs");
 const core = require("@actions/core");
 
-const bashVar = /\$\{?(?<variable>\w+)\}?/;
-const exported = /^export (?<variable>\w+)=.+/;
+const exported = /^(export |)(?<variable>\w+)=.+/;
 
 /**
  * Accepts a deployment object, and does some kind of check
@@ -31,22 +30,28 @@ async function noOutOfScopeVars(deployment) {
       exportedVars.add(variable);
     }
 
+    const result = {
+      title: "Out of Scope Variable Reference",
+      line: lineNumber,
+      level: "failure",
+      path: deployment.ordersPath,
+      problems: [
+        "GDS requires that all referenced variables be defined within the `orders` file. `.starphleet` has been deprecated."
+      ]
+    }
+    const bashVar = /\$\{?(?<variable>\w+)\}?/g;
     match = bashVar.exec(line);
-    if (match) {
+    while (match) {
       const { variable } = match.groups;
 
       if (!exportedVars.has(variable)) {
-        results.push({
-          title: "Out of Scope Variable Reference",
-          line: lineNumber,
-          level: "failure",
-          path: deployment.ordersPath,
-          problems: [
-            `Undefined Variable: \`${variable}\``,
-            "GDS requires that all referenced variables be defined within the `orders` file. `.starphleet` has been deprecated."
-          ]
-        })
+        result.problems.push(`Undefined Variable: \`${variable}\``,)
       }
+      match = bashVar.exec(line);
+    }
+
+    if (result.problems.length > 1) {
+      results.push(result);
     }
   });
 
