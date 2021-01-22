@@ -74,9 +74,7 @@ function getLinesForJSON(fileLines, jsonObj) {
  * @returns {string}
  */
 function suggest(title, suggestion) {
-  return `${title}\n\`\`\`suggestion
-${suggestion}
-\`\`\``;
+  return `${title}\n${codeBlock(suggestion, "suggestion")}`;
 }
 
 /**
@@ -337,6 +335,16 @@ async function clearPreviousRunComments(octokit, { owner, repo, pull_number }) {
   }
 }
 
+function getNewIssueLink({ linkText, owner, repo, title, body }) {
+  return `[${linkText}](https://github.com/${owner}/${repo}/issues/new?title=${encodeURIComponent(
+    title
+  )}&body=${encodeURIComponent(body)})`;
+}
+
+function codeBlock(text, type = "") {
+  return `\`\`\`${type}\n${text}\n\`\`\``;
+}
+
 /**
  * Submits an issue comment on the PR which contains
  * a link to a pre-populated bug report on this
@@ -356,21 +364,42 @@ async function suggestBugReport(
   title,
   { owner, repo, pull_number: issue_number }
 ) {
-  const errorText = `\`\`\`\n${error.message}\n\n${error.stack}\n\`\`\``;
-  const issueLink = `[Create an issue](https://github.com/glg-public/gds-cc-screamer/issues/new?title=${encodeURIComponent(
-    title
-  )}&body=${encodeURIComponent(errorText)})`;
-  const body = `## An error was encountered. Please submit a bug report
- ${errorText}
- 
- ${issueLink}
-   `;
+  const errorText = codeBlock(`${error.message}\n\n${error.stack}`);
+  const issueLink = getNewIssueLink({
+    linkText: "Create an issue",
+    owner: "glg-public",
+    repo: "gds-cc-screamer",
+    title,
+    body: errorText,
+  });
+
+  const body = `## An error was encountered. Please submit a bug report\n${errorText}\n\n${issueLink}\n`;
   await octokit.issues.createComment({
     owner,
     repo,
     issue_number,
     body,
   });
+}
+
+function prLink({ owner, repo, pull_number }) {
+  return `https://github.com/${owner}/${repo}/pull/${pull_number}`;
+}
+
+function lineLink({ owner, repo, sha, path: filePath, line }) {
+  let link = `https://github.com/${owner}/${repo}/blob/${sha}/${filePath}`;
+
+  if (
+    isNaN(line) &&
+    line.hasOwnProperty("start") &&
+    line.hasOwnProperty("end")
+  ) {
+    link += `#L${line.start}-L${line.end}`;
+  } else if (line > 0) {
+    link += `#L${line}`;
+  }
+
+  return link;
 }
 
 /**
@@ -400,12 +429,26 @@ async function leaveComment(
     notice: "👉",
   };
 
+  let resultPath = result.path || ordersPath || secretsPath || policyPath;
+
   // Build a markdown comment to post
   let comment = `## ${icons[result.level]} ${result.title}\n`;
   for (const problem of result.problems) {
     comment += `- ${problem}\n`;
     core.error(`${result.title} - ${problem}`);
   }
+
+  comment += `\n\n${getNewIssueLink({
+    linkText: "Look wrong? File a bug report",
+    owner: "glg-public",
+    repo: "gds-cc-screamer",
+    title: "Possible bug",
+    body: `# Context\n${prLink({
+      owner,
+      repo,
+      pull_number,
+    })}\n${lineLink({owner, repo, sha, path: resultPath, line: result.line })}\n\n# Result Contents\n\n${comment}`,
+  })}`;
   try {
     // Line 0 means a general comment, not a line-specific comment
     if (result.line === 0) {
@@ -428,7 +471,7 @@ async function leaveComment(
         repo,
         pull_number,
         commit_id: sha,
-        path: result.path || ordersPath || secretsPath || policyPath,
+        path: resultPath,
         body: comment,
         side: "RIGHT",
         start_line: result.line.start,
@@ -443,7 +486,7 @@ async function leaveComment(
         repo,
         pull_number,
         commit_id: sha,
-        path: result.path || ordersPath || secretsPath || policyPath,
+        path: resultPath,
         body: comment,
         side: "RIGHT",
         line: result.line,
@@ -470,8 +513,8 @@ async function leaveComment(
         sha,
       });
     } else {
-      console.log(e);
-      console.log(result);
+      core.info(e);
+      core.info(result);
       await suggestBugReport(octokit, e, "Error while posting comment", {
         owner,
         repo,
@@ -482,10 +525,10 @@ async function leaveComment(
 }
 
 /**
- * 
- * @param {Array<GitHubFile>} files 
+ *
+ * @param {Array<GitHubFile>} files
  * @param {Array<string>} filesToCheck
- * 
+ *
  * @returns {Array<Deployment>}
  */
 async function getAllDeployments(files, filesToCheck) {
@@ -530,4 +573,6 @@ module.exports = {
   getContents,
   camelCaseFileName,
   getExportValue,
+  getNewIssueLink,
+  codeBlock,
 };

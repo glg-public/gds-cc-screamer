@@ -6,7 +6,7 @@ const {
   getLinesForJSON,
   getNewFileLink,
   getOwnerRepoBranch,
-  detectIndentation
+  detectIndentation,
 } = require("../util");
 
 const secretsUse = /^(export +|)(?<variable>\w+)=\$\(\s*secrets\s*(?<secretName>\w*)\s*\)$/;
