@@ -66,18 +66,18 @@ async function leaveComment(
     linkText: "Look wrong? File a bug report",
     owner: "glg-public",
     repo: "gds-cc-screamer",
-    title: "Possible bug",
-    body: `# Context\n${prLink({
+    title: "Unexpected Behavior",
+    body: `# Context\n- [Pull Request](${prLink({
       owner,
       repo,
       pull_number,
-    })}\n${lineLink({
+    })})\n- [Flagged Lines](${lineLink({
       owner,
       repo,
       sha,
       path: resultPath,
       line: result.line,
-    })}\n\n# Result Contents\n\n${comment}`,
+    })})\n\n# Result Contents\n\n${comment}`,
   })}`;
   try {
     // Line 0 means a general comment, not a line-specific comment
