@@ -341,7 +341,7 @@ function getNewIssueLink({ linkText, owner, repo, title, body }) {
   )}&body=${encodeURIComponent(body)})`;
 }
 
-function codeBlock(text, type="") {
+function codeBlock(text, type = "") {
   return `\`\`\`${type}\n${text}\n\`\`\``;
 }
 
@@ -370,9 +370,9 @@ async function suggestBugReport(
     owner: "glg-public",
     repo: "gds-cc-screamer",
     title,
-    body: errorText
+    body: errorText,
   });
-  
+
   const body = `## An error was encountered. Please submit a bug report\n${errorText}\n\n${issueLink}\n`;
   await octokit.issues.createComment({
     owner,
@@ -384,6 +384,22 @@ async function suggestBugReport(
 
 function prLink({ owner, repo, pull_number }) {
   return `https://github.com/${owner}/${repo}/pull/${pull_number}`;
+}
+
+function lineLink({ owner, repo, sha, path: filePath, line }) {
+  let link = `https://github.com/${owner}/${repo}/blob/${sha}/${filePath}`;
+
+  if (
+    isNaN(line) &&
+    line.hasOwnProperty("start") &&
+    line.hasOwnProperty("end")
+  ) {
+    link += `#L${line.start}-L${line.end}`;
+  } else if (line > 0) {
+    link += `#L${line}`;
+  }
+
+  return link;
 }
 
 /**
@@ -422,13 +438,16 @@ async function leaveComment(
     core.error(`${result.title} - ${problem}`);
   }
 
-
   comment += `\n\n${getNewIssueLink({
     linkText: "Look wrong? File a bug report",
     owner: "glg-public",
     repo: "gds-cc-screamer",
     title: "Possible bug",
-    body: `# Pull Request\n${prLink({ owner, repo, pull_number })}\n**Path:** ${resultPath}\n**Line:** ${JSON.stringify(result.line)}\n\n# Result Contents\n\n${comment}`
+    body: `# Context\n${prLink({
+      owner,
+      repo,
+      pull_number,
+    })}\n${lineLink({owner, repo, sha, path: resultPath, line: result.line })}\n\n# Result Contents\n\n${comment}`,
   })}`;
   try {
     // Line 0 means a general comment, not a line-specific comment
@@ -555,5 +574,5 @@ module.exports = {
   camelCaseFileName,
   getExportValue,
   getNewIssueLink,
-  codeBlock
+  codeBlock,
 };
