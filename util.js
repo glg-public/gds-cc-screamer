@@ -382,6 +382,10 @@ async function suggestBugReport(
   });
 }
 
+function prLink({ owner, repo, pull_number }) {
+  return `https://github.com/${owner}/${repo}/pull/${pull_number}`;
+}
+
 /**
  * Leaves the correct type of comment for a given result and deployment
  * @param {Octokit} octokit A configured octokit client
@@ -415,6 +419,15 @@ async function leaveComment(
     comment += `- ${problem}\n`;
     core.error(`${result.title} - ${problem}`);
   }
+
+
+  comment += `\n\n${getNewIssueLink({
+    linkText: "Look wrong? File a bug report",
+    owner: "glg-public",
+    repo: "gds-cc-screamer",
+    title: "Possible bug",
+    body: `# Pull Request\n${prLink({ owner, repo, pull_number })}\n\n# Result Contents\n\n${comment}`
+  })}`;
   try {
     // Line 0 means a general comment, not a line-specific comment
     if (result.line === 0) {
@@ -479,8 +492,8 @@ async function leaveComment(
         sha,
       });
     } else {
-      console.log(e);
-      console.log(result);
+      core.info(e);
+      core.info(result);
       await suggestBugReport(octokit, e, "Error while posting comment", {
         owner,
         repo,
