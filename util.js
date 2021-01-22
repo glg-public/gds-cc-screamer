@@ -74,9 +74,7 @@ function getLinesForJSON(fileLines, jsonObj) {
  * @returns {string}
  */
 function suggest(title, suggestion) {
-  return `${title}\n\`\`\`suggestion
-${suggestion}
-\`\`\``;
+  return `${title}\n${codeBlock(suggestion, "suggestion")}`;
 }
 
 /**
@@ -337,6 +335,16 @@ async function clearPreviousRunComments(octokit, { owner, repo, pull_number }) {
   }
 }
 
+function getNewIssueLink({ linkText, owner, repo, title, body }) {
+  return `[${linkText}](https://github.com/${owner}/${repo}/issues/new?title=${encodeURIComponent(
+    title
+  )}&body=${encodeURIComponent(body)})`;
+}
+
+function codeBlock(text, type="") {
+  return `\`\`\`${type}\n${text}\n\`\`\``;
+}
+
 /**
  * Submits an issue comment on the PR which contains
  * a link to a pre-populated bug report on this
@@ -356,15 +364,16 @@ async function suggestBugReport(
   title,
   { owner, repo, pull_number: issue_number }
 ) {
-  const errorText = `\`\`\`\n${error.message}\n\n${error.stack}\n\`\`\``;
-  const issueLink = `[Create an issue](https://github.com/glg-public/gds-cc-screamer/issues/new?title=${encodeURIComponent(
-    title
-  )}&body=${encodeURIComponent(errorText)})`;
-  const body = `## An error was encountered. Please submit a bug report
- ${errorText}
- 
- ${issueLink}
-   `;
+  const errorText = codeBlock(`${error.message}\n\n${error.stack}`);
+  const issueLink = getNewIssueLink({
+    linkText: "Create an issue",
+    owner: "glg-public",
+    repo: "gds-cc-screamer",
+    title,
+    body: errorText
+  });
+  
+  const body = `## An error was encountered. Please submit a bug report\n${errorText}\n\n${issueLink}\n`;
   await octokit.issues.createComment({
     owner,
     repo,
@@ -482,10 +491,10 @@ async function leaveComment(
 }
 
 /**
- * 
- * @param {Array<GitHubFile>} files 
+ *
+ * @param {Array<GitHubFile>} files
  * @param {Array<string>} filesToCheck
- * 
+ *
  * @returns {Array<Deployment>}
  */
 async function getAllDeployments(files, filesToCheck) {
@@ -530,4 +539,6 @@ module.exports = {
   getContents,
   camelCaseFileName,
   getExportValue,
+  getNewIssueLink,
+  codeBlock
 };
