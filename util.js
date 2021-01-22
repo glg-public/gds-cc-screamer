@@ -413,6 +413,8 @@ async function leaveComment(
     notice: "👉",
   };
 
+  let resultPath = result.path || ordersPath || secretsPath || policyPath;
+
   // Build a markdown comment to post
   let comment = `## ${icons[result.level]} ${result.title}\n`;
   for (const problem of result.problems) {
@@ -426,7 +428,7 @@ async function leaveComment(
     owner: "glg-public",
     repo: "gds-cc-screamer",
     title: "Possible bug",
-    body: `# Pull Request\n${prLink({ owner, repo, pull_number })}\n\n# Result Contents\n\n${comment}`
+    body: `# Pull Request\n${prLink({ owner, repo, pull_number })}\n**Path:** ${resultPath}\n**Line:** ${JSON.stringify(result.line)}\n\n# Result Contents\n\n${comment}`
   })}`;
   try {
     // Line 0 means a general comment, not a line-specific comment
@@ -450,7 +452,7 @@ async function leaveComment(
         repo,
         pull_number,
         commit_id: sha,
-        path: result.path || ordersPath || secretsPath || policyPath,
+        path: resultPath,
         body: comment,
         side: "RIGHT",
         start_line: result.line.start,
@@ -465,7 +467,7 @@ async function leaveComment(
         repo,
         pull_number,
         commit_id: sha,
-        path: result.path || ordersPath || secretsPath || policyPath,
+        path: resultPath,
         body: comment,
         side: "RIGHT",
         line: result.line,
