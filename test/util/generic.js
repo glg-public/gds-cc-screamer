@@ -65,4 +65,4 @@ describe("getExportValue", () => {
     const value = getExportValue("export CAT=''", "CAT");
     expect(value).to.be.null;
   });
-})
+});
