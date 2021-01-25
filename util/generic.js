@@ -20,7 +20,6 @@ function isAJob(fileLines) {
   return isJobDeploy || isUnpublished;
 }
 
-
 /**
  * Read orders, secrets.json, and policy.json from the directory,
  * and split them by \n.
@@ -43,7 +42,6 @@ async function getContents(serviceName, filesToCheck) {
   return result;
 }
 
-
 function getExportValue(text, varName) {
   const regex = new RegExp(`^export ${varName}=(.*)`, "mi");
   const match = regex.exec(text);
@@ -57,5 +55,5 @@ function getExportValue(text, varName) {
 module.exports = {
   isAJob,
   getContents,
-  getExportValue
-}
+  getExportValue,
+};
