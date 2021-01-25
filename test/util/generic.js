@@ -1,7 +1,7 @@
 const { expect } = require("chai");
 const path = require("path");
 const fs = require("fs");
-const { isAJob, getContents } = require("../../util/generic");
+const { isAJob, getContents, getExportValue } = require("../../util/generic");
 
 describe("isAJob", () => {
   it("takes file lines, and determines if it is a job deployment", () => {
@@ -49,3 +49,20 @@ describe("getContents", () => {
     });
   });
 });
+
+describe("getExportValue", () => {
+  it("retrieves the value of an exported bash variable", () => {
+    const value = getExportValue("export CAT='pants'", "CAT");
+    expect(value).to.equal("pants");
+  });
+
+  it("returns null if the variable is not present in the text", () => {
+    const value = getExportValue("export CAT='pants'", "DOG");
+    expect(value).to.be.null;
+  });
+
+  it("returns null if the exported value is empty", () => {
+    const value = getExportValue("export CAT=''", "CAT");
+    expect(value).to.be.null;
+  });
+})
