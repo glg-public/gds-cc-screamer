@@ -18,6 +18,7 @@ module.exports = [
   require("./no-carriage-return"),
   require("./no-aws-secrets"),
   require("./no-out-of-scope-vars"),
+  require("./use-cname"),
 
   /**
    *  This should probably always be last, because it verifies that the
