@@ -1,16 +1,12 @@
 const { expect } = require("chai");
+const fs = require("fs");
+const path = require("path");
 const {
   getLinesForJSON,
   detectIndentation,
   camelCaseFileName,
-  isAJob,
-  getContents,
-  suggestBugReport,
-  getNewIssueLink,
   codeBlock,
-} = require("../util");
-const fs = require("fs");
-const path = require("path");
+} = require("../../util/text");
 
 describe("getLinesForJSON", () => {
   it("returns a range of lines for multiline JSON objects", () => {
@@ -117,16 +113,16 @@ describe("getLinesForJSON", () => {
 
 describe("detect-indent", () => {
   const spaces1 = fs
-    .readFileSync(path.join(__dirname, "fixtures/1space.json"), "utf8")
+    .readFileSync(path.join(__dirname, "../fixtures/1space.json"), "utf8")
     .split("\n");
   const spaces2 = fs
-    .readFileSync(path.join(__dirname, "fixtures/2space.json"), "utf8")
+    .readFileSync(path.join(__dirname, "../fixtures/2space.json"), "utf8")
     .split("\n");
   const spaces4 = fs
-    .readFileSync(path.join(__dirname, "fixtures/4space.json"), "utf8")
+    .readFileSync(path.join(__dirname, "../fixtures/4space.json"), "utf8")
     .split("\n");
   const tabs1 = fs
-    .readFileSync(path.join(__dirname, "fixtures/1tab.json"), "utf8")
+    .readFileSync(path.join(__dirname, "../fixtures/1tab.json"), "utf8")
     .split("\n");
   it("works with 1 space", () => {
     const result = detectIndentation(spaces1);
@@ -178,91 +174,12 @@ describe("camelCaseFilename", () => {
   });
 });
 
-describe("isAJob", () => {
-  it("takes file lines, and determines if it is a job deployment", () => {
-    let filelines = ["dockerdeploy github/glg/echo/gds:latest"];
-    expect(isAJob(filelines)).to.be.false;
-
-    filelines.push("unpublished");
-    expect(isAJob(filelines)).to.be.true;
-
-    filelines = ["jobdeploy github/glg/echo/gds:latest"];
-    expect(isAJob(filelines)).to.be.true;
-  });
-});
-
-describe("getContents", () => {
-  it("loads all important files from a directory, and returns a deployment object", async () => {
-    // Tests run from repo root, so have to specify the path
-    const serviceName = path.join("test", "test-service");
-    const deployment = await getContents(serviceName, [
-      "orders",
-      "secrets.json",
-      "policy.json",
-    ]);
-    const ordersPath = path.join(serviceName, "orders")
-    const ordersContents = fs
-      .readFileSync(ordersPath, "utf8")
-      .split("\n");
-
-    const secretsJsonPath = path.join(serviceName, "secrets.json");
-    const secretsJsonContents = fs
-      .readFileSync(secretsJsonPath, "utf8")
-      .split("\n");
-
-    const policyJsonPath = path.join(serviceName, "policy.json");
-    const policyJsonContents = fs
-      .readFileSync(policyJsonPath, "utf8")
-      .split("\n");
-    
-    expect(deployment).to.deep.equal({
-      serviceName,
-      ordersPath,
-      ordersContents,
-      secretsJsonPath,
-      secretsJsonContents,
-      policyJsonPath,
-      policyJsonContents
-    })
-  });
-});
-
-describe("suggestBugReport", () => {
-  it("creates an issue comment that contains a link to open an issue on this repo", async () => {
-    let commentPayload;
-    const moctokit = { issues: { createComment: (input) => { commentPayload = input } }};
-    const error = new Error("Test");
-    await suggestBugReport(moctokit, error, "Test Error", {
-      owner: "org",
-      repo: "repo",
-      pull_number: 42
-    });
-    
-    const errorText = codeBlock(`${error.message}\n\n${error.stack}`);
-    const issueLink = getNewIssueLink({
-      linkText: "Create an issue",
-      owner: "glg-public",
-      repo: "gds-cc-screamer",
-      title: "Test Error",
-      body: errorText
-    });
-    const expectedBody = `## An error was encountered. Please submit a bug report\n${errorText}\n\n${issueLink}\n`;
-
-    expect(commentPayload).to.deep.equal({
-      owner: "org",
-      repo: "repo",
-      issue_number: 42,
-      body: expectedBody
-    });
-  })
-});
-
 describe("codeBlock", () => {
   it("wraps text as a markdown codeblock", () => {
     let wrapped = codeBlock("test");
     expect(wrapped).to.equal("```\ntest\n```");
 
-    wrapped  = codeBlock("test", "suggestion");
+    wrapped = codeBlock("test", "suggestion");
     expect(wrapped).to.equal("```suggestion\ntest\n```");
-  })
+  });
 });

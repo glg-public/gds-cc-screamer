@@ -4,7 +4,7 @@
   "description": "This is a github action for validating PRs to GDS Cluster Configs",
   "main": "index.js",
   "scripts": {
-    "test": "mocha",
+    "test": "mocha --recursive",
     "coverage": "npx nyc mocha"
   },
   "repository": {
