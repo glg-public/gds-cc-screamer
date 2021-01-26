@@ -1,3 +1,5 @@
+![Tests Passing](https://github.com/glg-public/gds-cc-screamer/workflows/Test%20Suite/badge.svg)
+
 ![Screaming Goat](./screamer.png)
 
 # ClusterConfig Screamer for GLG Deployment System
