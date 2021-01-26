@@ -1,6 +1,11 @@
 const { expect } = require("chai");
 const policyJsonIsValid = require("../checks/policy-json-valid");
-const { suggest, codeBlock, getNewFileLink, getOwnerRepoBranch } = require("../util");
+const {
+  suggest,
+  codeBlock,
+  getNewFileLink,
+  getOwnerRepoBranch,
+} = require("../util");
 
 const actionFmtError =
   '"Action" must be either a valid [Action String](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_action.html), or an array of valid action strings. SRE recommends as specific of an Action String as possible.';
@@ -1011,14 +1016,14 @@ describe("policy.json is valid", () => {
           valueFrom:
             "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else:::abcdef",
         },
-      ]
+      ],
     };
 
     const pr = require("./fixtures/pull-request.json");
     const context = {
       payload: {
-        pull_request: pr
-      }
+        pull_request: pr,
+      },
     };
 
     const results = await policyJsonIsValid(deployment, context);
@@ -1033,22 +1038,31 @@ describe("policy.json is valid", () => {
           Action: "secretsmanager:GetSecretValue",
           Resource: [
             "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret-??????",
-            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else-abcdef"
-          ]
-        }
-      ]
+            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else-abcdef",
+          ],
+        },
+      ],
     };
 
     const policyText = JSON.stringify(expectedPolicy, null, 2);
     const { owner, repo, branch } = getOwnerRepoBranch(context);
-    const newFileLink = getNewFileLink({ owner, repo, branch, filename: "streamliner/policy.json", value: policyText});
+    const newFileLink = getNewFileLink({
+      owner,
+      repo,
+      branch,
+      filename: "streamliner/policy.json",
+      value: policyText,
+    });
     expect(results[0]).to.deep.equal({
       title: "Create a policy.json",
       level: "failure",
       line: 0,
       problems: [
-        `Add a new file, \`streamliner/policy.json\`, that contains the following:\n${codeBlock(policyText, "json")}\n[Click To Add File](${newFileLink})`
-      ]
+        `Add a new file, \`streamliner/policy.json\`, that contains the following:\n${codeBlock(
+          policyText,
+          "json"
+        )}\n[Click To Add File](${newFileLink})`,
+      ],
     });
-  })
+  });
 });
