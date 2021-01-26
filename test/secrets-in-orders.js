@@ -32,6 +32,15 @@ const context = {
 
 
 describe("Secrets in orders file", () => {
+  it("skips if there is no orders file", async () => {
+    const deployment = {
+      serviceName: "streamliner"
+    };
+
+    const results = await secretsInOrders(deployment);
+    expect(results.length).to.equal(0);
+  });
+
   it("accepts an orders file with no use of secrets", async () => {
     const deployment = {
       serviceName: "streamliner",
