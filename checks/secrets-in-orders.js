@@ -15,7 +15,7 @@ const autodeploy = /^autodeploy git@github.com:(?<org>[\w-]+)\/(?<repo>.+?)(.git
 const removeLineSuggestion = "Remove this line\n```suggestion\n```";
 
 /**
- * Accepts a deployment object, and does some kind of check
+ * Suggests the use of secrets.json instead of using secrets in orders
  * @param {Deployment} deployment
  * @param {GitHubContext} context The context object provided by github
  * @param {ActionInputs} inputs The inputs (excluding the token) from the github action

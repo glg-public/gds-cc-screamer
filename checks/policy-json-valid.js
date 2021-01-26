@@ -36,7 +36,7 @@ const secretArn = /arn:(?<partition>[\w\*\-]*):secretsmanager:(?<region>[\w-]*):
 const secretsAction = "secretsmanager:GetSecretValue";
 
 /**
- * Accepts a deployment object, and does some kind of check
+ * Checks policy.json for validity and completeness
  * @param {Deployment} deployment
  * @param {GitHubContext} context The context object provided by github
  *

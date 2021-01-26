@@ -3,7 +3,7 @@ const core = require("@actions/core");
 const { getExportValue, suggest } = require('../util');
 
 /**
- * Accepts a deployment object, and does some kind of check
+ * Requires the use of | instead of + to combine jwt access flags
  * @param {Deployment} deployment
  * 
  * @returns {Array<Result>}

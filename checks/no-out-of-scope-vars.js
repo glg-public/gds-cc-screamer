@@ -4,7 +4,7 @@ const core = require("@actions/core");
 const exported = /^(export |)(?<variable>\w+)=.+/;
 
 /**
- * Accepts a deployment object, and does some kind of check
+ * Checks to make sure all used bash variables are defined within the orders file
  * @param {Deployment} deployment An object containing information about a deployment
  *
  * @returns {Array<Result>}

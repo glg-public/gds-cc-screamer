@@ -5,7 +5,7 @@ const envvar = /^(export |)(?<variable>\w+)=['"]?(?<value>.+?)['"]?$/;
 const clusterDNS = /^https:\/\/(?<clusterId>[spji]\d\d)\.glgresearch\.com/;
 
 /**
- * Accepts a deployment object, and does some kind of check
+ * Throws a warning when it detects the use of cluster dns instead of a friendly cname
  * @param {Deployment} deployment An object containing information about a deployment
  *
  * @returns {Array<Result>}

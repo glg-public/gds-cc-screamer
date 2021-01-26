@@ -3,7 +3,7 @@ const core = require("@actions/core");
 const { isAJob } = require('../util');
 
 /**
- * Accepts a deployment object, and does some kind of check
+ * Validates that the declared security mode matches the cluster type
  * @param {Deployment} deployment An object containing information about a deployment
  * @param {GitHubContext} context The context object provided by github
  * 

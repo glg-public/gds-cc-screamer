@@ -5,7 +5,7 @@ const { getLinesForJSON, suggest, getLineWithinObject } = require("../util");
 const secretArn = /arn:(?<partition>[\w\*\-]*):secretsmanager:(?<region>[\w-]*):(?<account>\d*):secret:(?<secretName>[\w-\/]*):?(?<jsonKey>\S*?):?(?<versionStage>\S*?):?(?<versionId>\w*)/;
 
 /**
- * Accepts a deployment object, and does some kind of check
+ * Checks the validity of a secrets.json
  * @param {Deployment} deployment
  * 
  * @returns {Array<Result>}

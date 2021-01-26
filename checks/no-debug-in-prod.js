@@ -12,7 +12,7 @@ const debugs = [
 ];
 
 /**
- * Accepts a deployment object, and does some kind of check
+ * Checks for some known debug options, and warns about them
  * @param {Deployment} deployment
  * 
  * @returns {Array<Result>}

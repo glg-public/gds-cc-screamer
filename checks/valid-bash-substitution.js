@@ -4,7 +4,7 @@ const core = require("@actions/core");
 const singleQuoteSubsitution = /export \w+='.*\$({|)\w+(}|).*'/;
 
 /**
- * Accepts a deployment object, and does some kind of check
+ * Flags the use of single quotes for bash substitution
  * @param {Deployment} deployment
  * 
  * @returns {Array<Result>}

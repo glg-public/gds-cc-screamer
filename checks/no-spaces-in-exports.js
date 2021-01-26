@@ -4,7 +4,7 @@ const core = require("@actions/core");
 const exportLine = /^export\s(?<variable>.*?)\s*=\s*(?<value>.*)/i;
 
 /**
- * Accepts a deployment object, and does some kind of check
+ * Rejects improper syntax for bash variable definitions
  * @param {Deployment} deployment
  * 
  * @returns {Array<Result>}

@@ -5,7 +5,7 @@ const core = require("@actions/core");
 const validCharacters = /^[a-z][a-z0-9-]*$/;
 
 /**
- * Accepts a deployment object, and validates the name of the service
+ * Validates the name of service for length and characters
  * @param {Deployment} deployment
  *
  * @returns {Array<Result>}

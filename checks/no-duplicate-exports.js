@@ -4,7 +4,7 @@ const core = require("@actions/core");
 const exportedVariable = /^export +(?<variable>\w+)=/;
 
 /**
- * Accepts a deployment object, and does some kind of check
+ * Rejects orders that export a variable more than once
  * @param {Deployment} deployment
  * 
  * @returns {Array<Result>}

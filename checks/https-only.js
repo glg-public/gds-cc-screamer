@@ -11,7 +11,7 @@ const reBadURLs = new RegExp(
 );
 
 /**
- * Accepts a deployment object, and does some kind of check
+ * Requires that all urls from our domains are https
  * @param {Deployment} deployment
  * 
  * @returns {Array<Result>}

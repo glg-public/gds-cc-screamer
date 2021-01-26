@@ -4,7 +4,7 @@ const core = require("@actions/core");
 const sourceUse = /^source (.*)/;
 
 /**
- * Accepts a deployment object, and does some kind of check
+ * Rejects orders that source from another file
  * @param {Deployment} deployment
  * 
  * @returns {Array<Result>}
