@@ -26,7 +26,10 @@ describe("No Sourcing Check", () => {
     const deployment = {
       serviceName: "streamliner",
       ordersPath: "streamliner/orders",
-      ordersContents: ["source /var/starphleet/headquarters/cookie-beta/orders"],
+      ordersContents: [
+        "source /var/starphleet/headquarters/cookie-beta/orders",
+        "export CAT=pants"
+      ],
     };
 
     const results = await noSourcing(deployment);
