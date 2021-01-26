@@ -2,6 +2,15 @@ const { expect } = require("chai");
 const noDupes = require("../checks/no-duplicate-exports");
 
 describe("No Duplicate Exports Check", () => {
+  it("skips if there is no orders file", async () => {
+    const deployment = {
+      serviceName: "streamliner"
+    };
+
+    const results = await noDupes(deployment);
+    expect(results.length).to.equal(0);
+  });
+
   it("allows orders with no duplicate exports", async () => {
     const deployment = {
       serviceName: "streamliner",
@@ -10,6 +19,7 @@ describe("No Duplicate Exports Check", () => {
         "export THREE=something",
         "export UNIQUE=123",
         'export VARS="quoted string"',
+        "dockerdeploy github/glg/streamliner/main:latest"
       ],
     };
 
