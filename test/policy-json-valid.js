@@ -1009,7 +1009,7 @@ describe("policy.json is valid", () => {
         {
           name: "MY_OTHER_SECRET",
           valueFrom:
-            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else:::",
+            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else:::abcdef",
         },
       ]
     };
@@ -1033,7 +1033,7 @@ describe("policy.json is valid", () => {
           Action: "secretsmanager:GetSecretValue",
           Resource: [
             "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret-??????",
-            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else-??????"
+            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else-abcdef"
           ]
         }
       ]
