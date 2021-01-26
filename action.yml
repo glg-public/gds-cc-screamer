@@ -1,5 +1,6 @@
 name: 'GDS Cluster Config Screamer'
 description: 'Provides validation for GDS Cluster Configs'
+author: Shawn Rushefsky
 inputs:
   token:
     description: Should be secrets.GITHUB_TOKEN
