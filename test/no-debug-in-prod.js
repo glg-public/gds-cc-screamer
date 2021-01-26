@@ -2,6 +2,15 @@ const { expect } = require('chai');
 const noDebugInProd = require('../checks/no-debug-in-prod');
 
 describe('No Debug In Prod', async () => {
+  it("skips if there is no orders file", async () => {
+    const deployment = {
+      serviceName: "streamliner"
+    };
+
+    const results = await noDebugInProd(deployment);
+    expect(results.length).to.equal(0);
+  });
+
   it('accepts orders file with no known debug flags', async () => {
     const deployment = {
       serviceName: "streamliner",
