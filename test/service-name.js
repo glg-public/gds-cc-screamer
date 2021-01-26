@@ -28,7 +28,7 @@ describe("Service Name Check", () => {
 
     expect(results[0].problems.length).to.equal(1);
     expect(results[0].problems[0]).to.equal(
-      `**${serviceName}** - Name of service cannot exceed 28 characters.`
+      `**${serviceName}** - Name of service cannot exceed 28 characters (currently ${serviceName.length} characters).`
     );
   });
 

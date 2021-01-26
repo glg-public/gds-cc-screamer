@@ -7,7 +7,7 @@ const validCharacters = /^[a-z][a-z0-9-]*$/;
 /**
  * Accepts a deployment object, and validates the name of the service
  * @param {Deployment} deployment
- * 
+ *
  * @returns {Array<Result>}
  */
 async function validateServiceName(deployment) {
@@ -24,7 +24,7 @@ async function validateServiceName(deployment) {
 
   if (serviceName.length > 28) {
     problems.push(
-      `**${serviceName}** - Name of service cannot exceed 28 characters.`
+      `**${serviceName}** - Name of service cannot exceed 28 characters (currently ${serviceName.length} characters).`
     );
   }
 
