@@ -17,8 +17,7 @@ async function noSourcing(deployment) {
   core.info(`No Sourcing Other Files - ${deployment.ordersPath}`);
   const results = [];
 
-  for (let i = 0; i < deployment.ordersContents.length; i++) {
-    const line = deployment.ordersContents[i];
+  deployment.ordersContents.forEach((line, i) => {
     if (sourceUse.test(line)) {
       results.push({
         title: "No Use of `source`",
@@ -29,7 +28,7 @@ async function noSourcing(deployment) {
         level: "failure",
       });
     }
-  }
+  });
 
   return results;
 }

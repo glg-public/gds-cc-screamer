@@ -2,6 +2,15 @@ const { expect } = require("chai");
 const useCNAME = require("../checks/use-cname");
 
 describe("Use CNAME instead of cluster dns", () => {
+  it("skips if there is no orders file", async () => {
+    const deployment = {
+      serviceName: "streamliner"
+    };
+
+    const results = await useCNAME(deployment);
+    expect(results.length).to.equal(0);
+  });
+
   it("warns when it encounters a url that looks like a cluster dns", async () => {
     const deployment = {
       serviceName: "streamliner",

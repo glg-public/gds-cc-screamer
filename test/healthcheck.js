@@ -2,6 +2,27 @@ const { expect } = require("chai");
 const healthcheckCheck = require("../checks/healthcheck");
 
 describe("Healthcheck Check", () => {
+  it("skips if there is no orders file", async () => {
+    const deployment = {
+      serviceName: "streamliner"
+    };
+
+    const results = await healthcheckCheck(deployment);
+    expect(results.length).to.equal(0);
+  });
+
+  it("skips if the deployment is a job", async () => {
+    const deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: ["jobdeploy github/glg/streamliner/main:latest"],
+    };
+
+    const results = await healthcheckCheck(deployment);
+
+    expect(results.length).to.equal(0);
+  });
+
   it("works with a valid healthcheck", async () => {
     const deployment = {
       serviceName: "streamliner",

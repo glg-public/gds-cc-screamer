@@ -44,4 +44,13 @@ export JWT_ACCESS_FLAGS=$(($JWT_ROLE_GLG_USER | $JWT_ROLE_GLG_CLIENT))
 \`\`\``
     );
   });
+
+  it("skips if there is no orders file", async () => {
+    const deployment = {
+      serviceName: "streamliner"
+    };
+
+    const results = await jwtAccessFlags(deployment);
+    expect(results.length).to.equal(0);
+  });
 });

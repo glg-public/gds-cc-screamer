@@ -2,6 +2,15 @@ const { expect } = require("chai");
 const deploymentLineCheck = require("../checks/deployment-line");
 
 describe("Deployment Line Check", () => {
+  it("skips if there is no orders file", async () => {
+    const deployment = {
+      serviceName: "streamliner"
+    };
+
+    const results = await deploymentLineCheck(deployment);
+    expect(results.length).to.equal(0);
+  });
+
   it("works with a valid deployment line", async () => {
     // works with autodeploy
     let deployment = {

@@ -2,6 +2,15 @@ const { expect } = require("chai");
 const noAWSSecrets = require("../checks/no-aws-secrets");
 
 describe("No AWS Secrets", () => {
+  it("skips if there is no orders file", async () => {
+    const deployment = {
+      serviceName: "streamliner"
+    };
+
+    const results = await noAWSSecrets(deployment);
+    expect(results.length).to.equal(0);
+  });
+
   it("accepts orders with no aws config", async () => {
     const deployment = {
       serviceName: "streamliner",
