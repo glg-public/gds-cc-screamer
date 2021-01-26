@@ -2,6 +2,15 @@ const { expect } = require("chai");
 const noSourcing = require("../checks/no-sourcing");
 
 describe("No Sourcing Check", () => {
+  it("skips if there is no orders file", async () => {
+    const deployment = {
+      serviceName: "streamliner"
+    };
+
+    const results = await noSourcing(deployment);
+    expect(results.length).to.equal(0);
+  });
+
   it("allows orders with no external sourcing", async () => {
     const deployment = {
       serviceName: "streamliner",
