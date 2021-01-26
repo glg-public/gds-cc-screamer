@@ -51,4 +51,13 @@ export MORE='https://services.glgresearch.com/streamliner'
 
     expect(results.length).to.equal(0);
   });
+
+  it("skips if there is no orders file", async () => {
+    const deployment = {
+      serviceName: "streamliner"
+    };
+
+    const results = await httpsOnly(deployment);
+    expect(results.length).to.equal(0);
+  });
 });
