@@ -18,9 +18,7 @@ async function validBashSubsitutions(deployment) {
   /** @type {Array<Result>} */
   const results = [];
 
-  for (let i = 0; i < deployment.ordersContents.length; i++) {
-    const line = deployment.ordersContents[i];
-
+  deployment.ordersContents.forEach((line, i) => {
     if (singleQuoteSubsitution.test(line)) {
       results.push({
         title: "Bad Substitution",
@@ -33,7 +31,7 @@ ${line.replace(/'/g, '"')}
         level: "failure",
       });
     }
-  }
+  })
 
   return results;
 }
