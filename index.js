@@ -18,11 +18,15 @@ async function run() {
   const secretsPrefix = core.getInput("aws_secrets_prefix");
   const awsRegion = core.getInput("aws_region");
   const awsPartition = core.getInput("aws_partition");
+
+  /** @type {ActionInputs} */
   const inputs = { awsAccount, secretsPrefix, awsRegion, awsPartition };
 
   const octokit = github.getOctokit(token);
 
+  /** @type {PullRequest} */
   const pr = github.context.payload.pull_request;
+
   const owner = pr.base.repo.owner.login;
   const repo = pr.base.repo.name;
   const pull_number = pr.number;
