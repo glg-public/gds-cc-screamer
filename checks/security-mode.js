@@ -1,12 +1,12 @@
-require('../typedefs');
+require("../typedefs");
 const core = require("@actions/core");
-const { isAJob } = require('../util');
+const { isAJob } = require("../util");
 
 /**
  * Validates that the declared security mode matches the cluster type
  * @param {Deployment} deployment An object containing information about a deployment
  * @param {GitHubContext} context The context object provided by github
- * 
+ *
  * @returns {Array<Result>}
  */
 async function templateCheck(deployment, context) {
@@ -16,7 +16,7 @@ async function templateCheck(deployment, context) {
   }
 
   if (isAJob(deployment.ordersContents)) {
-    core.info('Jobs do not require a security mode, skipping.');
+    core.info("Jobs do not require a security mode, skipping.");
     return [];
   }
   core.info(`Security Mode - ${deployment.ordersPath}`);
@@ -41,9 +41,7 @@ async function templateCheck(deployment, context) {
   } else if (expectedModes.indexOf(securityMode) > -1) {
     return [];
   } else {
-    for (let i = 0; i < deployment.ordersContents.length; i++) {
-      const line = deployment.ordersContents[i];
-
+    deployment.ordersContents.forEach((line, i) => {
       if (line.startsWith("export SECURITY_MODE=")) {
         results.push({
           title: "Invalid SECURITY_MODE",
@@ -56,7 +54,7 @@ async function templateCheck(deployment, context) {
           level: "failure",
         });
       }
-    }
+    });
   }
 
   return results;
