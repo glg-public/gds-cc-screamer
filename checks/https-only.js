@@ -1,4 +1,4 @@
-require('../typedefs');
+require("../typedefs");
 const core = require("@actions/core");
 
 const SECURE_DOMAINS = ["glgresearch.com", "glg.it", "glginsights.com"];
@@ -13,7 +13,7 @@ const reBadURLs = new RegExp(
 /**
  * Requires that all urls from our domains are https
  * @param {Deployment} deployment
- * 
+ *
  * @returns {Array<Result>}
  */
 async function httpsOnly(deployment) {
@@ -22,13 +22,11 @@ async function httpsOnly(deployment) {
     return [];
   }
   core.info(`HTTPS Only - ${deployment.ordersPath}`);
-  
+
   /** @type {Array<Result>} */
   const results = [];
 
-  for (let i = 0; i < deployment.ordersContents.length; i++) {
-    const line = deployment.ordersContents[i];
-
+  deployment.ordersContents.forEach((line, i) => {
     if (reBadURLs.test(line)) {
       const result = {
         title: "HTTPS Only",
@@ -43,7 +41,7 @@ ${line.replace(/http:/i, "https:")}
 
       results.push(result);
     }
-  }
+  });
 
   return results;
 }
