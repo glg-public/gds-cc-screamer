@@ -15,6 +15,8 @@ async function noSourcing(deployment) {
     return [];
   }
   core.info(`No Sourcing Other Files - ${deployment.ordersPath}`);
+
+  /** @type {Array<Result>} */
   const results = [];
 
   deployment.ordersContents.forEach((line, i) => {

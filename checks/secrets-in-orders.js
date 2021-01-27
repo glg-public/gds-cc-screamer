@@ -29,6 +29,8 @@ async function secretsInOrders(deployment, context, inputs) {
   }
   core.info(`Secrets in Orders File - ${deployment.ordersPath}`);
   const { awsAccount, secretsPrefix, awsRegion, awsPartition } = inputs;
+
+  /** @type {Array<Result>} */
   const results = [];
   const secretsJson = [];
   const { owner, repo, branch } = getOwnerRepoBranch(context);

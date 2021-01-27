@@ -23,6 +23,8 @@ async function noDebugInProd(deployment) {
     return [];
   }
   core.info(`No Debug In Production - ${deployment.ordersPath}`);
+
+  /** @type {Array<Result>} */
   const results = [];
  
   deployment.ordersContents.forEach((line, i) => {

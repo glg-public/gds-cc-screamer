@@ -20,6 +20,8 @@ async function templateCheck(deployment, context) {
     return [];
   }
   core.info(`Security Mode - ${deployment.ordersPath}`);
+
+  /** @type {Array<Result>} */
   const results = [];
 
   const expectedModes = getExpectedModes(context);

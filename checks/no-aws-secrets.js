@@ -24,6 +24,8 @@ async function noAWSSecrets(deployment) {
     return [];
   }
   core.info(`No AWS Secrets - ${deployment.ordersPath}`);
+
+  /** @type {Array<Result>} */
   const results = [];
 
   deployment.ordersContents.forEach((line, i) => {

@@ -19,6 +19,7 @@ async function useCNAME(deployment) {
     return [];
   }
   core.info(`Use CNAME instead of cluster DNS - ${deployment.ordersPath}`);
+  /** @type {Array<Result>} */
   const results = [];
   
   deployment.ordersContents.forEach((line, i) => {

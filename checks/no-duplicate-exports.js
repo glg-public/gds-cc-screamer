@@ -15,6 +15,8 @@ async function noDuplicateExports(deployment) {
     return [];
   }
   core.info(`No Duplicate Exports - ${deployment.ordersPath}`);
+
+  /** @type {Array<Result>} */
   const results = [];
 
   const counts = {};

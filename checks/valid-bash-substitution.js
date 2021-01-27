@@ -15,6 +15,7 @@ async function validBashSubsitutions(deployment) {
     return [];
   }
   core.info(`Valid Bash Substitution - ${deployment.ordersPath}`);
+  /** @type {Array<Result>} */
   const results = [];
 
   for (let i = 0; i < deployment.ordersContents.length; i++) {

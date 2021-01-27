@@ -15,6 +15,8 @@ async function noSpacesInExports(deployment) {
     return [];
   }
   core.info(`No Spaces in Exports - ${deployment.ordersPath}`);
+
+  /** @type {Array<Result>} */
   const results = [];
 
   for (let i = 0; i < deployment.ordersContents.length; i++) {

@@ -18,18 +18,10 @@ async function templateCheck(deployment, context, inputs) {
     return [];
   }
   core.info(`Template Check - ${deployment.ordersPath}`);
-  const results = [];
-  /**
-   * A Result Object:
-   {
-    title: 'Failing Check',
-    problems: ['This code sucks'],
-    line: lineNumber,
-    level: 'failure' // must be "failure", "warning", "notice", or "success"
-    [path]: deployment.secretsJsonPath // This defaults to the deployment path, but you can override for different files.
-   }
-   */
 
+  /** @type {Array<Result>} */
+  const results = [];
+  
   deployment.ordersContents.forEach((line, i) => {
     const lineNumber = i + 1;
     // do something

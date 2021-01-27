@@ -18,6 +18,8 @@ async function noOutOfScopeVars(deployment) {
     return [];
   }
   core.info(`No Out Of Scope Variables - ${deployment.ordersPath}`);
+
+  /** @type {Array<Result>} */
   const results = [];
   const exportedVars = new Set();
   

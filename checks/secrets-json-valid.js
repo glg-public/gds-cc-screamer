@@ -11,6 +11,7 @@ const secretArn = /arn:(?<partition>[\w\*\-]*):secretsmanager:(?<region>[\w-]*):
  * @returns {Array<Result>}
  */
 async function secretsJsonIsValid(deployment) {
+  /** @type {Array<Result>} */
   const results = [];
 
   // secrets.json is not required

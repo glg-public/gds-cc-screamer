@@ -22,6 +22,8 @@ async function httpsOnly(deployment) {
     return [];
   }
   core.info(`HTTPS Only - ${deployment.ordersPath}`);
+  
+  /** @type {Array<Result>} */
   const results = [];
 
   for (let i = 0; i < deployment.ordersContents.length; i++) {

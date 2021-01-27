@@ -14,6 +14,8 @@ async function jwtAccessFlags(deployment) {
     return [];
   }
   core.info(`JWT Access Flags - ${deployment.ordersPath}`);
+
+  /** @type {Array<Result>} */
   const results = [];
 
   for (let i = 0; i < deployment.ordersContents.length; i++) {
