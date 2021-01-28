@@ -27,13 +27,12 @@ async function useCNAME(deployment, context, inputs, httpGet) {
   const splitName = repo.split(".");
   const repoCluster = splitName.pop();
 
-  let clusterMap = { [repoCluster]: { hosts: [] }};
-  try {
-    clusterMap = await httpGet(inputs.clusterMap);
-  } catch (e) {
-    // doesn't matter
+  const clusterMap = await httpGet(inputs.clusterMap);
+  
+  let myCluster = { hosts: [] };
+  if (clusterMap[repoCluster]) {
+    myCluster = clusterMap[repoCluster];
   }
-  const myCluster = clusterMap[repoCluster];
   
   deployment.ordersContents.forEach((line, i) => {
     const lineNumber = i + 1;
