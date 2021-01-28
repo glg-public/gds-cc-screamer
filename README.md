@@ -36,9 +36,9 @@ jobs:
 
 - Create a new file in `./checks/`. It should export an `async function` that accepts a `Deployment` object and returns an array of `Result` objects. You can start by copying the template check in `./checks/template.js`.
 - Add your new check to the export array in `./checks/index.js`, following the established pattern.
-- Provide test coverage for your check in `./test/`. Your test file should share a name with the file it is testing. i.e. `./checks/service-name.js` should have an accompanying `./test/service-name.js`.
+- Provide test coverage for your check in `./test/`. Your test file should share a name with the file it is testing. i.e. `./checks/service-name.js` should have an accompanying `./test/service-name.js`. This project currently has >90% test coverage, and you should strive to keep it in that range.
 - There are JSDoc type definitions in `./typedefs.js` that facilitate working with some of complex objects you get from GitHub.
-- There are some helpful utilities in `./utils`
+- There are some helpful utilities in `./util`.
 
 ## Who's the goat?
 
