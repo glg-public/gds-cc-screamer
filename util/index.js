@@ -24,7 +24,8 @@ const {
 const {
   isAJob,
   getContents,
-  getExportValue
+  getExportValue,
+  httpGet
 } = require("./generic");
 
 module.exports = {
@@ -48,4 +49,5 @@ module.exports = {
   codeBlock,
   prLink,
   lineLink,
+  httpGet
 };

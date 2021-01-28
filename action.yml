@@ -5,6 +5,10 @@ inputs:
   token:
     description: Should be secrets.GITHUB_TOKEN
     required: true
+  cluster_map:
+    description: A URL where a JSON mapping of cluster attributes can be retrieved
+    required: false
+    default: https://static.glgresearch.com/gds-cluster-map/cluster-map.json
   aws_account_id:
     description: The ID of your AWS account. Used to generate certain comments.
     required: false

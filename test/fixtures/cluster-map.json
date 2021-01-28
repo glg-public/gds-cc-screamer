@@ -1,0 +1,15 @@
+{
+  "s99": {
+    "clusterMap": "v3-s99",
+    "clusterVersion": "v3",
+    "clusterConfig": "s99",
+    "fullPath": "glgapp/route53/s99.glgresearch.com.tf",
+    "nameOfFile": "s99.glgresearch.com.tf",
+    "hosts": [
+      "cli.glgresearch.com",
+      "insights.glgresearch.com",
+      "jupyterhub.glgresearch.com",
+      "streamliner.glgresearch.com"
+    ]
+  }
+}
