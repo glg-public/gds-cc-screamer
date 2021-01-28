@@ -33,6 +33,9 @@ async function useCNAME(deployment, context, inputs, httpGet) {
   if (clusterMap[repoCluster]) {
     myCluster = clusterMap[repoCluster];
   }
+  if (!myCluster.hosts) {
+    myCluster.hosts = [];
+  }
   
   deployment.ordersContents.forEach((line, i) => {
     const lineNumber = i + 1;
