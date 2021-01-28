@@ -38,7 +38,7 @@ jobs:
 - Add your new check to the export array in `./checks/index.js`, following the established pattern.
 - Provide test coverage for your check in `./test/`. Your test file should share a name with the file it is testing. i.e. `./checks/service-name.js` should have an accompanying `./test/service-name.js`.
 - There are JSDoc type definitions in `./typedefs.js` that facilitate working with some of complex objects you get from GitHub.
-- There are some helpful utilities in `./utils.js`
+- There are some helpful utilities in `./utils`
 
 ## Who's the goat?
 
