@@ -2,6 +2,7 @@ require("../typedefs");
 const path = require("path");
 const { camelCaseFileName } = require("./text");
 const fs = require("fs").promises;
+const https = require("https");
 
 const jobdeploy = /^jobdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\w+)/;
 
@@ -52,8 +53,32 @@ function getExportValue(text, varName) {
   return value && value.length > 0 ? value : null;
 }
 
+// No need to pull in axios just  for this
+function httpGet(url) {
+  return new Promise((resolve, reject) => {
+    https
+      .get(url, (resp) => {
+        let data = "";
+
+        // A chunk of data has been received.
+        resp.on("data", (chunk) => {
+          data += chunk;
+        });
+
+        // The whole response has been received. Parse it and resolve the promise
+        resp.on("end", () => {
+          resolve(JSON.parse(data));
+        });
+      })
+      .on("error", (err) => {
+        reject(err);
+      });
+  });
+}
+
 module.exports = {
   isAJob,
   getContents,
   getExportValue,
+  httpGet,
 };

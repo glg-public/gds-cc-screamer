@@ -280,7 +280,8 @@
  * awsAccount: string,
  * awsRegion: string,
  * awsPartition: string,
- * secretsPrefix: string
+ * secretsPrefix: string,
+ * clusterMap: URI
  * }} ActionInputs
  */
 

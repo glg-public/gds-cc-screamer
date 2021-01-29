@@ -7,6 +7,7 @@ const {
   getAllDeployments,
   suggestBugReport,
   leaveComment,
+  httpGet
 } = require("./util");
 
 /**
@@ -18,9 +19,10 @@ async function run() {
   const secretsPrefix = core.getInput("aws_secrets_prefix");
   const awsRegion = core.getInput("aws_region");
   const awsPartition = core.getInput("aws_partition");
+  const clusterMap = core.getInput("cluster_map");
 
   /** @type {ActionInputs} */
-  const inputs = { awsAccount, secretsPrefix, awsRegion, awsPartition };
+  const inputs = { awsAccount, secretsPrefix, awsRegion, awsPartition, clusterMap };
 
   const octokit = github.getOctokit(token);
 
@@ -58,7 +60,7 @@ async function run() {
       for (const check of checks) {
         let results = [];
         try {
-          results = await check(deployment, github.context, inputs);
+          results = await check(deployment, github.context, inputs, httpGet);
         } catch (e) {
           await suggestBugReport(octokit, e, "Error running check", {
             owner,
