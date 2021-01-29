@@ -67,8 +67,6 @@ describe("Use CNAME instead of cluster dns", () => {
       path: deployment.ordersPath,
       problems: [problem],
     });
-
-    //
   });
 
   it("warns and makes a generic suggestion if no friendly cname can be found", async () => {
