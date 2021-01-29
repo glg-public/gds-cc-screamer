@@ -1,6 +1,6 @@
 ![Tests Passing](https://github.com/glg-public/gds-cc-screamer/workflows/Test%20Suite/badge.svg)
 
-![Screaming Goat](./screamer.png)
+![Screamy the GLGoat](./screamer.png)
 
 # ClusterConfig Screamer for GLG Deployment System
 This is a github action for validating PRs to GDS Cluster Configs. It evaluates `orders`, `secrets.json`, and `policy.json` for known bugs, and comments on the PR with information and suggestions.
