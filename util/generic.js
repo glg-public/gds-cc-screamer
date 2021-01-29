@@ -53,6 +53,7 @@ function getExportValue(text, varName) {
   return value && value.length > 0 ? value : null;
 }
 
+// No need to pull in axios just  for this
 function httpGet(url) {
   return new Promise((resolve, reject) => {
     https
