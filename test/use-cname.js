@@ -1,21 +1,21 @@
 const { expect } = require("chai");
-const fs = require('fs').promises;
+const fs = require("fs").promises;
 const useCNAME = require("../checks/use-cname");
 const { suggest } = require("../util");
 
 async function localGet(path) {
-  const content = await fs.readFile(path, 'utf8');
+  const content = await fs.readFile(path, "utf8");
   return JSON.parse(content);
 }
 
 const inputs = {
-  clusterMap: "test/fixtures/cluster-map.json"
+  clusterMap: "test/fixtures/cluster-map.json",
 };
 
 describe("Use CNAME instead of cluster dns", () => {
   it("skips if there is no orders file", async () => {
     const deployment = {
-      serviceName: "streamliner"
+      serviceName: "streamliner",
     };
 
     const results = await useCNAME(deployment, {}, inputs, localGet);
@@ -42,22 +42,29 @@ describe("Use CNAME instead of cluster dns", () => {
         },
       },
     };
-    
+
     const results = await useCNAME(deployment, context, inputs, localGet);
     expect(results.length).to.equal(1);
 
     const clusterMap = await localGet(inputs.clusterMap);
 
-    const problem = "Rather than using the cluster dns (`s99.glgresearch.com`), consider using a friendly CNAME like one of the following:\n" + clusterMap.s99.hosts.map((host) => suggest("", deployment.ordersContents[0].replace("s99.glgresearch.com", host))).join('\n');
+    const problem =
+      "Rather than using the cluster dns (`s99.glgresearch.com`), consider using a friendly CNAME like one of the following:\n" +
+      clusterMap.s99.hosts
+        .map((host) =>
+          suggest(
+            "",
+            deployment.ordersContents[0].replace("s99.glgresearch.com", host)
+          )
+        )
+        .join("\n");
 
     expect(results[0]).to.deep.equal({
       title: "Use friendly CNAME instead",
       line: 1,
       level: "warning",
       path: deployment.ordersPath,
-      problems: [
-        problem
-      ],
+      problems: [problem],
     });
 
     //
@@ -87,16 +94,15 @@ describe("Use CNAME instead of cluster dns", () => {
     const results = await useCNAME(deployment, context, inputs, localGet);
     expect(results.length).to.equal(1);
 
-    const problem = "Rather than using the cluster dns (`s99.glgresearch.com`), consider using a friendly CNAME (e.g. `streamliner.glgresearch.com`)";
+    const problem =
+      "Rather than using the cluster dns (`s99.glgresearch.com`), consider using a friendly CNAME (e.g. `streamliner.glgresearch.com`)";
 
     expect(results[0]).to.deep.equal({
       title: "Use friendly CNAME instead",
       line: 1,
       level: "warning",
       path: deployment.ordersPath,
-      problems: [
-        problem
-      ],
+      problems: [problem],
     });
-  })
+  });
 });

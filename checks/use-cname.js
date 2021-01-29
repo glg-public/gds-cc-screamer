@@ -1,6 +1,6 @@
 require("../typedefs");
 const core = require("@actions/core");
-const { suggest } = require('../util');
+const { suggest } = require("../util");
 
 const envvar = /^(export |)(?<variable>\w+)=['"]?(?<value>.+?)['"]?$/;
 const clusterDNS = /^https:\/\/(?<clusterId>[spji]\d\d)\.glgresearch\.com/;
@@ -28,7 +28,7 @@ async function useCNAME(deployment, context, inputs, httpGet) {
   const repoCluster = splitName.pop();
 
   const clusterMap = await httpGet(inputs.clusterMap);
-  
+
   let myCluster = { hosts: [] };
   if (clusterMap[repoCluster]) {
     myCluster = clusterMap[repoCluster];
@@ -36,7 +36,7 @@ async function useCNAME(deployment, context, inputs, httpGet) {
   if (!myCluster.hosts) {
     myCluster.hosts = [];
   }
-  
+
   deployment.ordersContents.forEach((line, i) => {
     const lineNumber = i + 1;
     const envvarMatch = envvar.exec(line);
@@ -54,13 +54,18 @@ async function useCNAME(deployment, context, inputs, httpGet) {
           problems: [],
         };
 
-        let msg = `Rather than using the cluster dns (\`${clusterId}.glgresearch.com\`), consider using a friendly CNAME`
+        const msg = `Rather than using the cluster dns (\`${clusterId}.glgresearch.com\`), consider using a friendly CNAME`;
 
         if (myCluster.hosts.length === 0) {
           result.problems.push(`${msg} (e.g. \`streamliner.glgresearch.com\`)`);
         } else {
-          result.problems.push(`${msg} like one of the following:\n${myCluster.hosts.map((host) => suggest("", line.replace(`${clusterId}.glgresearch.com`, host))
-          ).join('\n')}`);
+          result.problems.push(
+            `${msg} like one of the following:\n${myCluster.hosts
+              .map((host) =>
+                suggest("", line.replace(`${clusterId}.glgresearch.com`, host))
+              )
+              .join("\n")}`
+          );
         }
         results.push(result);
       }
