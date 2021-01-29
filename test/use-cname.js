@@ -3,6 +3,7 @@ const fs = require("fs").promises;
 const useCNAME = require("../checks/use-cname");
 const { suggest } = require("../util");
 
+// This makes unit testing much simpler
 async function localGet(path) {
   const content = await fs.readFile(path, "utf8");
   return JSON.parse(content);

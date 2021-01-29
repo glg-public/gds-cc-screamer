@@ -65,7 +65,7 @@ function httpGet(url) {
           data += chunk;
         });
 
-        // The whole response has been received. Print out the result.
+        // The whole response has been received. Parse it and resolve the promise
         resp.on("end", () => {
           resolve(JSON.parse(data));
         });
