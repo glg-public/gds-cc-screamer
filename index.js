@@ -1,7 +1,7 @@
 require("./typedefs");
 const core = require("@actions/core");
 const github = require("@actions/github");
-const checks = require("./checks");
+const checks = require("./checks").all;
 const {
   clearPreviousRunComments,
   getAllDeployments,
