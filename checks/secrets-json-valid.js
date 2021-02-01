@@ -16,11 +16,11 @@ async function secretsJsonIsValid(deployment) {
 
   // secrets.json is not required
   if (!deployment.secretsJsonContents) {
-    core.info(`No secrets.json present, skipping - ${deployment.serviceName}`);
+    console.log(`No secrets.json present, skipping - ${deployment.serviceName}`);
     return results;
   }
 
-  core.info(`secrets.json is valid - ${deployment.secretsJsonPath}`);
+  console.log(`secrets.json is valid - ${deployment.secretsJsonPath}`);
 
   // secrets.json must be valid json
   let secretsJson;

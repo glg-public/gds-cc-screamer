@@ -2,7 +2,7 @@
   "name": "gds-cc-screamer",
   "version": "1.0.0",
   "description": "This is a github action for validating PRs to GDS Cluster Configs",
-  "main": "index.js",
+  "main": "module.js",
   "scripts": {
     "test": "mocha --recursive",
     "coverage": "npx nyc npm test"

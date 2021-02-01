@@ -19,10 +19,10 @@ const debugs = [
  */
 async function noDebugInProd(deployment) {
   if (!deployment.ordersContents) {
-    core.info(`No Orders Present - Skipping ${deployment.serviceName}`);
+    console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
-  core.info(`No Debug In Production - ${deployment.ordersPath}`);
+  console.log(`No Debug In Production - ${deployment.ordersPath}`);
 
   /** @type {Array<Result>} */
   const results = [];

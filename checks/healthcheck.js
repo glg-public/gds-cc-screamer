@@ -10,7 +10,7 @@ const { isAJob } = require('../util');
  */
 async function validateHealthcheck(deployment) {
   if (!deployment.ordersContents) {
-    core.info(`No Orders Present - Skipping ${deployment.serviceName}`);
+    console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
 
@@ -18,10 +18,10 @@ async function validateHealthcheck(deployment) {
   let lineNumber = 0;
 
   if (isAJob(deployment.ordersContents)) {
-    core.info('Jobs do not require a healthcheck, skipping.');
+    console.log('Jobs do not require a healthcheck, skipping.');
     return [];
   }
-  core.info(`Valid Health Check - ${deployment.ordersPath}`);
+  console.log(`Valid Health Check - ${deployment.ordersPath}`);
 
   for (let i = 0; i < deployment.ordersContents.length; i++) {
     const line = deployment.ordersContents[i];

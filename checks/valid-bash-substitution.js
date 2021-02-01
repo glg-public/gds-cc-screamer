@@ -11,10 +11,10 @@ const singleQuoteSubsitution = /export \w+='.*\$({|)\w+(}|).*'/;
  */
 async function validBashSubsitutions(deployment) {
   if (!deployment.ordersContents) {
-    core.info(`No Orders Present - Skipping ${deployment.serviceName}`);
+    console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
-  core.info(`Valid Bash Substitution - ${deployment.ordersPath}`);
+  console.log(`Valid Bash Substitution - ${deployment.ordersPath}`);
   /** @type {Array<Result>} */
   const results = [];
 

@@ -27,10 +27,10 @@ function getDeployment(match) {
  */
 async function validateDeploymentLine(deployment) {
   if (!deployment.ordersContents) {
-    core.info(`No Orders Present - Skipping ${deployment.serviceName}`);
+    console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
-  core.info(`Valid Deployment Line - ${deployment.ordersPath}`);
+  console.log(`Valid Deployment Line - ${deployment.ordersPath}`);
 
   const problems = [];
   let lineNumber = 0;

@@ -24,10 +24,10 @@ const removeLineSuggestion = "Remove this line\n```suggestion\n```";
  */
 async function secretsInOrders(deployment, context, inputs) {
   if (!deployment.ordersContents) {
-    core.info(`No Orders Present - Skipping ${deployment.serviceName}`);
+    console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
-  core.info(`Secrets in Orders File - ${deployment.ordersPath}`);
+  console.log(`Secrets in Orders File - ${deployment.ordersPath}`);
   const { awsAccount, secretsPrefix, awsRegion, awsPartition } = inputs;
 
   /** @type {Array<Result>} */
