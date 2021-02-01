@@ -20,10 +20,10 @@ const SAK_ENVVAR = /^export AWS_SECRET_ACCESS_KEY=/;
  */
 async function noAWSSecrets(deployment) {
   if (!deployment.ordersContents) {
-    core.info(`No Orders Present - Skipping ${deployment.serviceName}`);
+    console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
-  core.info(`No AWS Secrets - ${deployment.ordersPath}`);
+  console.log(`No AWS Secrets - ${deployment.ordersPath}`);
 
   /** @type {Array<Result>} */
   const results = [];

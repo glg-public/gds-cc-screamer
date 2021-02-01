@@ -10,7 +10,7 @@ const core = require("@actions/core");
  * @returns {Array<Result>}
  */
 async function noCarriageReturn(deployment, context, inputs) {
-  core.info(`No Carriage Return Character - ${deployment.serviceName}`);
+  console.log(`No Carriage Return Character - ${deployment.serviceName}`);
 
   /** @type {Array<Result>} */
   const results = [];

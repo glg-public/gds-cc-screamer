@@ -83,17 +83,17 @@ ${policyDoc}
 
   // policy.json is not required, unless secrets.json is present
   if (!deployment.policyJsonContents && deployment.secretsJson) {
-    core.info(
+    console.log(
       `policy.json is missing, but required - ${deployment.serviceName}`
     );
     return [_suggestNewPolicyFile(deployment.secretsJson)];
   }
 
   if (!deployment.policyJsonContents) {
-    core.info(`No policy.json present, skipping - ${deployment.serviceName}`);
+    console.log(`No policy.json present, skipping - ${deployment.serviceName}`);
     return [];
   }
-  core.info(`policy.json is valid - ${deployment.policyJsonPath}`);
+  console.log(`policy.json is valid - ${deployment.policyJsonPath}`);
 
   let { results, document } = validateGenericIamPolicy(
     deployment.policyJsonContents.join("\n"),

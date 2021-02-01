@@ -11,10 +11,10 @@ const sourceUse = /^source (.*)/;
  */
 async function noSourcing(deployment) {
   if (!deployment.ordersContents) {
-    core.info(`No Orders Present - Skipping ${deployment.serviceName}`);
+    console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
-  core.info(`No Sourcing Other Files - ${deployment.ordersPath}`);
+  console.log(`No Sourcing Other Files - ${deployment.ordersPath}`);
 
   /** @type {Array<Result>} */
   const results = [];

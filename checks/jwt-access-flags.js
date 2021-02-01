@@ -10,10 +10,10 @@ const { getExportValue, suggest } = require('../util');
  */
 async function jwtAccessFlags(deployment) {
   if (!deployment.ordersContents) {
-    core.info(`No Orders Present - Skipping ${deployment.serviceName}`);
+    console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
-  core.info(`JWT Access Flags - ${deployment.ordersPath}`);
+  console.log(`JWT Access Flags - ${deployment.ordersPath}`);
 
   /** @type {Array<Result>} */
   const results = [];

@@ -143,8 +143,8 @@ async function leaveComment(
         sha,
       });
     } else {
-      core.info(e);
-      core.info(result);
+      console.log(e);
+      console.log(result);
       await suggestBugReport(octokit, e, "Error while posting comment", {
         owner,
         repo,

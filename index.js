@@ -72,7 +72,7 @@ async function run() {
           continue;
         }
         if (results.length === 0) {
-          core.info("...Passed");
+          console.log("...Passed");
           counts.success += 1;
           continue;
         }
@@ -87,7 +87,7 @@ async function run() {
             });
           } else {
             counts.success += 1;
-            core.info("...Passed");
+            console.log("...Passed");
           }
         }
       }
