@@ -18,7 +18,8 @@ describe("No Out Of Scope Variables", () => {
       ordersContents: [
         "export SOMETHING=hello",
         'MORE="You had me at $SOMETHING"',
-        'echo "${MORE}"'
+        'echo "${MORE}"',
+        'echo $PORT'
       ]
     }
 
