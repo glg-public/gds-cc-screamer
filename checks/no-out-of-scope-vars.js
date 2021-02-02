@@ -21,11 +21,7 @@ async function noOutOfScopeVars(deployment) {
 
   /** @type {Array<Result>} */
   const results = [];
-  // There are some vars you get by default
-  const exportedVars = new Set([
-    "ORDERS_NAME",
-    "PORT",
-  ]);
+  const exportedVars = new Set();
   
   deployment.ordersContents.forEach((line, i) => {
     const lineNumber = i + 1;

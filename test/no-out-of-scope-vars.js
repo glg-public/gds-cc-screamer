@@ -19,7 +19,6 @@ describe("No Out Of Scope Variables", () => {
         "export SOMETHING=hello",
         'MORE="You had me at $SOMETHING"',
         'echo "${MORE}"',
-        'echo $PORT'
       ]
     }
 
