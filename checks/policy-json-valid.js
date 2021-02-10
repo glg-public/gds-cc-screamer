@@ -10,6 +10,8 @@ const {
   detectIndentation,
   getNewFileLink,
   getOwnerRepoBranch,
+  generateSecretsPolicy,
+  getSimpleSecret
 } = require("../util");
 
 const lowerVersion = /"version"/;
@@ -31,8 +33,6 @@ const warnActions = [/^\*$/, /[\w\*]+:Delete[\w\*]/, /[\w\*]+:\*/];
 
 const warnResources = [/^\*$/, /arn:aws:\\*?:.*/];
 
-const secretArn = /arn:(?<partition>[\w\*\-]*):secretsmanager:(?<region>[\w-]*):(?<account>\d*):secret:(?<secretName>[\w-\/]*)(:(?<jsonKey>\S*?):(?<versionStage>\S*?):(?<versionId>\w*)|)/;
-
 const secretsAction = "secretsmanager:GetSecretValue";
 
 /**
@@ -45,19 +45,7 @@ const secretsAction = "secretsmanager:GetSecretValue";
 async function policyJsonIsValid(deployment, context) {
   function _suggestNewPolicyFile(secretsJson) {
     const policyDoc = JSON.stringify(
-      {
-        Version: "2012-10-17",
-        Statement: [
-          {
-            Sid: "AllowSecretsAccess",
-            Effect: "Allow",
-            Action: secretsAction,
-            Resource: Array.from(
-              new Set(secretsJson.map((s) => s.valueFrom).map(_getSimpleSecret))
-            ),
-          },
-        ],
-      },
+      generateSecretsPolicy(secretsJson),
       null,
       2
     );
@@ -110,20 +98,6 @@ ${policyDoc}
   // Secrets access is only needed for services that use secrets
   if (deployment.secretsJsonContents) {
     requiredActions[secretsAction] = false;
-  }
-
-  function _getSimpleSecret(secret) {
-    const match = secretArn.exec(secret);
-    const { partition, region, account, secretName, versionId } = match.groups;
-    let arn = `arn:${partition}:secretsmanager:${region}:${account}:secret:${secretName}`;
-
-    if (versionId) {
-      arn += `-${versionId}`;
-    } else {
-      arn += "-??????";
-    }
-
-    return arn;
   }
 
   function _toggleRequiredAction(item) {
@@ -259,7 +233,7 @@ ${policyDoc}
   if (deployment.secretsJson) {
     const requiredSecrets = {};
     deployment.secretsJson.forEach((secret) => {
-      requiredSecrets[_getSimpleSecret(secret.valueFrom)] = false;
+      requiredSecrets[getSimpleSecret(secret.valueFrom)] = false;
     });
 
     function _toggleRequiredSecret(resource) {

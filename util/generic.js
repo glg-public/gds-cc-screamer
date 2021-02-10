@@ -76,9 +76,44 @@ function httpGet(url) {
   });
 }
 
+const secretArn = /arn:(?<partition>[\w\*\-]*):secretsmanager:(?<region>[\w-]*):(?<account>\d*):secret:(?<secretName>[\w-\/]*)(:(?<jsonKey>\S*?):(?<versionStage>\S*?):(?<versionId>\w*)|)/;
+function getSimpleSecret(secret) {
+  const match = secretArn.exec(secret);
+  const { partition, region, account, secretName, versionId } = match.groups;
+  let arn = `arn:${partition}:secretsmanager:${region}:${account}:secret:${secretName}`;
+
+  if (versionId) {
+    arn += `-${versionId}`;
+  } else {
+    arn += "-??????";
+  }
+
+  return arn;
+}
+
+function generateSecretsPolicy(secretsJson) {
+  const policyDoc = {
+    Version: "2012-10-17",
+    Statement: [
+      {
+        Sid: "AllowSecretsAccess",
+        Effect: "Allow",
+        Action: "secretsmanager:GetSecretValue",
+        Resource: Array.from(
+          new Set(secretsJson.map((s) => s.valueFrom).map(getSimpleSecret))
+        ),
+      },
+    ],
+  }
+
+  return policyDoc;
+}
+
 module.exports = {
   isAJob,
   getContents,
   getExportValue,
   httpGet,
+  generateSecretsPolicy,
+  getSimpleSecret
 };

@@ -25,7 +25,9 @@ const {
   isAJob,
   getContents,
   getExportValue,
-  httpGet
+  httpGet,
+  generateSecretsPolicy,
+  getSimpleSecret
 } = require("./generic");
 
 module.exports = {
@@ -49,5 +51,7 @@ module.exports = {
   codeBlock,
   prLink,
   lineLink,
-  httpGet
+  httpGet,
+  generateSecretsPolicy,
+  getSimpleSecret,
 };
