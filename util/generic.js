@@ -76,19 +76,22 @@ function httpGet(url) {
   });
 }
 
-const secretArn = /arn:(?<partition>[\w\*\-]*):secretsmanager:(?<region>[\w-]*):(?<account>\d*):secret:(?<secretName>[\w-\/]*)(:(?<jsonKey>\S*?):(?<versionStage>\S*?):(?<versionId>\w*)|)/;
+const secretArn = /arn:([\w\*\-]*):secretsmanager:([\w-]*):(\d*):secret:([\w-\/]+):(\S*?):(\S*?):(\w*)/;
 function getSimpleSecret(secret) {
   const match = secretArn.exec(secret);
-  const { partition, region, account, secretName, versionId } = match.groups;
-  let arn = `arn:${partition}:secretsmanager:${region}:${account}:secret:${secretName}`;
-
-  if (versionId) {
-    arn += `-${versionId}`;
-  } else {
-    arn += "-??????";
+  if (match) {
+    const [ partition, region, account, secretName, jsonKey, versionStage, versionId ] = match.slice(1);
+    let arn = `arn:${partition}:secretsmanager:${region}:${account}:secret:${secretName}`;
+  
+    if (versionId) {
+      arn += `-${versionId}`;
+    } else {
+      arn += "-??????";
+    }
+  
+    return arn;
   }
-
-  return arn;
+  
 }
 
 function generateSecretsPolicy(secretsJson) {
