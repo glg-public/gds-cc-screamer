@@ -2,7 +2,7 @@ require('../typedefs');
 const core = require("@actions/core");
 const { getLinesForJSON, suggest, getLineWithinObject } = require("../util");
 
-const secretArn = /arn:(?<partition>[\w\*\-]*):secretsmanager:(?<region>[\w-]*):(?<account>\d*):secret:(?<secretName>[\w-\/]*):?(?<jsonKey>\S*?):?(?<versionStage>\S*?):?(?<versionId>\w*)/;
+const secretArn = /arn:([\w\*\-]*):secretsmanager:([\w-]*):(\d*):secret:([\w-\/]*):?(\S*?):?(\S*?):?(\w*)/;
 
 /**
  * Checks the validity of a secrets.json
