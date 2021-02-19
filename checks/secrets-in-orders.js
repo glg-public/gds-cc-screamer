@@ -9,9 +9,9 @@ const {
   detectIndentation,
 } = require("../util");
 
-const secretsUse = /^(export +|)(?<variable>\w+)=\$\(\s*secrets\s*(?<secretName>\w*)\s*\)$/;
-const fromJsonUse = /^export +(?<variable>\w+)=\$\(\s*fromJson\s+"?\${?(?<sourceVar>\w+)}?"?\s+"?(?<jsonKey>\w+)"?\)$/;
-const autodeploy = /^autodeploy git@github.com:(?<org>[\w-]+)\/(?<repo>.+?)(.git|)#(?<branch>.+)/;
+const secretsUse = /^(export +|)(\w+)=\$\(\s*secrets\s*(\w*)\s*\)$/;
+const fromJsonUse = /^export +(\w+)=\$\(\s*fromJson\s+"?\${?(\w+)}?"?\s+"?(\w+)"?\)$/;
+const autodeploy = /^autodeploy git@github.com:([\w-]+)\/(.+?)(.git|)#(.+)/;
 const removeLineSuggestion = "Remove this line\n```suggestion\n```";
 
 /**
@@ -43,11 +43,10 @@ async function secretsInOrders(deployment, context, inputs) {
     .filter(({ match }) => match)
     .forEach(
       ({
-        match: {
-          groups: { variable: secretVar, secretName },
-        },
+        match,
         index: i,
       }) => {
+        const [, , secretVar, secretName] = match;
         results.push({
           title: "Deprecated Utility",
           problems: [
@@ -67,16 +66,12 @@ async function secretsInOrders(deployment, context, inputs) {
           .filter(({ match }) => match)
           .filter(
             ({
-              match: {
-                groups: { sourceVar },
-              },
+              match: [, variable, sourceVar, jsonKey],
             }) => sourceVar === secretVar
           )
           .forEach(
             ({
-              match: {
-                groups: { variable, jsonKey },
-              },
+              match:  [, variable, sourceVar, jsonKey],
               index: j,
             }) => {
               results.push({
