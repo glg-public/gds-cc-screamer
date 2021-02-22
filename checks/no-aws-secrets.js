@@ -7,8 +7,8 @@ const core = require("@actions/core");
  *
  * https://aws.amazon.com/blogs/security/a-safer-way-to-distribute-aws-credentials-to-ec2/
  */
-const AKID = /(?<![A-Z0-9])[A-Z0-9]{20}(?![A-Z0-9])/;
-const SAK = /(?<![A-Za-z0-9/+])[A-Za-z0-9/+=]{40}(?![A-Za-z0-9/+=])/;
+const AKID = /^export [A-Z_]*AWS[A-Z_]*=['"]*(?<![A-Z0-9])[A-Z0-9]{20}(?![A-Z0-9])['"]*/;
+const SAK = /^export [A-Z_]*AWS[A-Z_]*=['"]*(?<![A-Za-z0-9/+])[A-Za-z0-9/+=]{40}(?![A-Za-z0-9/+=])['"]*/;
 const AKID_ENVVAR = /^export AWS_ACCESS_KEY_ID=/;
 const SAK_ENVVAR = /^export AWS_SECRET_ACCESS_KEY=/;
 

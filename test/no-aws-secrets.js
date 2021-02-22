@@ -101,4 +101,37 @@ describe("No AWS Secrets", () => {
       path: deployment.ordersPath,
     });
   });
+
+  it("does not flag a git sha in a deploy line", async () => {
+    const deployment = {
+      serviceName: "marketingtestcanary",
+      ordersPath: "marketingtestcanary/orders",
+      ordersContents: [
+        "# This job is for testing CI/CD things only",
+        "",
+        "# Env vars",
+        "export LOG_LEVEL=info",
+        "",
+        "export ECS_SCHEDULED_TASK_CRON='0 22 * * *'",
+        "jobdeploy github/glg/marketing-test/main:aca02d0a803c7115887a8aa59ce2b09f8b739108"
+      ]
+    }
+
+    const results = await noAWSSecrets(deployment);
+    expect(results.length).to.equal(0);
+  });
+
+  it("does not flag New Relic keys as AWS keys", async () => {
+    const deployment = {
+      serviceName: "marketingtestcanary",
+      ordersPath: "marketingtestcanary/orders",
+      ordersContents: [
+        // this is not real
+        "export NEW_RELIC_LICENSE_KEY=afd8d93b8483a9963dc70b24bf1cf79e53ceb569" 
+      ]
+    }
+
+    const results = await noAWSSecrets(deployment);
+    expect(results.length).to.equal(0);
+  });
 });
