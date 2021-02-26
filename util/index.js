@@ -27,7 +27,8 @@ const {
   getExportValue,
   httpGet,
   generateSecretsPolicy,
-  getSimpleSecret
+  getSimpleSecret,
+  getSecretsFromOrders
 } = require("./generic");
 
 module.exports = {
@@ -54,4 +55,5 @@ module.exports = {
   httpGet,
   generateSecretsPolicy,
   getSimpleSecret,
+  getSecretsFromOrders
 };

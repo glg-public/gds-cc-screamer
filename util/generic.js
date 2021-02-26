@@ -112,11 +112,82 @@ function generateSecretsPolicy(secretsJson) {
   return policyDoc;
 }
 
+function getSecretsFromOrders(ordersLines, secretsPrefix) {
+  const secretsUse = /^(export +|)(\w+)=\$\(\s*secrets\s*(\w*)\s*\)$/;
+  const fromJsonUse = /^export +(\w+)=\$\(\s*fromJson\s+"?\${?(\w+)}?"?\s+"?(\w+)"?\)$/;
+  const removeLineSuggestion = "Remove this line\n```suggestion\n```";
+  const secrets = [];
+  const results = [];
+
+  ordersLines
+    .map((line, i) => {
+      return { match: secretsUse.exec(line), index: i };
+    })
+    .filter(({ match }) => match)
+    .forEach(
+      ({
+        match,
+        index: i,
+      }) => {
+        const [, , secretVar, secretName] = match;
+        results.push({
+          title: "Deprecated Utility",
+          problems: [
+            "The **secrets** binary is being deprecated. Please create a secrets.json in this directory instead.",
+            removeLineSuggestion,
+          ],
+          line: i + 1,
+          level: "warning",
+        });
+        let hasKeys = false;
+        ordersLines
+          .slice(i + 1) // References to this secret must be below it in the orders file
+          .map((line, j) => {
+            return { match: fromJsonUse.exec(line), index: i + j + 1 };
+          })
+          .filter(({ match }) => match)
+          .filter(
+            ({
+              match: [, variable, sourceVar, jsonKey],
+            }) => sourceVar === secretVar
+          )
+          .forEach(
+            ({
+              match:  [, variable, sourceVar, jsonKey],
+              index: j,
+            }) => {
+              results.push({
+                title: "Deprecated Utility",
+                problems: [
+                  "The **fromJson** utility is being deprecated. Please create a secrets.json instead.",
+                  removeLineSuggestion,
+                ],
+                line: j + 1,
+                level: "warning",
+              });
+              hasKeys = true;
+              secrets.push({ name: variable, value: `${secretsPrefix}${secretName}`, jsonKey })
+            }
+          );
+
+        if (!hasKeys || ordersLines[i].startsWith("export ")) {
+          secrets.push({
+            name: secretVar,
+            value: `${secretsPrefix}${secretName}`,
+          });
+        }
+      }
+    );
+
+  return { secrets, results };
+}
+
 module.exports = {
   isAJob,
   getContents,
   getExportValue,
   httpGet,
   generateSecretsPolicy,
-  getSimpleSecret
+  getSimpleSecret,
+  getSecretsFromOrders
 };

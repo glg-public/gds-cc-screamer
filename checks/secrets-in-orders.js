@@ -7,12 +7,10 @@ const {
   getNewFileLink,
   getOwnerRepoBranch,
   detectIndentation,
+  getSecretsFromOrders
 } = require("../util");
 
-const secretsUse = /^(export +|)(\w+)=\$\(\s*secrets\s*(\w*)\s*\)$/;
-const fromJsonUse = /^export +(\w+)=\$\(\s*fromJson\s+"?\${?(\w+)}?"?\s+"?(\w+)"?\)$/;
 const autodeploy = /^autodeploy git@github.com:([\w-]+)\/(.+?)(.git|)#(.+)/;
-const removeLineSuggestion = "Remove this line\n```suggestion\n```";
 
 /**
  * Suggests the use of secrets.json instead of using secrets in orders
@@ -31,75 +29,18 @@ async function secretsInOrders(deployment, context, inputs) {
   const { awsAccount, secretsPrefix, awsRegion, awsPartition } = inputs;
 
   /** @type {Array<Result>} */
-  const results = [];
-  const secretsJson = [];
+
+  
   const { owner, repo, branch } = getOwnerRepoBranch(context);
   const secretsJsonPath = path.join(deployment.serviceName, "secrets.json");
 
-  deployment.ordersContents
-    .map((line, i) => {
-      return { match: secretsUse.exec(line), index: i };
-    })
-    .filter(({ match }) => match)
-    .forEach(
-      ({
-        match,
-        index: i,
-      }) => {
-        const [, , secretVar, secretName] = match;
-        results.push({
-          title: "Deprecated Utility",
-          problems: [
-            "The **secrets** binary is being deprecated. Please create a secrets.json in this directory instead.",
-            removeLineSuggestion,
-          ],
-          line: i + 1,
-          level: "warning",
-        });
-
-        let hasKeys = false;
-        deployment.ordersContents
-          .slice(i + 1) // References to this secret must be below it in the orders file
-          .map((line, j) => {
-            return { match: fromJsonUse.exec(line), index: i + j + 1 };
-          })
-          .filter(({ match }) => match)
-          .filter(
-            ({
-              match: [, variable, sourceVar, jsonKey],
-            }) => sourceVar === secretVar
-          )
-          .forEach(
-            ({
-              match:  [, variable, sourceVar, jsonKey],
-              index: j,
-            }) => {
-              results.push({
-                title: "Deprecated Utility",
-                problems: [
-                  "The **fromJson** utility is being deprecated. Please create a secrets.json instead.",
-                  removeLineSuggestion,
-                ],
-                line: j + 1,
-                level: "warning",
-              });
-
-              hasKeys = true;
-              secretsJson.push({
-                name: variable,
-                valueFrom: `arn:${awsPartition}:secretsmanager:${awsRegion}:${awsAccount}:secret:${secretsPrefix}${secretName}:${jsonKey}::`,
-              });
-            }
-          );
-
-        if (!hasKeys || deployment.ordersContents[i].startsWith("export ")) {
-          secretsJson.push({
-            name: secretVar,
-            valueFrom: `arn:${awsPartition}:secretsmanager:${awsRegion}:${awsAccount}:secret:${secretsPrefix}${secretName}:::`,
-          });
-        }
-      }
-    );
+  const { secrets, results } = getSecretsFromOrders(deployment.ordersContents, secretsPrefix);
+  const secretsJson = secrets.map(({ name, value, jsonKey='' }) => {
+    return {
+      name,
+      valueFrom: `arn:${awsPartition}:secretsmanager:${awsRegion}:${awsAccount}:secret:${value}:${jsonKey}::`
+    };
+  });
 
   if (secretsJson.length === 0) {
     return results;
