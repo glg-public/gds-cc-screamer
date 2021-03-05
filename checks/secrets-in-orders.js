@@ -11,6 +11,7 @@ const {
 } = require("../util");
 
 const autodeploy = /^autodeploy git@github.com:([\w-]+)\/(.+?)(.git|)#(.+)/;
+const dockerbuild = /^dockerbuild git@github.com:([\w-]+)\/(.+?)(.git|)#(.+)/;
 
 /**
  * Suggests the use of secrets.json instead of using secrets in orders
@@ -20,7 +21,7 @@ const autodeploy = /^autodeploy git@github.com:([\w-]+)\/(.+?)(.git|)#(.+)/;
  * 
  * @returns {Array<Result>}
  */
-async function secretsInOrders(deployment, context, inputs) {
+async function secretsInOrders(deployment, context, inputs, isChinaCC) {
   if (!deployment.ordersContents) {
     console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
@@ -99,9 +100,15 @@ async function secretsInOrders(deployment, context, inputs) {
   } else {
     // If there's not already a secrets.json, we should
     // recommend that user create one
-    const isAutodeploy =
-      deployment.ordersContents.filter((line) => autodeploy.test(line)).length > 0;
-    const level = isAutodeploy ? "warning" : "failure"; // autodeploy doesn't require this
+    if (!isChinaCC) {
+      const isAutodeploy =
+        deployment.ordersContents.filter((line) => autodeploy.test(line)).length > 0;
+      const level = isAutodeploy ? "warning" : "failure"; // autodeploy doesn't require this
+    } else {
+      const isDockerbuild =
+        deployment.ordersContents.filter((line) => dockerbuild.test(line)).length > 0;
+      const level = isDockerbuild ? "warning" : "failure"; // dockerbuild doesn't require this and it is only avaible in China CC
+    }
     const secretsFile = JSON.stringify(secretsJson, null, 2);
     results.unshift({
       title: "Create a secrets.json",

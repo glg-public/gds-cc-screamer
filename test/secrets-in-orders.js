@@ -29,7 +29,7 @@ const context = {
   }
 };
 
-
+const isChinaCC = true;
 
 describe("Secrets in orders file", () => {
   it("skips if there is no orders file", async () => {
@@ -51,7 +51,7 @@ describe("Secrets in orders file", () => {
       ],
     };
 
-    const results = await secretsInOrders(deployment, context, inputs);
+    const results = await secretsInOrders(deployment, context, inputs, false);
     expect(results.length).to.equal(0);
   });
 
@@ -70,7 +70,7 @@ describe("Secrets in orders file", () => {
       ],
     };
 
-    let results = await secretsInOrders(deployment, context, inputs);
+    let results = await secretsInOrders(deployment, context, inputs, false);
     expect(results.length).to.equal(6);
 
     const { owner, repo, branch } = getOwnerRepoBranch(context);
