@@ -76,22 +76,29 @@ function httpGet(url) {
   });
 }
 
-const secretArn = /arn:([\w\*\-]*):secretsmanager:([\w-]*):(\d*):secret:([\w-\/]+):(\S*?):(\S*?):(\w*)/;
+const secretArn = /arn:([\w\*\-]*):secretsmanager:([\w-]*):(\d*):secret:([\w\-\/]*):?(\S*?):+(\S*?):+(\w*)/;
 function getSimpleSecret(secret) {
   const match = secretArn.exec(secret);
   if (match) {
-    const [ partition, region, account, secretName, jsonKey, versionStage, versionId ] = match.slice(1);
+    const [
+      partition,
+      region,
+      account,
+      secretName,
+      jsonKey,
+      versionStage,
+      versionId,
+    ] = match.slice(1);
     let arn = `arn:${partition}:secretsmanager:${region}:${account}:secret:${secretName}`;
-  
+
     if (versionId) {
       arn += `-${versionId}`;
     } else {
       arn += "-??????";
     }
-  
+
     return arn;
   }
-  
 }
 
 function generateSecretsPolicy(secretsJson) {
@@ -107,7 +114,7 @@ function generateSecretsPolicy(secretsJson) {
         ),
       },
     ],
-  }
+  };
 
   return policyDoc;
 }
@@ -124,60 +131,53 @@ function getSecretsFromOrders(ordersLines, secretsPrefix) {
       return { match: secretsUse.exec(line), index: i };
     })
     .filter(({ match }) => match)
-    .forEach(
-      ({
-        match,
-        index: i,
-      }) => {
-        const [, , secretVar, secretName] = match;
-        results.push({
-          title: "Deprecated Utility",
-          problems: [
-            "The **secrets** binary is being deprecated. Please create a secrets.json in this directory instead.",
-            removeLineSuggestion,
-          ],
-          line: i + 1,
-          level: "warning",
-        });
-        let hasKeys = false;
-        ordersLines
-          .slice(i + 1) // References to this secret must be below it in the orders file
-          .map((line, j) => {
-            return { match: fromJsonUse.exec(line), index: i + j + 1 };
-          })
-          .filter(({ match }) => match)
-          .filter(
-            ({
-              match: [, variable, sourceVar, jsonKey],
-            }) => sourceVar === secretVar
-          )
-          .forEach(
-            ({
-              match:  [, variable, sourceVar, jsonKey],
-              index: j,
-            }) => {
-              results.push({
-                title: "Deprecated Utility",
-                problems: [
-                  "The **fromJson** utility is being deprecated. Please create a secrets.json instead.",
-                  removeLineSuggestion,
-                ],
-                line: j + 1,
-                level: "warning",
-              });
-              hasKeys = true;
-              secrets.push({ name: variable, value: `${secretsPrefix}${secretName}`, jsonKey })
-            }
-          );
-
-        if (!hasKeys || ordersLines[i].startsWith("export ")) {
-          secrets.push({
-            name: secretVar,
-            value: `${secretsPrefix}${secretName}`,
+    .forEach(({ match, index: i }) => {
+      const [, , secretVar, secretName] = match;
+      results.push({
+        title: "Deprecated Utility",
+        problems: [
+          "The **secrets** binary is being deprecated. Please create a secrets.json in this directory instead.",
+          removeLineSuggestion,
+        ],
+        line: i + 1,
+        level: "warning",
+      });
+      let hasKeys = false;
+      ordersLines
+        .slice(i + 1) // References to this secret must be below it in the orders file
+        .map((line, j) => {
+          return { match: fromJsonUse.exec(line), index: i + j + 1 };
+        })
+        .filter(({ match }) => match)
+        .filter(
+          ({ match: [, variable, sourceVar, jsonKey] }) =>
+            sourceVar === secretVar
+        )
+        .forEach(({ match: [, variable, sourceVar, jsonKey], index: j }) => {
+          results.push({
+            title: "Deprecated Utility",
+            problems: [
+              "The **fromJson** utility is being deprecated. Please create a secrets.json instead.",
+              removeLineSuggestion,
+            ],
+            line: j + 1,
+            level: "warning",
           });
-        }
+          hasKeys = true;
+          secrets.push({
+            name: variable,
+            value: `${secretsPrefix}${secretName}`,
+            jsonKey,
+          });
+        });
+
+      if (!hasKeys || ordersLines[i].startsWith("export ")) {
+        secrets.push({
+          name: secretVar,
+          value: `${secretsPrefix}${secretName}`,
+        });
       }
-    );
+    });
 
   return { secrets, results };
 }
@@ -189,5 +189,5 @@ module.exports = {
   httpGet,
   generateSecretsPolicy,
   getSimpleSecret,
-  getSecretsFromOrders
+  getSecretsFromOrders,
 };
