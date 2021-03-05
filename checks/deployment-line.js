@@ -4,6 +4,7 @@ const core = require("@actions/core");
 const dockerdeploy = /^dockerdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\w+)/;
 const jobdeploy = /^jobdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\w+)/;
 const autodeploy = /^autodeploy git@github.com:(?<org>[\w-]+)\/(?<repo>.+?)(.git|)#(?<branch>.+)/;
+const dockerbuild = /^dockerbuild git@github.com:(?<org>[\w-]+)\/(?<repo>.+?)(.git|)#(?<branch>.+)/;
 const validCharacters = /^[a-z][a-z0-9-]*$/;
 
 function getDeployment(match) {
@@ -71,6 +72,19 @@ async function validateDeploymentLine(deployment) {
       if (!match) {
         problems.push(
           "Incorrect Formatting: must be `jobdeploy github/<org>/<repo>/<branch>:<tag>`"
+        );
+        break;
+      }
+
+      deploymentParts = getDeployment(match);
+      break;
+    } else if (line.startsWith("dockerbuild")) {
+      lineNumber = i + 1;
+      const match = dockerbuild.exec(line);
+
+      if (!match) {
+        problems.push(
+          "Incorrect Formatting: must be `dockerbuild git@github.com:<org>/<repo>[.git]#<branch>`"
         );
         break;
       }

@@ -23,6 +23,17 @@ describe("Deployment Line Check", () => {
 
     expect(results[0].problems.length).to.equal(0);
 
+    // works with dockerbuild
+    deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: ["dockerbuild git@github.com:glg/price-service.git#main"],
+    };
+
+    results = await deploymentLineCheck(deployment);
+
+    expect(results[0].problems.length).to.equal(0);
+
     // works with dockerdeploy
     deployment = {
       serviceName: "streamliner",
@@ -91,6 +102,21 @@ describe("Deployment Line Check", () => {
     );
   });
 
+  it("rejects an improperly formatted dockerbuild line", async () => {
+    const deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: ["dockerbuild git@github/glg/streamliner.git#main"],
+    };
+
+    const results = await deploymentLineCheck(deployment);
+
+    expect(results[0].problems.length).to.equal(1);
+    expect(results[0].problems[0]).to.equal(
+      "Incorrect Formatting: must be `dockerbuild git@github.com:<org>/<repo>[.git]#<branch>`"
+    );
+  });
+
   it("requires either a dockerdeploy or an autodeploy line", async () => {
     const deployment = {
       serviceName: "streamliner",
@@ -115,6 +141,20 @@ describe("Deployment Line Check", () => {
     };
 
     let results = await deploymentLineCheck(deployment);
+
+    expect(results[0].problems.length).to.equal(1);
+    expect(results[0].problems[0]).to.equal(
+      "**PriceService** - Repository name must be only lowercase alphanumeric characters and hyphens."
+    );
+
+    // works with dockerbuild
+    deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: ["dockerbuild git@github.com:glg/PriceService.git#main"],
+    };
+
+    results = await deploymentLineCheck(deployment);
 
     expect(results[0].problems.length).to.equal(1);
     expect(results[0].problems[0]).to.equal(
@@ -153,6 +193,22 @@ describe("Deployment Line Check", () => {
       "**Wrong_Branch!** - Branch name must be only lowercase alphanumeric characters and hyphens."
     );
 
+    // works with dockerbuild
+    deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: [
+        "dockerbuild git@github.com:glg/price-service.git#Wrong_Branch!",
+      ],
+    };
+
+    results = await deploymentLineCheck(deployment);
+
+    expect(results[0].problems.length).to.equal(1);
+    expect(results[0].problems[0]).to.equal(
+      "**Wrong_Branch!** - Branch name must be only lowercase alphanumeric characters and hyphens."
+    );
+
     // works with dockerdeploy
     deployment = {
       serviceName: "streamliner",
@@ -181,6 +237,22 @@ describe("Deployment Line Check", () => {
     };
 
     let results = await deploymentLineCheck(deployment);
+
+    expect(results[0].problems.length).to.equal(1);
+    expect(results[0].problems[0]).to.equal(
+      "**too--many** - Branch name cannot contain `--`"
+    );
+
+    // works with dockerbuild
+    deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: [
+        "dockerbuild git@github.com:glg/price-service.git#too--many",
+      ],
+    };
+
+    results = await deploymentLineCheck(deployment);
 
     expect(results[0].problems.length).to.equal(1);
     expect(results[0].problems[0]).to.equal(
