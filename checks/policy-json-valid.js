@@ -322,12 +322,12 @@ ${policyDoc}
         );
 
       // Sids must be unique within a policy
-      let Sid = "AllowRequiredSecrets";
+      let Sid = "AllowSecretsAccess";
       let i = 0;
       const allSids = _getSids();
       while (allSids.includes(Sid)) {
         i += 1;
-        Sid = `AllowRequiredSecrets${i}`;
+        Sid = `AllowSecretsAccess${i}`;
       }
 
       const newStatementBlock = {
