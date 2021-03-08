@@ -2,15 +2,14 @@ require('../typedefs');
 const core = require("@actions/core");
 const { getLinesForJSON, suggest, getLineWithinObject } = require("../util");
 
-const secretArn = /arn:([\w\*\-]*):secretsmanager:([\w-]*):(\d*):secret:([\w-\/]*):?(\S*?):?(\S*?):?(\w*)/;
-
 /**
  * Checks the validity of a secrets.json
  * @param {Deployment} deployment
  * 
  * @returns {Array<Result>}
  */
-async function secretsJsonIsValid(deployment) {
+async function secretsJsonIsValid(deployment, inputs) {
+  const secretArn = new RegExp(`arn:${inputs.awsPartition}:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:([\\w-\\/]*):?(\\S*?):?(\\S*?):?(\\w*)`);
   /** @type {Array<Result>} */
   const results = [];
 

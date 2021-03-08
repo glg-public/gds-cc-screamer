@@ -4,9 +4,9 @@ const { getNewFileLink, getOwnerRepoBranch } = require('../util');
 
 const inputs = {
   awsAccount: 12345678,
-  secretsPrefix: "us-east-1/production/",
-  awsRegion: "us-east-1",
-  awsPartition: "aws"
+  secretsPrefix: "cn-north-1/production/",
+  awsRegion: "cn-north-1",
+  awsPartition: "aws-cn"
 };
 
 const context = {
@@ -75,19 +75,19 @@ describe("Secrets in orders file", () => {
     const secretsJson = [
       {
         name: "SECRET_KEY",
-        valueFrom: `arn:aws:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}MY_SECRET:myKey::`,
+        valueFrom: `arn:${inputs.awsPartition}:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}MY_SECRET:myKey::`,
       },
       {
         name: "OTHER_SECRET",
-        valueFrom: `arn:aws:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}SOMETHING:::`,
+        valueFrom: `arn:${inputs.awsPartition}:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}SOMETHING:::`,
       },
       {
         name: "MORE_KEY",
-        valueFrom: `arn:aws:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}PANTS:belt::`,
+        valueFrom: `arn:${inputs.awsPartition}:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}PANTS:belt::`,
       },
       {
         name: "ONE_MORE",
-        valueFrom: `arn:aws:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}PANTS:::`,
+        valueFrom: `arn:${inputs.awsPartition}:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}PANTS:::`,
       },
     ];
     const secretsFile = JSON.stringify(secretsJson, null, 2);
@@ -168,11 +168,11 @@ describe("Secrets in orders file", () => {
     const secretsJson = [
       {
         name: "SECRET_KEY",
-        valueFrom: `arn:aws:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}MY_SECRET:myKey::`,
+        valueFrom: `arn:${inputs.awsPartition}:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}MY_SECRET:myKey::`,
       },
       {
         name: "OTHER_SECRET",
-        valueFrom: `arn:aws:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}SOMETHING:::`,
+        valueFrom: `arn:${inputs.awsPartition}:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}SOMETHING:::`,
       },
     ];
     const deployment = {
@@ -199,11 +199,11 @@ describe("Secrets in orders file", () => {
     },
     {
         "name": "MORE_KEY",
-        "valueFrom": "arn:aws:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}PANTS:belt::"
+        "valueFrom": "arn:${inputs.awsPartition}:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}PANTS:belt::"
     },
     {
         "name": "ONE_MORE",
-        "valueFrom": "arn:aws:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}PANTS:::"
+        "valueFrom": "arn:${inputs.awsPartition}:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:${inputs.secretsPrefix}PANTS:::"
     }
 \`\`\``;
     expect(results[0]).to.deep.equal({

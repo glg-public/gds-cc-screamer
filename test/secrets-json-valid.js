@@ -1,6 +1,13 @@
 const { expect } = require("chai");
 const secretsJsonIsValid = require("../checks/secrets-json-valid");
 
+const inputs = {
+  awsAccount: 12345678,
+  secretsPrefix: "cn-north-1/production/",
+  awsRegion: "cn-north-1",
+  awsPartition: "aws-cn"
+};
+
 describe("secrets.json is valid check", () => {
   it("skips when there is no secrets.json", async () => {
     const deployment = {
@@ -9,7 +16,7 @@ describe("secrets.json is valid check", () => {
       ordersContents: [],
     };
 
-    const results = await secretsJsonIsValid(deployment);
+    const results = await secretsJsonIsValid(deployment, inputs);
     expect(results.length).to.equal(0);
   });
 
@@ -17,15 +24,15 @@ describe("secrets.json is valid check", () => {
     const secretsJson = `[
       {
         "name": "JSON_SECRET",
-        "valueFrom": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:example::"
+        "valueFrom": "arn:aws-cn:secretsmanager:cn-north-1:12345678:secret:dev/json_secret:example::"
       },
       {
         "name": "OTHER_VALUE",
-        "valueFrom": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:newkey::"
+        "valueFrom": "arn:aws-cn:secretsmanager:cn-north-1:12345678:secret:dev/json_secret:newkey::"
       },
       {
         "name": "MORE_PLAIN",
-        "valueFrom": "arn:aws:secretsmanager:us-east-1:988857891049:secret:us-east-1/prototype/GDS_INSTANCES_PRIVATE_KEY-46S5sl"
+        "valueFrom": "arn:aws-cn:secretsmanager:cn-north-1:12345678:secret:cn-north-1/prototype/GDS_INSTANCES_PRIVATE_KEY-46S5sl"
       }
     ]`;
 
@@ -37,7 +44,7 @@ describe("secrets.json is valid check", () => {
       secretsJsonContents: secretsJson.split("\n"),
     };
 
-    const results = await secretsJsonIsValid(deployment);
+    const results = await secretsJsonIsValid(deployment, inputs);
     expect(results.length).to.equal(0);
 
     // When the secrets.json is valid, it gets attached to the orders object
@@ -56,7 +63,7 @@ describe("secrets.json is valid check", () => {
       secretsJsonContents: secretsJson.split("\n"),
     };
 
-    const results = await secretsJsonIsValid(deployment);
+    const results = await secretsJsonIsValid(deployment, inputs);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: "secrets.json is not valid JSON",
@@ -71,7 +78,7 @@ describe("secrets.json is valid check", () => {
 
   it("rejects secrets.json that is not an array", async () => {
     const secretsJson = `{
-      "JSON_SECRET": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:example::"
+      "JSON_SECRET": "arn:aws-cn:secretsmanager:cn-north-1:12345678:secret:dev/json_secret:example::"
     }`;
 
     const deployment = {
@@ -82,7 +89,7 @@ describe("secrets.json is valid check", () => {
       secretsJsonContents: secretsJson.split("\n"),
     };
 
-    const results = await secretsJsonIsValid(deployment);
+    const results = await secretsJsonIsValid(deployment, inputs);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: `Invalid secrets.json`,
@@ -99,11 +106,11 @@ describe("secrets.json is valid check", () => {
     const secretsJson = `[
       {
         "name": "JSON_SECRET",
-        "valueFrom": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:example::"
+        "valueFrom": "arn:aws-cn:secretsmanager:cn-north-1:12345678:secret:dev/json_secret:example::"
       },
       {
         "name": "OTHER_VALUE",
-        "valueFrom": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:newkey::"
+        "valueFrom": "arn:aws-cn:secretsmanager:cn-north-1:12345678:secret:dev/json_secret:newkey::"
       },
       ["some array"]
     ]`;
@@ -116,7 +123,7 @@ describe("secrets.json is valid check", () => {
       secretsJsonContents: secretsJson.split("\n"),
     };
 
-    const results = await secretsJsonIsValid(deployment);
+    const results = await secretsJsonIsValid(deployment, inputs);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: `Invalid secrets.json`,
@@ -132,11 +139,11 @@ describe("secrets.json is valid check", () => {
   it("rejects a secrets.json where any secret is missing a required key", async () => {
     const secretsJson = `[
       {
-        "valueFrom": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:example::"
+        "valueFrom": "arn:aws-cn:secretsmanager:cn-north-1:12345678:secret:dev/json_secret:example::"
       },
       {
         "name": "OTHER_VALUE",
-        "valueFrom": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:newkey::"
+        "valueFrom": "arn:aws-cn:secretsmanager:cn-north-1:12345678:secret:dev/json_secret:newkey::"
       }
     ]`;
 
@@ -148,7 +155,7 @@ describe("secrets.json is valid check", () => {
       secretsJsonContents: secretsJson.split("\n"),
     };
 
-    const results = await secretsJsonIsValid(deployment);
+    const results = await secretsJsonIsValid(deployment, inputs);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: "Invalid Secret Structure",
@@ -166,11 +173,11 @@ describe("secrets.json is valid check", () => {
     const secretsJson = `[
       {
         "name": "MY_SECRET",
-        "valueFrom": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:example::"
+        "valueFrom": "arn:aws-cn:secretsmanager:cn-north-1:12345678:secret:dev/json_secret:example::"
       },
       {
         "name": "OTHER_VALUE",
-        "valueFrom": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:newkey::",
+        "valueFrom": "arn:aws-cn:secretsmanager:cn-north-1:12345678:secret:dev/json_secret:newkey::",
         "extraKey": "this shouldn't be here"
       }
     ]`;
@@ -183,7 +190,7 @@ describe("secrets.json is valid check", () => {
       secretsJsonContents: secretsJson.split("\n"),
     };
 
-    const results = await secretsJsonIsValid(deployment);
+    const results = await secretsJsonIsValid(deployment, inputs);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: "Invalid Secret Structure",
@@ -203,7 +210,7 @@ describe("secrets.json is valid check", () => {
     const secretsJson = `[
       {
         "name": "JSON_SECRET",
-        "valueFrom": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:example::"
+        "valueFrom": "arn:aws-cn:secretsmanager:cn-north-1:12345678:secret:dev/json_secret:example::"
       },
       {
         "name": "OTHER_VALUE",
@@ -219,7 +226,7 @@ describe("secrets.json is valid check", () => {
       secretsJsonContents: secretsJson.split("\n"),
     };
 
-    const results = await secretsJsonIsValid(deployment);
+    const results = await secretsJsonIsValid(deployment, inputs);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: "Invalid Secret: OTHER_VALUE",

@@ -42,11 +42,11 @@ describe("No Carriage Return", () => {
     const secretsJson = `[\r
       {\r
         "name": "JSON_SECRET",\r
-        "valueFrom": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:example::"\r
+        "valueFrom": "arn:aws-cn:secretsmanager:cn-north-1:868468680417:secret:dev/json_secret:example::"\r
       },\r
       {\r
         "name": "OTHER_VALUE",\r
-        "valueFrom": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:newkey::"\r
+        "valueFrom": "arn:aws-cn:secretsmanager:cn-north-1:868468680417:secret:dev/json_secret:newkey::"\r
       }\r
     ]`;
 
@@ -89,7 +89,7 @@ describe("No Carriage Return", () => {
               "secretsmanager:GetSecretValue",
             ],
             Resource:
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
+              "arn:aws-cn:secretsmanager:cn-north-1:868468680417:secret:dev/json_secret",
           },
         ],
       },

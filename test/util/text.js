@@ -84,13 +84,13 @@ describe("getLinesForJSON", () => {
             Effect: "Allow",
             Action: "resource:action",
             Resource:
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
+              "arn:aws-cn:secretsmanager:cn-north-1:868468680417:secret:dev/json_secret",
           },
           {
             Effect: "Allow",
             Action: ["resource:*", "wrong"],
             Resource:
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
+              "arn:aws-cn:secretsmanager:cn-north-1:868468680417:secret:dev/json_secret",
           },
         ],
       },
@@ -102,7 +102,7 @@ describe("getLinesForJSON", () => {
       Effect: "Allow",
       Action: ["resource:*", "wrong"],
       Resource:
-        "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
+        "arn:aws-cn:secretsmanager:cn-north-1:868468680417:secret:dev/json_secret",
     };
 
     const lines = getLinesForJSON(policyLines, jsonObj);

@@ -6,7 +6,7 @@
       "Effect": "Allow",
       "Action": "secretsmanager:GetSecretValue",
       "Resource": [
-        "arn:aws:secretsmanager:us-east-1:868468680417:secret:us-east-1/production/MY_SECRET"
+      "arn:aws-cn:secretsmanager:cn-noth-1:868468680417:secret:us-east-1/production/MY_SECRET"
       ]
     }
   ]

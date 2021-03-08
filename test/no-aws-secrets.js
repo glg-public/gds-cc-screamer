@@ -16,7 +16,7 @@ describe("No AWS Secrets", () => {
       serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [
-        "export AWS_REGION=us-east-1",
+        "export AWS_REGION=cn-north-1",
         "export AWS_DEFAULT_REGION=eu-west-2",
         "export ACCOUNT_ID=12345678",
       ],
@@ -31,7 +31,7 @@ describe("No AWS Secrets", () => {
       serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [
-        "export AWS_REGION=us-east-1",
+        "export AWS_REGION=cn-north-1",
         "export AWS_DEFAULT_REGION=eu-west-2",
         "export ACCOUNT_ID=12345678",
         "export AWS_ACCESS_KEY_ID=$(secrets ACCESS_KEY)",
@@ -68,7 +68,7 @@ describe("No AWS Secrets", () => {
       serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: [
-        "export AWS_REGION=us-east-1",
+        "export AWS_REGION=cn-north-1",
         "export AWS_DEFAULT_REGION=eu-west-2",
         "export ACCOUNT_ID=12345678",
         "export AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE",

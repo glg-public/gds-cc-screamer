@@ -22,7 +22,7 @@ inputs:
     required: false
     default: "us-east-1"
   aws_partition:
-    description: Your AWS partition. Like 'aws', 'aws-china', etc.
+    description: Your AWS partition. Like 'aws', 'aws-cn', etc.
     required: false
     default: aws
 runs:
