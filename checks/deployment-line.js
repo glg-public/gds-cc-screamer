@@ -26,7 +26,7 @@ function getDeployment(match) {
  * 
  * @returns {Array<Result>}
  */
-async function validateDeploymentLine(deployment, isChinaCC) {
+async function validateDeploymentLine(deployment) {
   if (!deployment.ordersContents) {
     console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
@@ -55,40 +55,19 @@ async function validateDeploymentLine(deployment, isChinaCC) {
       break;
     } else if (line.startsWith("autodeploy")) {
       lineNumber = i + 1;
-      const match = autodeploy.exec(line);
-
-      if (!match) {
-        if (!isChinaCC) {
-          problems.push(
-            "Incorrect Formatting: must be `autodeploy git@github.com:<org>/<repo>[.git]#<branch>`"
-          );
-          break;
-        } else {
-          problems.push(
-            "GDS China supports \`dockerbuild\` and \`dockerdeploy\` only."
-          );
-          break;
-        }
-      }
+      problems.push(
+        "GDS China supports \`dockerbuild\` and \`dockerdeploy\` only."
+      );
+      break;
+      
 
       deploymentParts = getDeployment(match);
     } else if (line.startsWith("jobdeploy")) {
       lineNumber = i + 1;
-      const match = jobdeploy.exec(line);
-
-      if (!match) {
-        if (!isChinaCC) {
-          problems.push(
-            "Incorrect Formatting: must be `jobdeploy github/<org>/<repo>/<branch>:<tag>`"
-          );
-          break;
-        } else {
-          problems.push(
-            "GDS China supports \`dockerbuild\` and \`dockerdeploy\` only."
-          );
-          break;
-        }
-      }
+      problems.push(
+        "GDS China supports \`dockerbuild\` and \`dockerdeploy\` only."
+      );
+      break;
 
       deploymentParts = getDeployment(match);
       break;
@@ -97,17 +76,10 @@ async function validateDeploymentLine(deployment, isChinaCC) {
       const match = dockerbuild.exec(line);
 
       if (!match) {
-        if (!isChinaCC) {
-          problems.push(
-            `**${deploymentParts.repo}** - Repository name must be only lowercase alphanumeric characters and hyphens.`
-          );
-          break;
-        } else {
-          problems.push(
-            "Incorrect Formatting: must be `dockerbuild git@github.com:<org>/<repo>[.git]#<branch>`"
-          );
-          break;
-        }
+        problems.push(
+          "Incorrect Formatting: must be `dockerbuild git@github.com:<org>/<repo>[.git]#<branch>`"
+        );
+        break;
       }
 
       deploymentParts = getDeployment(match);
@@ -134,15 +106,9 @@ async function validateDeploymentLine(deployment, isChinaCC) {
       );
     }
   } else if (!deploymentParts && problems.length === 0) {
-    if (!isChinaCC) {
-      problems.push(
-        `**${deployment.ordersPath}** - Missing deployment. Must include either an \`autodeploy\` line, a \`dockerdeploy\` line, or a \`jobdeploy\` line.`
-      );
-    } else {
       problems.push(
         `**${deployment.ordersPath}** - Missing deployment. Must include either an \`dockerbuild\` line, or a \`dockerdeploy\` line.`
       );
-    }
 
     lineNumber = 0;
   }

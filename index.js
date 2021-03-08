@@ -34,9 +34,6 @@ async function run() {
   const pull_number = pr.number;
   const sha = pr.head.sha;
 
-  const isChinaCCRegex = new RegExp('china*');
-  const isChinaCC = isChinaCCRegex.test(repo);
-
   try {
     await clearPreviousRunComments(octokit, { owner, repo, pull_number });
 
@@ -64,7 +61,7 @@ async function run() {
       for (const check of checks) {
         let results = [];
         try {
-          results = await check(deployment, github.context, inputs, httpGet, isChinaCC);
+          results = await check(deployment, github.context, inputs, httpGet);
         } catch (e) {
           await suggestBugReport(octokit, e, "Error running check", {
             owner,

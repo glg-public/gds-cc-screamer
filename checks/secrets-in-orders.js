@@ -10,7 +10,6 @@ const {
   getSecretsFromOrders
 } = require("../util");
 
-const autodeploy = /^autodeploy git@github.com:([\w-]+)\/(.+?)(.git|)#(.+)/;
 const dockerbuild = /^dockerbuild git@github.com:([\w-]+)\/(.+?)(.git|)#(.+)/;
 
 /**
@@ -100,16 +99,11 @@ async function secretsInOrders(deployment, context, inputs, isChinaCC) {
   } else {
     // If there's not already a secrets.json, we should
     // recommend that user create one
-      const isAutodeploy =
-        deployment.ordersContents.filter((line) => autodeploy.test(line)).length > 0;
       const isDockerbuild =
         deployment.ordersContents.filter((line) => dockerbuild.test(line)).length > 0;
-      let level = "";
-      if (!isChinaCC) {
-        level = isAutodeploy ? "warning" : "failure"; // autodeploy doesn't require this
-      } else {
-        level = isDockerbuild ? "warning" : "failure"; // dockerbuild doesn't require this and it is only avaible in China CC
-      }
+
+      const level = isDockerbuild ? "warning" : "failure"; // dockerbuild doesn't require this and it is only avaible in China CC
+
 
     const secretsFile = JSON.stringify(secretsJson, null, 2);
     results.unshift({
