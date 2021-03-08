@@ -7,6 +7,33 @@ const {
   getOwnerRepoBranch,
 } = require("../util");
 
+const inputs = {
+  awsAccount: 868468680417,
+  secretsPrefix: "cn-north-1/production/",
+  awsRegion: "cn-north-1",
+  awsPartition: "aws-cn"
+};
+
+const context = {
+  payload: {
+    pull_request: {
+      base: {
+        repo: {
+          name: 'repo'
+        }
+      },
+      head: {
+        ref: 'branch',
+        repo: {
+          owner: {
+            login: 'org'
+          }
+        }
+      }
+    }
+  }
+};
+
 const actionFmtError =
   '"Action" must be either a valid [Action String](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_action.html), or an array of valid action strings. SRE recommends as specific of an Action String as possible.';
 const resourceFmtError =
@@ -20,7 +47,7 @@ describe("policy.json is valid", () => {
       ordersContents: [],
     };
 
-    const results = await policyJsonIsValid(deployment);
+    const results = await policyJsonIsValid(deployment, context, inputs);
     expect(results.length).to.equal(0);
   });
 
@@ -56,7 +83,7 @@ describe("policy.json is valid", () => {
       policyJsonContents: policyJson.split("\n"),
     };
 
-    const results = await policyJsonIsValid(deployment);
+    const results = await policyJsonIsValid(deployment, context, inputs);
     expect(results.length).to.equal(0);
   });
 
@@ -69,7 +96,7 @@ describe("policy.json is valid", () => {
       policyJsonContents: ["not valid json"],
     };
 
-    const results = await policyJsonIsValid(deployment);
+    const results = await policyJsonIsValid(deployment, context, inputs);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: "policy.json is not valid JSON",
@@ -108,7 +135,7 @@ describe("policy.json is valid", () => {
       policyJsonContents: policyJson.split("\n"),
     };
 
-    const results = await policyJsonIsValid(deployment);
+    const results = await policyJsonIsValid(deployment, context, inputs);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: `Invalid policy.json`,
@@ -151,7 +178,7 @@ describe("policy.json is valid", () => {
       policyJsonContents: policyJson.split("\n"),
     };
 
-    const results = await policyJsonIsValid(deployment);
+    const results = await policyJsonIsValid(deployment, context, inputs);
     expect(results.length).to.equal(5);
 
     const [version, statement, effect, action, resource] = results;
@@ -233,7 +260,7 @@ describe("policy.json is valid", () => {
       policyJsonContents: policyJson.split("\n"),
     };
 
-    const results = await policyJsonIsValid(deployment);
+    const results = await policyJsonIsValid(deployment, context, inputs);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: 'Policy must have a "Version" field',
@@ -276,7 +303,7 @@ describe("policy.json is valid", () => {
       policyJsonContents: policyJson.split("\n"),
     };
 
-    const results = await policyJsonIsValid(deployment);
+    const results = await policyJsonIsValid(deployment, context, inputs);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: "Invalid Version",
@@ -303,7 +330,7 @@ describe("policy.json is valid", () => {
       policyJsonContents: policyJson.split("\n"),
     };
 
-    const results = await policyJsonIsValid(deployment);
+    const results = await policyJsonIsValid(deployment, context, inputs);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: 'Policy must have a "Statement" block.',
@@ -351,7 +378,7 @@ describe("policy.json is valid", () => {
       policyJsonContents: policyJson.split("\n"),
     };
 
-    const results = await policyJsonIsValid(deployment);
+    const results = await policyJsonIsValid(deployment, context, inputs);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: "Statement is missing required fields.",
@@ -402,7 +429,7 @@ describe("policy.json is valid", () => {
       policyJsonContents: policyJson.split("\n"),
     };
 
-    const results = await policyJsonIsValid(deployment);
+    const results = await policyJsonIsValid(deployment, context, inputs);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: 'Invalid value for "Effect"',
@@ -451,7 +478,7 @@ describe("policy.json is valid", () => {
       policyJsonContents: policyJson.split("\n"),
     };
 
-    let results = await policyJsonIsValid(deployment);
+    let results = await policyJsonIsValid(deployment, context, inputs);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: 'Invalid value for "Action"',
@@ -501,7 +528,7 @@ describe("policy.json is valid", () => {
       policyJsonContents: policyJson.split("\n"),
     };
 
-    results = (await policyJsonIsValid(deployment)).filter(
+    results = (await policyJsonIsValid(deployment, context, inputs)).filter(
       ({ level }) => level === "failure"
     );
     expect(results.length).to.equal(1);
@@ -551,7 +578,7 @@ describe("policy.json is valid", () => {
       policyJsonContents: policyJson.split("\n"),
     };
 
-    let results = await policyJsonIsValid(deployment);
+    let results = await policyJsonIsValid(deployment, context, inputs);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: 'Invalid value for "Resource"',
@@ -601,7 +628,7 @@ describe("policy.json is valid", () => {
       policyJsonContents: policyJson.split("\n"),
     };
 
-    results = (await policyJsonIsValid(deployment)).filter(
+    results = (await policyJsonIsValid(deployment, context, inputs)).filter(
       ({ level }) => level === "failure"
     );
     expect(results.length).to.equal(1);
@@ -648,7 +675,7 @@ describe("policy.json is valid", () => {
       secretsJsonContents: [], // indicates presence of a secrets.json
     };
 
-    let results = (await policyJsonIsValid(deployment)).filter(
+    let results = (await policyJsonIsValid(deployment, context, inputs)).filter(
       ({ level }) => level === "failure"
     );
     expect(results.length).to.equal(1);
@@ -707,7 +734,7 @@ describe("policy.json is valid", () => {
         },
       ],
     };
-    let results = (await policyJsonIsValid(deployment)).filter(
+    let results = (await policyJsonIsValid(deployment, context, inputs)).filter(
       ({ level }) => level === "failure"
     );
     expect(results.length).to.equal(1);
@@ -779,7 +806,7 @@ describe("policy.json is valid", () => {
         },
       ],
     };
-    results = (await policyJsonIsValid(deployment)).filter(
+    results = (await policyJsonIsValid(deployment, context, inputs)).filter(
       ({ level }) => level === "failure"
     );
     expect(results.length).to.equal(0);
@@ -831,7 +858,7 @@ describe("policy.json is valid", () => {
         },
       ],
     };
-    let results = (await policyJsonIsValid(deployment)).filter(
+    let results = (await policyJsonIsValid(deployment, context, inputs)).filter(
       ({ level }) => level === "failure"
     );
     expect(results.length).to.equal(2);
@@ -912,7 +939,7 @@ describe("policy.json is valid", () => {
         },
       ],
     };
-    const results = (await policyJsonIsValid(deployment)).filter(
+    const results = (await policyJsonIsValid(deployment, context, inputs)).filter(
       ({ level }) => level === "warning"
     );
     expect(results.length).to.equal(3);
@@ -986,7 +1013,7 @@ describe("policy.json is valid", () => {
         },
       ],
     };
-    const results = (await policyJsonIsValid(deployment)).filter(
+    const results = (await policyJsonIsValid(deployment, context, inputs)).filter(
       ({ level }) => level === "warning"
     );
     expect(results.length).to.equal(1);
@@ -1026,7 +1053,7 @@ describe("policy.json is valid", () => {
       },
     };
 
-    const results = await policyJsonIsValid(deployment, context);
+    const results = await policyJsonIsValid(deployment, context, inputs);
     expect(results.length).to.equal(1);
 
     const expectedPolicy = {

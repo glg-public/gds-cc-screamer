@@ -27,11 +27,10 @@ const lowerResource = /"resource"/;
 const lowerNotResource = /"(notResource|notresource|Notresource)"/;
 const lowerCondition = /"condition"/;
 const actionString = /(^\*$|^\w+:[\w\*]+$)/;
-const arnRegex = /(arn:(?<partition>[\w\*\-]*):(?<service>[\w\*\-]*):(?<region>[\w\*\-]*):(?<accountId>[\d\*]*):(?<resourceId>[\w\*\-\/\:]*)|^\*$)/;
 
 const warnActions = [/^\*$/, /[\w\*]+:Delete[\w\*]/, /[\w\*]+:\*/];
 
-const warnResources = [/^\*$/, /arn:aws:\\*?:.*/];
+const warnResources = [/^\*$/, /arn:aws-cn:\\*?:.*/];
 
 const secretsAction = "secretsmanager:GetSecretValue";
 
@@ -42,7 +41,7 @@ const secretsAction = "secretsmanager:GetSecretValue";
  *
  * @returns {Array<Result>}
  */
-async function policyJsonIsValid(deployment, context) {
+async function policyJsonIsValid(deployment, context, inputs) {
   function _suggestNewPolicyFile(secretsJson) {
     const policyDoc = JSON.stringify(
       generateSecretsPolicy(secretsJson),
@@ -85,7 +84,8 @@ ${policyDoc}
 
   let { results, document } = validateGenericIamPolicy(
     deployment.policyJsonContents.join("\n"),
-    deployment.policyJsonPath
+    deployment.policyJsonPath,
+    inputs
   );
 
   if (!document) {
@@ -426,7 +426,7 @@ function maybeFixCapitalization({
  * @param {string|Buffer} file
  * @param {string} filePath the path the file lives at
  */
-function validateGenericIamPolicy(file, filePath) {
+function validateGenericIamPolicy(file, filePath, inputs) {
   let results = [];
   let fileLines = file.toString().split("\n");
 
@@ -715,6 +715,7 @@ function validateGenericIamPolicy(file, filePath) {
         });
     }
 
+    const arnRegex = new RegExp(`(arn:${inputs.awsPartition}:(?<service>[\\w\\*\\-]*):${inputs.awsRegion}:${inputs.awsAccount}:(?<resourceId>[\\w\\*\\-\\/\\:]*)|^\\*$)`);
     const resource =
       statement.Resource ||
       statement.resource ||
