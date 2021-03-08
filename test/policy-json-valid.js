@@ -720,7 +720,7 @@ describe("policy.json is valid", () => {
           "```suggestion\n" +
           "    },\n" +
           "    {\n" +
-          '      "Sid": "AllowRequiredSecrets",\n' +
+          '      "Sid": "AllowSecretsAccess",\n' +
           '      "Effect": "Allow",\n' +
           '      "Action": "secretsmanager:GetSecretValue",\n' +
           '      "Resource": [\n' +
