@@ -100,15 +100,17 @@ async function secretsInOrders(deployment, context, inputs, isChinaCC) {
   } else {
     // If there's not already a secrets.json, we should
     // recommend that user create one
-    if (!isChinaCC) {
       const isAutodeploy =
         deployment.ordersContents.filter((line) => autodeploy.test(line)).length > 0;
-      const level = isAutodeploy ? "warning" : "failure"; // autodeploy doesn't require this
-    } else {
       const isDockerbuild =
         deployment.ordersContents.filter((line) => dockerbuild.test(line)).length > 0;
-      const level = isDockerbuild ? "warning" : "failure"; // dockerbuild doesn't require this and it is only avaible in China CC
-    }
+      let level = "";
+      if (!isChinaCC) {
+        level = isAutodeploy ? "warning" : "failure"; // autodeploy doesn't require this
+      } else {
+        level = isDockerbuild ? "warning" : "failure"; // dockerbuild doesn't require this and it is only avaible in China CC
+      }
+
     const secretsFile = JSON.stringify(secretsJson, null, 2);
     results.unshift({
       title: "Create a secrets.json",
