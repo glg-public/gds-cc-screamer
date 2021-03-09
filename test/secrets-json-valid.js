@@ -16,7 +16,7 @@ describe("secrets.json is valid check", () => {
       ordersContents: [],
     };
 
-    const results = await secretsJsonIsValid(deployment, inputs);
+    const results = await secretsJsonIsValid(deployment, {}, inputs);
     expect(results.length).to.equal(0);
   });
 
@@ -44,7 +44,7 @@ describe("secrets.json is valid check", () => {
       secretsJsonContents: secretsJson.split("\n"),
     };
 
-    const results = await secretsJsonIsValid(deployment, inputs);
+    const results = await secretsJsonIsValid(deployment, {}, inputs);
     expect(results.length).to.equal(0);
 
     // When the secrets.json is valid, it gets attached to the orders object
@@ -63,7 +63,7 @@ describe("secrets.json is valid check", () => {
       secretsJsonContents: secretsJson.split("\n"),
     };
 
-    const results = await secretsJsonIsValid(deployment, inputs);
+    const results = await secretsJsonIsValid(deployment, {}, inputs);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: "secrets.json is not valid JSON",
@@ -89,7 +89,7 @@ describe("secrets.json is valid check", () => {
       secretsJsonContents: secretsJson.split("\n"),
     };
 
-    const results = await secretsJsonIsValid(deployment, inputs);
+    const results = await secretsJsonIsValid(deployment, {}, inputs);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: `Invalid secrets.json`,
@@ -123,7 +123,7 @@ describe("secrets.json is valid check", () => {
       secretsJsonContents: secretsJson.split("\n"),
     };
 
-    const results = await secretsJsonIsValid(deployment, inputs);
+    const results = await secretsJsonIsValid(deployment, {}, inputs);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: `Invalid secrets.json`,
@@ -155,7 +155,7 @@ describe("secrets.json is valid check", () => {
       secretsJsonContents: secretsJson.split("\n"),
     };
 
-    const results = await secretsJsonIsValid(deployment, inputs);
+    const results = await secretsJsonIsValid(deployment, {}, inputs);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: "Invalid Secret Structure",
@@ -190,7 +190,7 @@ describe("secrets.json is valid check", () => {
       secretsJsonContents: secretsJson.split("\n"),
     };
 
-    const results = await secretsJsonIsValid(deployment, inputs);
+    const results = await secretsJsonIsValid(deployment, {}, inputs);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: "Invalid Secret Structure",
@@ -234,7 +234,7 @@ describe("secrets.json is valid check", () => {
       secretsJsonContents: secretsJson.split("\n"),
     };
 
-    const results = await secretsJsonIsValid(deployment, inputs);
+    const results = await secretsJsonIsValid(deployment, {}, inputs);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: "Invalid Secret: OTHER_VALUE",
@@ -264,7 +264,7 @@ describe("secrets.json is valid check", () => {
       secretsJsonContents: secretsJson.split("\n"),
     };
 
-    const results = await secretsJsonIsValid(deployment, inputs);
+    const results = await secretsJsonIsValid(deployment, {}, inputs);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
       title: "Invalid Secret: JSON_SECRET",
@@ -305,7 +305,7 @@ describe("secrets.json is valid check", () => {
       secretsJsonContents: secretsJson.split("\n"),
     };
 
-    const results = await secretsJsonIsValid(deployment, inputs);
+    const results = await secretsJsonIsValid(deployment, {}, inputs);
     expect(results.length).to.equal(2);
     expect(results[0]).to.deep.equal({
       title: "Invalid Secret: MORE_KEY",
