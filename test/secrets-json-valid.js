@@ -209,6 +209,14 @@ describe("secrets.json is valid check", () => {
   it("rejects a secrets.json if the arn is invalid", async () => {
     const secretsJson = `[
       {
+        "name": "OTHER_SECRET",
+        "valueFrom": "arn:aws-cn:secretsmanager:cn-north-1:12345678:secret:cn-north-1/production/SOMETHING:::"
+      },
+      {
+        "name": "SECRET_KEY",
+        "valueFrom": "arn:aws-cn:secretsmanager:cn-north-1:12345678:secret:cn-north-1/production/MY_SECRET:myKey::"
+      },
+      {
         "name": "JSON_SECRET",
         "valueFrom": "arn:aws-cn:secretsmanager:cn-north-1:12345678:secret:dev/json_secret:example::"
       },
@@ -233,8 +241,8 @@ describe("secrets.json is valid check", () => {
       path: deployment.secretsJsonPath,
       problems: ["Invalid secret ARN: dev/json_secret"],
       line: {
-        start: 6,
-        end: 9,
+        start: 14,
+        end: 17,
       },
       level: "failure",
     });
@@ -259,6 +267,57 @@ describe("secrets.json is valid check", () => {
     const results = await secretsJsonIsValid(deployment, inputs);
     expect(results.length).to.equal(1);
     expect(results[0]).to.deep.equal({
+      title: "Invalid Secret: JSON_SECRET",
+      path: deployment.secretsJsonPath,
+      problems: ["Invalid secret ARN: arn:aws:secretsmanager:cn-north-1:12345678:secret:dev/json_secret:example::"],
+      line: {
+        start: 2,
+        end: 5,
+      },
+      level: "failure",
+    });
+  });
+
+  it("rejects a secrets.json if has used aws as partition for AWS China", async () => {
+    const secretsJson = `[
+    {
+      "name": "SECRET_KEY",
+      "valueFrom": "arn:aws-cn:secretsmanager:cn-north-1:12345678:secret:cn-north-1/production/MY_SECRET:myKey::"
+    },
+    {
+      "name": "OTHER_SECRET",
+      "valueFrom": "arn:aws-cn:secretsmanager:cn-north-1:12345678:secret:cn-north-1/production/SOMETHING:::"
+    },
+    {
+      "name": "MORE_KEY",
+      "valueFrom": "arn:aws:secretsmanager:cn-north-1:12345678:secret:cn-north-1/production/PANTS:belt::"
+    },
+    {
+      "name": "ONE_MORE",
+      "valueFrom": "arn:aws:secretsmanager:cn-north-1:12345678:secret:cn-north-1/production/PANTS:::"
+    }]`;
+
+    const deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
+      secretsJsonPath: "streamliner/secrets.json",
+      secretsJsonContents: secretsJson.split("\n"),
+    };
+
+    const results = await secretsJsonIsValid(deployment, inputs);
+    expect(results.length).to.equal(2);
+    expect(results[0]).to.deep.equal({
+      title: "Invalid Secret: MORE_KEY",
+      path: deployment.secretsJsonPath,
+      problems: ["Invalid secret ARN: arn:aws:secretsmanager:cn-north-1:12345678:secret:cn-north-1/production/PANTS:belt::"],
+      line: {
+        start: 10,
+        end: 13,
+      },
+      level: "failure",
+    });
+    expect(results[1]).to.deep.equal({
       title: "Invalid Secret: JSON_SECRET",
       path: deployment.secretsJsonPath,
       problems: ["Invalid secret ARN: arn:aws:secretsmanager:cn-north-1:12345678:secret:dev/json_secret:example::"],
