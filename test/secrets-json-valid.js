@@ -239,4 +239,34 @@ describe("secrets.json is valid check", () => {
       level: "failure",
     });
   });
+
+  it("rejects a secrets.json if has used aws as partition for AWS China", async () => {
+    const secretsJson = `[
+      {
+        "name": "JSON_SECRET",
+        "valueFrom": "arn:aws:secretsmanager:cn-north-1:12345678:secret:dev/json_secret:example::"
+      }
+    ]`;
+
+    const deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
+      secretsJsonPath: "streamliner/secrets.json",
+      secretsJsonContents: secretsJson.split("\n"),
+    };
+
+    const results = await secretsJsonIsValid(deployment, inputs);
+    expect(results.length).to.equal(1);
+    expect(results[0]).to.deep.equal({
+      title: "Invalid Secret: JSON_SECRET",
+      path: deployment.secretsJsonPath,
+      problems: ["Invalid secret ARN: arn:aws:secretsmanager:cn-north-1:12345678:secret:dev/json_secret:example::"],
+      line: {
+        start: 2,
+        end: 5,
+      },
+      level: "failure",
+    });
+  });
 });
