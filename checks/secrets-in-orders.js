@@ -10,17 +10,15 @@ const {
   getSecretsFromOrders
 } = require("../util");
 
-const dockerbuild = /^dockerbuild git@github.com:([\w-]+)\/(.+?)(.git|)#(.+)/;
-
 /**
  * Suggests the use of secrets.json instead of using secrets in orders
  * @param {Deployment} deployment
  * @param {GitHubContext} context The context object provided by github
  * @param {ActionInputs} inputs The inputs (excluding the token) from the github action
- * 
+ *
  * @returns {Array<Result>}
  */
-async function secretsInOrders(deployment, context, inputs, isChinaCC) {
+async function secretsInOrders(deployment, context, inputs) {
   if (!deployment.ordersContents) {
     console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
@@ -30,7 +28,7 @@ async function secretsInOrders(deployment, context, inputs, isChinaCC) {
 
   /** @type {Array<Result>} */
 
-  
+
   const { owner, repo, branch } = getOwnerRepoBranch(context);
   const secretsJsonPath = path.join(deployment.serviceName, "secrets.json");
 
@@ -97,13 +95,7 @@ async function secretsInOrders(deployment, context, inputs, isChinaCC) {
       deployment.secretsJson = newSecretsJson;
     }
   } else {
-    // If there's not already a secrets.json, we should
-    // recommend that user create one
-      const isDockerbuild =
-        deployment.ordersContents.filter((line) => dockerbuild.test(line)).length > 0;
-
-      const level = isDockerbuild ? "warning" : "failure"; // dockerbuild doesn't require this and it is only avaible in China CC
-
+    const level = "failure";
 
     const secretsFile = JSON.stringify(secretsJson, null, 2);
     results.unshift({

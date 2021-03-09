@@ -156,12 +156,6 @@ describe("Secrets in orders file", () => {
       line: 6,
       level: "warning",
     });
-
-    deployment.ordersContents[6] = "autodeploy git@github.com:glg/streamliner.git#master";
-    delete deployment.secretsJson;
-    results = await secretsInOrders(deployment, context, inputs);
-    expect(results.length).to.equal(6); // same number of errors with an autodeploy
-    expect(results[0].level).to.equal("warning"); // not a hard failure if they are using legacy autodeploy
   });
 
   it("recommends adding missing secrets to an existing secrets.json", async () => {

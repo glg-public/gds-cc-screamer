@@ -51,24 +51,6 @@ async function validateDeploymentLine(deployment) {
 
       deploymentParts = getDeployment(match);
       break;
-    } else if (line.startsWith("autodeploy")) {
-      lineNumber = i + 1;
-      problems.push(
-        "GDS China supports \`dockerbuild\` and \`dockerdeploy\` only."
-      );
-      break;
-      
-
-      deploymentParts = getDeployment(match);
-    } else if (line.startsWith("jobdeploy")) {
-      lineNumber = i + 1;
-      problems.push(
-        "GDS China supports \`dockerbuild\` and \`dockerdeploy\` only."
-      );
-      break;
-
-      deploymentParts = getDeployment(match);
-      break;
     } else if (line.startsWith("dockerbuild")) {
       lineNumber = i + 1;
       const match = dockerbuild.exec(line);
@@ -81,6 +63,12 @@ async function validateDeploymentLine(deployment) {
       }
 
       deploymentParts = getDeployment(match);
+      break;
+    } else if (/^(autodeploy|jobdeploy)\s/.test(line)) {
+      lineNumber = i + 1;
+      problems.push(
+        "GDS China supports \`dockerbuild\` and \`dockerdeploy\` only."
+      );
       break;
     }
   }
