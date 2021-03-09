@@ -9,10 +9,10 @@ const { getLinesForJSON, suggest, getLineWithinObject } = require("../util");
  * @returns {Array<Result>}
  */
 async function secretsJsonIsValid(deployment, context, inputs) {
-  console.log('WEIRD', inputs);
-  const expression = `arn:${inputs.awsPartition}:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:([\\w\\-\\/]*):?(\\S*?):?(\\S*?):?(\\w*)`;
-  console.log({expression});
-  const secretArn = new RegExp(expression);
+  const secretArn = new RegExp("".concat(
+    `arn:${inputs.awsPartition}:secretsmanager:${inputs.awsRegion}:${inputs.awsAccount}:secret:`,
+    /([\w\-\/]*):?(\S*?):?(\S*?):?(\w*)/.source
+  ));
   /** @type {Array<Result>} */
   const results = [];
 
