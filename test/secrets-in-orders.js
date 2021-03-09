@@ -258,6 +258,6 @@ describe("Secrets in orders file", () => {
       level: "warning",
     });
 
-    
+
   });
 });
