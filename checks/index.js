@@ -16,6 +16,7 @@ const noAWSSecrets = require("./no-aws-secrets");
 const noOutOfScopeVars = require("./no-out-of-scope-vars");
 const useCNAME = require("./use-cname");
 const policyJsonValid = require("./policy-json-valid");
+const noReservedVars = require("./no-reserved-vars");
 
 /**
  * Exports an array of async functions
@@ -39,6 +40,7 @@ module.exports = {
   noOutOfScopeVars,
   useCNAME,
   policyJsonValid,
+  noReservedVars,
 
   // Also export as an array for use by checksuite
   all: [
@@ -59,11 +61,12 @@ module.exports = {
     noAWSSecrets,
     noOutOfScopeVars,
     useCNAME,
+    noReservedVars,
 
     /**
      *  This should probably always be last, because it verifies that the
      *  policy includes permissions that are implied by orders and secrets.json
      * */
     policyJsonValid,
-  ]
+  ],
 };
