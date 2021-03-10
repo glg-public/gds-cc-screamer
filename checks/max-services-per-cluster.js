@@ -31,7 +31,7 @@ async function maxServicesPerCluster(deployment, context, inputs) {
       {
         title: "Approaching Service Number Limit",
         problems: [
-          `Including this deployment, this cluster has ${numDeployments} services out of ${numServicesFailThreshold} allowed.`,
+          `Including \`/${deployment.serviceName}\`, this cluster has ${numDeployments} services out of ${numServicesFailThreshold} allowed.`,
         ],
         level: "warning",
         line: 0,
@@ -43,7 +43,7 @@ async function maxServicesPerCluster(deployment, context, inputs) {
     {
       title: "Too Many Services In This Cluster",
       problems: [
-        `This cluster supports a maximum of ${numServicesFailThreshold} services. (Currently **${numDeployments}** services, including this one)`,
+        `This cluster supports a maximum of ${numServicesFailThreshold} services. (Currently **${numDeployments}** services, including \`/${deployment.serviceName}\`)`,
       ],
       level: "failure",
       line: 0,
