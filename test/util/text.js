@@ -6,6 +6,7 @@ const {
   detectIndentation,
   camelCaseFileName,
   codeBlock,
+  getLineWithinObject,
 } = require("../../util/text");
 
 describe("getLinesForJSON", () => {
@@ -181,5 +182,34 @@ describe("codeBlock", () => {
 
     wrapped = codeBlock("test", "suggestion");
     expect(wrapped).to.equal("```suggestion\ntest\n```");
+  });
+});
+
+describe("getLineWithinObject", () => {
+  it("returns a line number for a value within a json object", () => {
+    const secretsJson = [
+      {
+        name: "JWT_SECRET",
+        valueFrom: "some secret arn",
+      },
+    ];
+    const deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: [
+        "export SOMETHING=allowed",
+        'export SOMETHING_ELSE="also allowed"',
+      ],
+      secretsJsonPath: "streamliner/secrets.json",
+      secretsJson,
+      secretsJsonContents: JSON.stringify(secretsJson, null, 2).split("\n"),
+    };
+    const regex = new RegExp(`"name":\\s*"${secretsJson[0].name}"`);
+    const lineNumber = getLineWithinObject(
+      deployment.secretsJsonContents,
+      secretsJson[0],
+      regex
+    );
+    expect(lineNumber).to.equal(3);
   });
 });
