@@ -39,4 +39,37 @@ describe("No Reserved Variabes", () => {
       ],
     });
   });
+
+  it("rejects secrets.json that contains reserved variables", async () => {
+    const secretsJson = [
+      {
+        name: "CMD",
+        valueFrom: "some secret arn",
+      },
+    ];
+    const deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: [
+        "export SOMETHING=allowed",
+        'export SOMETHING_ELSE="also allowed"',
+      ],
+      secretsJsonPath: "streamliner/secrets.json",
+      secretsJson,
+      secretsJsonContents: JSON.stringify(secretsJson, null, 2).split("\n"),
+    };
+
+    const results = await noReservedVars(deployment);
+    expect(results.length).to.equal(1);
+
+    expect(results[0]).to.deep.equal({
+      title: "No Reserved Variables",
+      path: deployment.secretsJsonPath,
+      level: "failure",
+      line: 3,
+      problems: [
+        "`CMD` is a reserved variable name in GDS. You will need to rename this variable.",
+      ],
+    });
+  });
 });
