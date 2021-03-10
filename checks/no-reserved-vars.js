@@ -52,7 +52,7 @@ async function noReservedVars(deployment) {
     console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
-  console.log(`Template Check - ${deployment.ordersPath}`);
+  console.log(`No Reserved Variables - ${deployment.serviceName}`);
 
   /** @type {Array<Result>} */
   const results = [];

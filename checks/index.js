@@ -17,6 +17,7 @@ const noOutOfScopeVars = require("./no-out-of-scope-vars");
 const useCNAME = require("./use-cname");
 const policyJsonValid = require("./policy-json-valid");
 const noReservedVars = require("./no-reserved-vars");
+const maxServicesPerCluster = require("./max-services-per-cluster");
 
 /**
  * Exports an array of async functions
@@ -41,6 +42,7 @@ module.exports = {
   useCNAME,
   policyJsonValid,
   noReservedVars,
+  maxServicesPerCluster,
 
   // Also export as an array for use by checksuite
   all: [
@@ -62,6 +64,7 @@ module.exports = {
     noOutOfScopeVars,
     useCNAME,
     noReservedVars,
+    maxServicesPerCluster,
 
     /**
      *  This should probably always be last, because it verifies that the
