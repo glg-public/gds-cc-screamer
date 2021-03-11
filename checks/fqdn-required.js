@@ -44,7 +44,7 @@ async function fqdnRequired(deployment, context, inputs, httpGet) {
   }
 
   let isSet = false;
-  let lastEnvLine = 0;
+  let lastEnvLine = 1;
   deployment.ordersContents.forEach((line, i) => {
     const lineNumber = i + 1;
     const match = envvar.exec(line);
@@ -103,7 +103,7 @@ async function fqdnRequired(deployment, context, inputs, httpGet) {
             suggest(
               "",
               `${
-                deployment.ordersContents[result.line] || ""
+                deployment.ordersContents[result.line - 1] || ""
               }\n# Preferred Fully Qualified Domain Name\nexport GDS_FQDN='${host}'\n`
             )
           )
