@@ -11,5 +11,12 @@
       "jupyterhub.glgresearch.com",
       "streamliner.glgresearch.com"
     ]
+  },
+  "s98": {
+    "clusterMap": "v3-s98",
+    "clusterVersion": "v3",
+    "clusterConfig": "s98",
+    "fullPath": "glgapp/route53/s98.glgresearch.com.tf",
+    "nameOfFile": "s98.glgresearch.com.tf"
   }
 }
