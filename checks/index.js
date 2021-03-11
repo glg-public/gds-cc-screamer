@@ -18,6 +18,7 @@ const useCNAME = require("./use-cname");
 const policyJsonValid = require("./policy-json-valid");
 const noReservedVars = require("./no-reserved-vars");
 const maxServicesPerCluster = require("./max-services-per-cluster");
+const fqdnRequired = require("./fqdn-required");
 
 /**
  * Exports an array of async functions
@@ -43,6 +44,7 @@ module.exports = {
   policyJsonValid,
   noReservedVars,
   maxServicesPerCluster,
+  fqdnRequired,
 
   // Also export as an array for use by checksuite
   all: [
@@ -65,6 +67,7 @@ module.exports = {
     useCNAME,
     noReservedVars,
     maxServicesPerCluster,
+    fqdnRequired,
 
     /**
      *  This should probably always be last, because it verifies that the
