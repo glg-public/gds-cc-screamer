@@ -131,7 +131,7 @@ describe("FQDN is Required", () => {
 
     expect(results.length).to.equal(1);
     expect(results[0].level).to.equal("failure");
-    expect(results[0].line).to.equal(2); // proposes adding after the rest of the environment
+    expect(results[0].line).to.equal(1); // proposes adding after the rest of the environment
   });
 
   it("fails if a domain name is defined that is not associated with the cluster", async () => {

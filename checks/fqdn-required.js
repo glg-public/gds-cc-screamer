@@ -50,7 +50,10 @@ async function fqdnRequired(deployment, context, inputs, httpGet) {
     const match = envvar.exec(line);
     if (match) {
       const [, , variable, value] = match;
-      lastEnvLine = lineNumber;
+      if (!["SECURITY_MODE", "SESSION_ACCESS_FLAGS"].includes(variable)) {
+        lastEnvLine = lineNumber;
+      }
+
       if (variable === "GDS_FQDN") {
         isSet = true;
         if (myCluster.hosts.length > 0 && !myCluster.hosts.includes(value)) {
@@ -88,7 +91,7 @@ async function fqdnRequired(deployment, context, inputs, httpGet) {
       level: "failure",
       problems: [],
       path: deployment.ordersPath,
-      line: lastEnvLine + 1,
+      line: lastEnvLine,
     };
 
     if (myCluster.hosts.length === 0) {
