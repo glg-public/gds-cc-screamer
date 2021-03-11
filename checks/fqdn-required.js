@@ -104,7 +104,7 @@ async function fqdnRequired(deployment, context, inputs, httpGet) {
               "",
               `${
                 deployment.ordersContents[result.line - 1] || ""
-              }\n# Preferred Fully Qualified Domain Name\nexport GDS_FQDN='${host}'\n`
+              }\n\n# Preferred Fully Qualified Domain Name\nexport GDS_FQDN='${host}'\n`
             )
           )
           .join("\n")}`
