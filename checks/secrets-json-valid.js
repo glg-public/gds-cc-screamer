@@ -1,4 +1,4 @@
-require('../typedefs');
+require("../typedefs");
 const core = require("@actions/core");
 const { getLinesForJSON, suggest, getLineWithinObject } = require("../util");
 
@@ -18,7 +18,9 @@ async function secretsJsonIsValid(deployment, context, inputs) {
 
   // secrets.json is not required
   if (!deployment.secretsJsonContents) {
-    console.log(`No secrets.json present, skipping - ${deployment.serviceName}`);
+    console.log(
+      `No secrets.json present, skipping - ${deployment.serviceName}`
+    );
     return results;
   }
 
@@ -87,7 +89,7 @@ async function secretsJsonIsValid(deployment, context, inputs) {
     }
 
     // This object will end up with correctly cased keys
-    const standardSecret = Object.assign({}, secret);
+    const standardSecret = JSON.parse(JSON.stringify(secret));
 
     // Suggest casing corrections
     Object.keys(secret).forEach((key) => {
@@ -110,7 +112,10 @@ async function secretsJsonIsValid(deployment, context, inputs) {
           problems: [
             suggest(
               "Lowercase this key:",
-              deployment.secretsJsonContents[lineNumber - 1].replace(regex, '"name":')
+              deployment.secretsJsonContents[lineNumber - 1].replace(
+                regex,
+                '"name":'
+              )
             ),
           ],
         });
@@ -141,7 +146,10 @@ async function secretsJsonIsValid(deployment, context, inputs) {
       }
     });
 
-    if (!standardSecret.hasOwnProperty("name") || !standardSecret.hasOwnProperty("valueFrom")) {
+    if (
+      !standardSecret.hasOwnProperty("name") ||
+      !standardSecret.hasOwnProperty("valueFrom")
+    ) {
       result.problems.push(
         "Each secret must be an object like { name, valueFrom }"
       );
@@ -151,7 +159,10 @@ async function secretsJsonIsValid(deployment, context, inputs) {
       result.problems.push("secret.name must be a string.");
     }
 
-    if (standardSecret.valueFrom && typeof standardSecret.valueFrom !== "string") {
+    if (
+      standardSecret.valueFrom &&
+      typeof standardSecret.valueFrom !== "string"
+    ) {
       result.problems.push("secret.valueFrom must be a string.");
     }
 
@@ -161,7 +172,11 @@ async function secretsJsonIsValid(deployment, context, inputs) {
       );
     }
 
-    if (standardSecret.valueFrom && standardSecret.name && !secretArn.test(standardSecret.valueFrom)) {
+    if (
+      standardSecret.valueFrom &&
+      standardSecret.name &&
+      !secretArn.test(standardSecret.valueFrom)
+    ) {
       result.problems.push(`Invalid secret ARN: ${standardSecret.valueFrom}`);
       result.title = `Invalid Secret: ${standardSecret.name}`;
     }

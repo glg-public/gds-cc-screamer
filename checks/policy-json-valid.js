@@ -11,7 +11,7 @@ const {
   getNewFileLink,
   getOwnerRepoBranch,
   generateSecretsPolicy,
-  getSimpleSecret
+  getSimpleSecret,
 } = require("../util");
 
 const lowerVersion = /"version"/;
@@ -314,7 +314,7 @@ ${policyDoc}
       }
 
       Object.keys(requiredSecrets)
-        .filter((key) => !requiredSecrets[key])
+        .filter((key) => requiredSecrets[key] === false)
         .forEach((key) =>
           result.problems.push(
             `Your secrets.json requests ${key}, but your policy does not allow access.`
@@ -322,12 +322,12 @@ ${policyDoc}
         );
 
       // Sids must be unique within a policy
-      let Sid = "AllowRequiredSecrets";
+      let Sid = "AllowSecretsAccess";
       let i = 0;
       const allSids = _getSids();
       while (allSids.includes(Sid)) {
         i += 1;
-        Sid = `AllowRequiredSecrets${i}`;
+        Sid = `AllowSecretsAccess${i}`;
       }
 
       const newStatementBlock = {

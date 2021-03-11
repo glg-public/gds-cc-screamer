@@ -211,5 +211,5 @@ module.exports = {
   getLineWithinObject,
   escapeRegExp,
   detectIndentation,
-  camelCaseFileName
+  camelCaseFileName,
 };

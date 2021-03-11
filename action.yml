@@ -1,5 +1,5 @@
-name: 'GDS Cluster Config Screamer'
-description: 'Provides validation for GDS Cluster Configs'
+name: "GDS Cluster Config Screamer"
+description: "Provides validation for GDS Cluster Configs"
 author: Shawn Rushefsky
 inputs:
   token:
@@ -25,9 +25,21 @@ inputs:
     description: Your AWS partition. Like 'aws', 'aws-cn', etc.
     required: false
     default: aws
+  num_services_warn:
+    description: The number of services that can be in the cluster before getting a warning
+    required: false
+    default: 50
+  num_services_fail:
+    description: The number of services that can be in the cluster before future services are rejected
+    required: false
+    default: 100
+  cluster_root:
+    description: The path of the root of the cluster
+    required: false
+    default: "."
 runs:
-  using: 'node12'
-  main: 'index.js'
+  using: "node12"
+  main: "index.js"
 branding:
   color: purple
   icon: eye

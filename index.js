@@ -2,12 +2,13 @@ require("./typedefs");
 const core = require("@actions/core");
 const github = require("@actions/github");
 const checks = require("./checks").all;
+const path = require("path");
 const {
   clearPreviousRunComments,
   getAllDeployments,
   suggestBugReport,
   leaveComment,
-  httpGet
+  httpGet,
 } = require("./util");
 
 /**
@@ -20,9 +21,21 @@ async function run() {
   const awsRegion = core.getInput("aws_region");
   const awsPartition = core.getInput("aws_partition");
   const clusterMap = core.getInput("cluster_map");
+  const numServicesWarnThreshold = core.getInput("num_services_warn");
+  const numServicesFailThreshold = core.getInput("num_services_fail");
+  const clusterRoot = path.resolve(core.getInput("cluster_root"));
 
   /** @type {ActionInputs} */
-  const inputs = { awsAccount, secretsPrefix, awsRegion, awsPartition, clusterMap };
+  const inputs = {
+    awsAccount,
+    secretsPrefix,
+    awsRegion,
+    awsPartition,
+    clusterMap,
+    numServicesFailThreshold,
+    numServicesWarnThreshold,
+    clusterRoot,
+  };
 
   const octokit = github.getOctokit(token);
 
