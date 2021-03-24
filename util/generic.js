@@ -313,7 +313,7 @@ function getMaskComponents(mask) {
   const components = Array.from(bits)
     .reverse()
     .map(Number)
-    .map((bit, i) => (2 * bit) ** i)
+    .map((bit, i) => (2 * bit) ** (bit ? i : 1))
     .filter((bit) => bit);
 
   return components;

@@ -22,7 +22,7 @@ async function validTemplatesJson(deployment, context, inputs, httpGet) {
   /**
    * You should check the existance of any file you're trying to check
    */
-  if (!deployment.templatesJson) {
+  if (!deployment.templatesJsonContents) {
     console.log(
       `No templates.json Present - Skipping ${deployment.serviceName}`
     );
@@ -39,7 +39,7 @@ async function validTemplatesJson(deployment, context, inputs, httpGet) {
 
   try {
     deployment.templatesJson = JSON.parse(
-      deployment.templatesJsonContents.join("/n")
+      deployment.templatesJsonContents.join("\n")
     );
   } catch (e) {
     results.push({
@@ -71,14 +71,17 @@ async function validTemplatesJson(deployment, context, inputs, httpGet) {
   const orders = deployment.ordersContents.join("\n");
 
   const securityMode = getExportValue(orders, "SECURITY_MODE");
-  if (securityMode === "public" && deployment.templatesJson.secure.length > 0) {
+  if (
+    (securityMode === "public" || !securityMode) &&
+    deployment.templatesJson.secure.length > 0
+  ) {
     results.push({
       title: "Public App with Secure Templates",
       line: 0,
       level: "warning",
       path: deployment.templatesJsonPath,
       problems: [
-        `Your app is public, which means browser requests will be made unauthenticated. However, you have specified **${deployment.templatesJson.secure.length}** template(s) as being secure. Your users may not be able to access these templates without authentication.`,
+        `Your app lacks access controls, which means browser requests will be made unauthenticated. However, you have specified **${deployment.templatesJson.secure.length}** template(s) as being secure. Your users may not be able to access these templates without authentication.`,
       ],
     });
     return results;
@@ -109,7 +112,7 @@ async function validTemplatesJson(deployment, context, inputs, httpGet) {
     const access = getAccess(orders, roles);
     if (!access) {
       results.push({
-        title: "No Security Mode with Secure Templates",
+        title: "No Access Flags with Secure Templates",
         line: 0,
         level: "warning",
         path: deployment.templatesJsonPath,
@@ -141,10 +144,12 @@ async function validTemplatesJson(deployment, context, inputs, httpGet) {
               level: "warning",
               problems: [
                 "> Note: `role-glg` and `jwt-role-glg` are equivalent for this case.",
-                `Template \`${templateName}\` expects the following masks: ${JSON.stringify(
+                `Template \`${templateName}\` expects the following masks: \`${JSON.stringify(
                   frontMatter.executionMasks
-                )}`,
-                `Your app has the following masks: ${JSON.stringify(expected)}`,
+                )}\``,
+                `Your app has the following masks: \`${JSON.stringify(
+                  expected
+                )}\``,
               ],
               path: deployment.templatesJsonPath,
             });
