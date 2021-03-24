@@ -54,10 +54,10 @@ function getExportValue(text, varName) {
 }
 
 // No need to pull in axios just  for this
-function httpGet(url) {
+function httpGet(url, options = {}) {
   return new Promise((resolve, reject) => {
     https
-      .get(url, (resp) => {
+      .get(url, options, (resp) => {
         let data = "";
 
         // A chunk of data has been received.

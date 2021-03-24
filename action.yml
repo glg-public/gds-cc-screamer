@@ -37,6 +37,10 @@ inputs:
     description: The path of the root of the cluster
     required: false
     default: "."
+  deployinator_token:
+    description: An App Token that can access an instance of Deployinator
+    required: false
+    default: ""
 runs:
   using: "node12"
   main: "index.js"

@@ -24,6 +24,7 @@ async function run() {
   const numServicesWarnThreshold = core.getInput("num_services_warn");
   const numServicesFailThreshold = core.getInput("num_services_fail");
   const clusterRoot = path.resolve(core.getInput("cluster_root"));
+  const deployinatorToken = core.getInput("deployinator_token");
 
   /** @type {ActionInputs} */
   const inputs = {
@@ -35,6 +36,7 @@ async function run() {
     numServicesFailThreshold,
     numServicesWarnThreshold,
     clusterRoot,
+    deployinatorToken,
   };
 
   const octokit = github.getOctokit(token);
@@ -56,7 +58,12 @@ async function run() {
     });
 
     // These are all of the files that, if changed, will trigger the check suite
-    const filesToCheck = ["orders", "secrets.json", "policy.json"];
+    const filesToCheck = [
+      "orders",
+      "secrets.json",
+      "policy.json",
+      "templates.json",
+    ];
     const deployments = await getAllDeployments(files, filesToCheck);
 
     // We want to track how all the checks go
