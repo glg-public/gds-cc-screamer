@@ -93,11 +93,11 @@ async function run() {
             pull_number,
           });
 
-          console.log(e);
+          log.info(e);
           continue;
         }
         if (results.length === 0) {
-          console.log("...Passed");
+          log.info("...Passed");
           counts.success += 1;
           continue;
         }
@@ -112,7 +112,7 @@ async function run() {
             });
           } else {
             counts.success += 1;
-            console.log("...Passed");
+            log.info("...Passed");
           }
         }
       }
