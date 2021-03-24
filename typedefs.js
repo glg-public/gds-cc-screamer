@@ -289,6 +289,7 @@
  * numServicesWarnThreshold: number
  * clusterRoot: string
  * deployinatorToken: string
+ * deployinatorURL: URI
  * }} ActionInputs
  */
 

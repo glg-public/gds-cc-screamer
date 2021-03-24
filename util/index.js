@@ -28,7 +28,12 @@ const {
   httpGet,
   generateSecretsPolicy,
   getSimpleSecret,
-  getSecretsFromOrders
+  getSecretsFromOrders,
+  compareSecurity,
+  getMasks,
+  getAccess,
+  getMaskComponents,
+  getRoleByClaim,
 } = require("./generic");
 
 module.exports = {
@@ -55,5 +60,10 @@ module.exports = {
   httpGet,
   generateSecretsPolicy,
   getSimpleSecret,
-  getSecretsFromOrders
+  getSecretsFromOrders,
+  compareSecurity,
+  getMasks,
+  getAccess,
+  getMaskComponents,
+  getRoleByClaim,
 };

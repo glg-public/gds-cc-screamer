@@ -41,6 +41,10 @@ inputs:
     description: An App Token that can access an instance of Deployinator
     required: false
     default: ""
+  deployinator_url:
+    description: A fully qualified url for an instance of Deployinator
+    required: false
+    default: ""
 runs:
   using: "node12"
   main: "index.js"

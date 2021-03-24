@@ -25,6 +25,7 @@ async function run() {
   const numServicesFailThreshold = core.getInput("num_services_fail");
   const clusterRoot = path.resolve(core.getInput("cluster_root"));
   const deployinatorToken = core.getInput("deployinator_token");
+  const deployinatorURL = core.getInput("deployinator_url");
 
   /** @type {ActionInputs} */
   const inputs = {
@@ -37,6 +38,7 @@ async function run() {
     numServicesWarnThreshold,
     clusterRoot,
     deployinatorToken,
+    deployinatorURL,
   };
 
   const octokit = github.getOctokit(token);

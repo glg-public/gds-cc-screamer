@@ -1,6 +1,14 @@
 require("../typedefs");
 const core = require("@actions/core");
-const { codeBlock } = require("../util");
+const {
+  codeBlock,
+  getLineNumber,
+  escapeRegExp,
+  compareSecurity,
+  getMasks,
+  getAccess,
+  getExportValue,
+} = require("../util");
 
 /**
  * Accepts a deployment object, and does some kind of check
@@ -18,6 +26,10 @@ async function validTemplatesJson(deployment, context, inputs, httpGet) {
     console.log(
       `No templates.json Present - Skipping ${deployment.serviceName}`
     );
+    return [];
+  }
+  if (!deployment.ordersContents) {
+    console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
   console.log(`templates.json is valid - ${deployment.templatesJsonPath}`);
@@ -56,8 +68,101 @@ async function validTemplatesJson(deployment, context, inputs, httpGet) {
     return results;
   }
 
-  if (inputs.deployinatorToken) {
-    deployment.templatesJson.secure.forEach((templateName, i) => {});
+  const orders = deployment.ordersContents.join("\n");
+
+  const securityMode = getExportValue(orders, "SECURITY_MODE");
+  if (securityMode === "public" && deployment.templatesJson.secure.length > 0) {
+    results.push({
+      title: "Public App with Secure Templates",
+      line: 0,
+      level: "warning",
+      path: deployment.templatesJsonPath,
+      problems: [
+        `Your app is public, which means browser requests will be made unauthenticated. However, you have specified **${deployment.templatesJson.secure.length}** template(s) as being secure. Your users may not be able to access these templates without authentication.`,
+      ],
+    });
+    return results;
+  }
+
+  if (inputs.deployinatorToken && inputs.deployinatorURL) {
+    const httpOpts = {
+      headers: {
+        Authorization: `bearer ${inputs.deployinatorToken}`,
+      },
+    };
+    const rolesURL = `${inputs.deployinatorURL}/enumerate/roles`;
+    let roles;
+    try {
+      roles = await httpGet(rolesURL, httpOpts);
+    } catch (e) {
+      results.push({
+        title: `Could not fetch roles`,
+        level: "warning",
+        line: 0,
+        path: deployment.templatesJsonPath,
+        problems: [
+          "This most likely implies an incorrectly configured connection to Deployinator",
+        ],
+      });
+      return results;
+    }
+    const access = getAccess(orders, roles);
+    if (!access) {
+      results.push({
+        title: "No Security Mode with Secure Templates",
+        line: 0,
+        level: "warning",
+        path: deployment.templatesJsonPath,
+        problems: [
+          `Your app has not defined any access controls. However, you have specified **${deployment.templatesJson.secure.length}** template(s) as being secure. Your users may not be able to access these templates without proper authentication.`,
+        ],
+      });
+      return results;
+    }
+    await Promise.all(
+      deployment.templatesJson.secure.map(async (templateName, i) => {
+        const frontMatterURL = `${inputs.deployinatorURL}/template/security/${templateName}`;
+        const regex = new RegExp(escapeRegExp(templateName));
+        const lineNumber = getLineNumber(
+          deployment.templatesJsonContents,
+          regex
+        );
+        try {
+          const frontMatter = await httpGet(frontMatterURL, httpOpts);
+          const expected = getMasks(access, roles).masks;
+          const securityMatches = compareSecurity(
+            expected,
+            frontMatter.executionMasks
+          );
+          if (!securityMatches) {
+            results.push({
+              title: "Template Security Does Not Match App Security",
+              line: lineNumber,
+              level: "warning",
+              problems: [
+                "> Note: `role-glg` and `jwt-role-glg` are equivalent for this case.",
+                `Template \`${templateName}\` expects the following masks: ${JSON.stringify(
+                  frontMatter.executionMasks
+                )}`,
+                `Your app has the following masks: ${JSON.stringify(expected)}`,
+              ],
+              path: deployment.templatesJsonPath,
+            });
+          }
+        } catch (e) {
+          results.push({
+            title: `${templateName} could not be found.`,
+            level: "warning",
+            line: lineNumber,
+            path: deployment.templatesJsonPath,
+            problems: [
+              `The specified template \`${templateName}\` could not be found.`,
+              "This can happen for several reasons, including a bad connection to Deployinator.",
+            ],
+          });
+        }
+      })
+    );
   }
 
   return results;
