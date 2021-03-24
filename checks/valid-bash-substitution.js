@@ -1,20 +1,20 @@
-require('../typedefs');
-const core = require("@actions/core");
+require("../typedefs");
+const log = require("loglevel");
 
 const singleQuoteSubsitution = /export \w+='.*\$({|)\w+(}|).*'/;
 
 /**
  * Flags the use of single quotes for bash substitution
  * @param {Deployment} deployment
- * 
+ *
  * @returns {Array<Result>}
  */
 async function validBashSubsitutions(deployment) {
   if (!deployment.ordersContents) {
-    console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
+    log.info(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
-  console.log(`Valid Bash Substitution - ${deployment.ordersPath}`);
+  log.info(`Valid Bash Substitution - ${deployment.ordersPath}`);
   /** @type {Array<Result>} */
   const results = [];
 
@@ -31,7 +31,7 @@ ${line.replace(/'/g, '"')}
         level: "failure",
       });
     }
-  })
+  });
 
   return results;
 }

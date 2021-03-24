@@ -1,5 +1,5 @@
 require("../typedefs");
-const core = require("@actions/core");
+const log = require("loglevel");
 
 const SECURE_DOMAINS = ["glgresearch.com", "glg.it", "glginsights.com"];
 
@@ -18,10 +18,10 @@ const reBadURLs = new RegExp(
  */
 async function httpsOnly(deployment) {
   if (!deployment.ordersContents) {
-    console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
+    log.info(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
-  console.log(`HTTPS Only - ${deployment.ordersPath}`);
+  log.info(`HTTPS Only - ${deployment.ordersPath}`);
 
   /** @type {Array<Result>} */
   const results = [];

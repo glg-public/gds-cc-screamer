@@ -1,5 +1,5 @@
 require("../typedefs");
-const core = require("@actions/core");
+const log = require("loglevel");
 const path = require("path");
 const {
   getLinesForJSON,
@@ -71,17 +71,17 @@ ${policyDoc}
 
   // policy.json is not required, unless secrets.json is present
   if (!deployment.policyJsonContents && deployment.secretsJson) {
-    console.log(
+    log.info(
       `policy.json is missing, but required - ${deployment.serviceName}`
     );
     return [_suggestNewPolicyFile(deployment.secretsJson)];
   }
 
   if (!deployment.policyJsonContents) {
-    console.log(`No policy.json present, skipping - ${deployment.serviceName}`);
+    log.info(`No policy.json present, skipping - ${deployment.serviceName}`);
     return [];
   }
-  console.log(`policy.json is valid - ${deployment.policyJsonPath}`);
+  log.info(`policy.json is valid - ${deployment.policyJsonPath}`);
 
   let { results, document } = validateGenericIamPolicy(
     deployment.policyJsonContents.join("\n"),

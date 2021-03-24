@@ -1,5 +1,5 @@
 require("../typedefs");
-const core = require("@actions/core");
+const log = require("loglevel");
 const { getLinesForJSON, suggest, getLineWithinObject } = require("../util");
 
 const secretArn = /arn:([\w\*\-]*):secretsmanager:([\w-]*):(\d*):secret:([\w-\/]*):?(\S*?):?(\S*?):?(\w*)/;
@@ -16,13 +16,11 @@ async function secretsJsonIsValid(deployment) {
 
   // secrets.json is not required
   if (!deployment.secretsJsonContents) {
-    console.log(
-      `No secrets.json present, skipping - ${deployment.serviceName}`
-    );
+    log.info(`No secrets.json present, skipping - ${deployment.serviceName}`);
     return results;
   }
 
-  console.log(`secrets.json is valid - ${deployment.secretsJsonPath}`);
+  log.info(`secrets.json is valid - ${deployment.secretsJsonPath}`);
 
   // secrets.json must be valid json
   let secretsJson;

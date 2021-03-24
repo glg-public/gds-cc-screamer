@@ -1,19 +1,19 @@
-require('../typedefs');
-const core = require("@actions/core");
-const { getExportValue, suggest } = require('../util');
+require("../typedefs");
+const log = require("loglevel");
+const { getExportValue, suggest } = require("../util");
 
 /**
  * Requires the use of | instead of + to combine jwt access flags
  * @param {Deployment} deployment
- * 
+ *
  * @returns {Array<Result>}
  */
 async function jwtAccessFlags(deployment) {
   if (!deployment.ordersContents) {
-    console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
+    log.info(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
-  console.log(`JWT Access Flags - ${deployment.ordersPath}`);
+  log.info(`JWT Access Flags - ${deployment.ordersPath}`);
 
   /** @type {Array<Result>} */
   const results = [];

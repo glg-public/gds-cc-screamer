@@ -1,5 +1,5 @@
 require("../typedefs");
-const core = require("@actions/core");
+const log = require("loglevel");
 const path = require("path");
 const fs = require("fs").promises;
 
@@ -12,7 +12,7 @@ const fs = require("fs").promises;
  * @returns {Array<Result>}
  */
 async function maxServicesPerCluster(deployment, context, inputs) {
-  console.log(`Max Services Per Cluster - ${deployment.serviceName}`);
+  log.info(`Max Services Per Cluster - ${deployment.serviceName}`);
 
   const {
     numServicesWarnThreshold,

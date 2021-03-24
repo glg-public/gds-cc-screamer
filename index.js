@@ -3,6 +3,7 @@ const core = require("@actions/core");
 const github = require("@actions/github");
 const checks = require("./checks").all;
 const path = require("path");
+const log = require("loglevel");
 const {
   clearPreviousRunComments,
   getAllDeployments,
@@ -10,6 +11,8 @@ const {
   leaveComment,
   httpGet,
 } = require("./util");
+
+log.setLevel(process.env.LOG_LEVEL || "info");
 
 /**
  * Perform all checks on all deployments included in a PR

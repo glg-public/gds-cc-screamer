@@ -1,20 +1,20 @@
-require('../typedefs');
-const core = require("@actions/core");
+require("../typedefs");
+const log = require("loglevel");
 
 const exportedVariable = /^export +(?<variable>\w+)=/;
 
 /**
  * Rejects orders that export a variable more than once
  * @param {Deployment} deployment
- * 
+ *
  * @returns {Array<Result>}
  */
 async function noDuplicateExports(deployment) {
   if (!deployment.ordersContents) {
-    console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
+    log.info(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
-  console.log(`No Duplicate Exports - ${deployment.ordersPath}`);
+  log.info(`No Duplicate Exports - ${deployment.ordersPath}`);
 
   /** @type {Array<Result>} */
   const results = [];

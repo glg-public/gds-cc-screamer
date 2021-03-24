@@ -1,5 +1,5 @@
-require('../typedefs');
-const core = require("@actions/core");
+require("../typedefs");
+const log = require("loglevel");
 const path = require("path");
 const {
   suggest,
@@ -7,7 +7,7 @@ const {
   getNewFileLink,
   getOwnerRepoBranch,
   detectIndentation,
-  getSecretsFromOrders
+  getSecretsFromOrders,
 } = require("../util");
 
 const autodeploy = /^autodeploy git@github.com:([\w-]+)\/(.+?)(.git|)#(.+)/;
@@ -17,28 +17,30 @@ const autodeploy = /^autodeploy git@github.com:([\w-]+)\/(.+?)(.git|)#(.+)/;
  * @param {Deployment} deployment
  * @param {GitHubContext} context The context object provided by github
  * @param {ActionInputs} inputs The inputs (excluding the token) from the github action
- * 
+ *
  * @returns {Array<Result>}
  */
 async function secretsInOrders(deployment, context, inputs) {
   if (!deployment.ordersContents) {
-    console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
+    log.info(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
-  console.log(`Secrets in Orders File - ${deployment.ordersPath}`);
+  log.info(`Secrets in Orders File - ${deployment.ordersPath}`);
   const { awsAccount, secretsPrefix, awsRegion, awsPartition } = inputs;
 
   /** @type {Array<Result>} */
 
-  
   const { owner, repo, branch } = getOwnerRepoBranch(context);
   const secretsJsonPath = path.join(deployment.serviceName, "secrets.json");
 
-  const { secrets, results } = getSecretsFromOrders(deployment.ordersContents, secretsPrefix);
-  const secretsJson = secrets.map(({ name, value, jsonKey='' }) => {
+  const { secrets, results } = getSecretsFromOrders(
+    deployment.ordersContents,
+    secretsPrefix
+  );
+  const secretsJson = secrets.map(({ name, value, jsonKey = "" }) => {
     return {
       name,
-      valueFrom: `arn:${awsPartition}:secretsmanager:${awsRegion}:${awsAccount}:secret:${value}:${jsonKey}::`
+      valueFrom: `arn:${awsPartition}:secretsmanager:${awsRegion}:${awsAccount}:secret:${value}:${jsonKey}::`,
     };
   });
 
@@ -67,9 +69,11 @@ async function secretsInOrders(deployment, context, inputs) {
 
       // This lets us indent more correctly
       const newSecretsJson = deployment.secretsJson.concat(secretsToAdd);
-      const newSecretsLines = JSON.stringify(newSecretsJson, null, indent).split(
-        "\n"
-      );
+      const newSecretsLines = JSON.stringify(
+        newSecretsJson,
+        null,
+        indent
+      ).split("\n");
       let stringifiedStatement = "";
       secretsToAdd.forEach((secret) => {
         const { start, end } = getLinesForJSON(newSecretsLines, secret);
@@ -100,7 +104,8 @@ async function secretsInOrders(deployment, context, inputs) {
     // If there's not already a secrets.json, we should
     // recommend that user create one
     const isAutodeploy =
-      deployment.ordersContents.filter((line) => autodeploy.test(line)).length > 0;
+      deployment.ordersContents.filter((line) => autodeploy.test(line)).length >
+      0;
     const level = isAutodeploy ? "warning" : "failure"; // autodeploy doesn't require this
     const secretsFile = JSON.stringify(secretsJson, null, 2);
     results.unshift({
@@ -115,7 +120,7 @@ ${secretsFile}
           branch,
           filename: secretsJsonPath,
           value: secretsFile,
-          type: 'new'
+          type: "new",
         })})`,
       ],
       line: 0,

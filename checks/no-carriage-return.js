@@ -1,5 +1,5 @@
 require("../typedefs");
-const core = require("@actions/core");
+const log = require("loglevel");
 
 /**
  * Checks for windows-type carriage return characters, and suggests removing them.
@@ -10,7 +10,7 @@ const core = require("@actions/core");
  * @returns {Array<Result>}
  */
 async function noCarriageReturn(deployment, context, inputs) {
-  console.log(`No Carriage Return Character - ${deployment.serviceName}`);
+  log.info(`No Carriage Return Character - ${deployment.serviceName}`);
 
   /** @type {Array<Result>} */
   const results = [];
@@ -37,14 +37,16 @@ async function noCarriageReturn(deployment, context, inputs) {
 
   if (
     deployment.secretsJsonContents &&
-    deployment.secretsJsonContents.filter((line) => line.includes("\r")).length > 0
+    deployment.secretsJsonContents.filter((line) => line.includes("\r"))
+      .length > 0
   ) {
     results.push(_removeCR(deployment.secretsJsonPath));
   }
 
   if (
     deployment.policyJsonContents &&
-    deployment.policyJsonContents.filter((line) => line.includes("\r")).length > 0
+    deployment.policyJsonContents.filter((line) => line.includes("\r")).length >
+      0
   ) {
     results.push(_removeCR(deployment.policyJsonPath));
   }

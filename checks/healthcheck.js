@@ -1,16 +1,16 @@
-require('../typedefs');
-const core = require("@actions/core");
-const { isAJob } = require('../util');
+require("../typedefs");
+const log = require("loglevel");
+const { isAJob } = require("../util");
 
 /**
  * Accepts a deployment object, and validates the healthcheck
  * @param {Deployment} deployment
- * 
+ *
  * @returns {Array<Result>}
  */
 async function validateHealthcheck(deployment) {
   if (!deployment.ordersContents) {
-    console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
+    log.info(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
 
@@ -18,10 +18,10 @@ async function validateHealthcheck(deployment) {
   let lineNumber = 0;
 
   if (isAJob(deployment.ordersContents)) {
-    console.log('Jobs do not require a healthcheck, skipping.');
+    log.info("Jobs do not require a healthcheck, skipping.");
     return [];
   }
-  console.log(`Valid Health Check - ${deployment.ordersPath}`);
+  log.info(`Valid Health Check - ${deployment.ordersPath}`);
 
   for (let i = 0; i < deployment.ordersContents.length; i++) {
     const line = deployment.ordersContents[i];

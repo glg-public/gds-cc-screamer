@@ -1,5 +1,5 @@
-require('../typedefs');
-const core = require("@actions/core");
+require("../typedefs");
+const log = require("loglevel");
 
 const dockerdeploy = /^dockerdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\w+)/;
 const jobdeploy = /^jobdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\w+)/;
@@ -22,15 +22,15 @@ function getDeployment(match) {
  * Accepts a deployment object, and validates the name of the repo and branch.
  * Also validates that there is a valid deployment line
  * @param {Deployment} deployment
- * 
+ *
  * @returns {Array<Result>}
  */
 async function validateDeploymentLine(deployment) {
   if (!deployment.ordersContents) {
-    console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
+    log.info(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
-  console.log(`Valid Deployment Line - ${deployment.ordersPath}`);
+  log.info(`Valid Deployment Line - ${deployment.ordersPath}`);
 
   const problems = [];
   let lineNumber = 0;

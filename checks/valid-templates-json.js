@@ -1,5 +1,5 @@
 require("../typedefs");
-const core = require("@actions/core");
+const log = require("loglevel");
 const {
   codeBlock,
   getLineNumber,
@@ -23,16 +23,14 @@ async function validTemplatesJson(deployment, context, inputs, httpGet) {
    * You should check the existance of any file you're trying to check
    */
   if (!deployment.templatesJsonContents) {
-    console.log(
-      `No templates.json Present - Skipping ${deployment.serviceName}`
-    );
+    log.info(`No templates.json Present - Skipping ${deployment.serviceName}`);
     return [];
   }
   if (!deployment.ordersContents) {
-    console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
+    log.info(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
-  console.log(`templates.json is valid - ${deployment.templatesJsonPath}`);
+  log.info(`templates.json is valid - ${deployment.templatesJsonPath}`);
 
   /** @type {Array<Result>} */
   const results = [];
