@@ -6,10 +6,11 @@ const log = require("loglevel");
  * @param {Deployment} deployment An object containing information about a deployment
  * @param {GitHubContext} context The context object provided by github
  * @param {ActionInputs} inputs The inputs (excluding the token) from the github action
+ * @param {function(string, (object | undefined)):Promise} httpGet
  *
  * @returns {Array<Result>}
  */
-async function templateCheck(deployment, context, inputs) {
+async function templateCheck(deployment, context, inputs, httpGet) {
   /**
    * You should check the existance of any file you're trying to check
    */
