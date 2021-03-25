@@ -251,6 +251,8 @@ function getAccess(orders, roles) {
     GLG_ALLOW_ALL: { claim: "role-glg", mask: 2147483647 },
   };
 
+  const unknownRoles = [];
+
   const securityMode = getExportValue(orders, "SECURITY_MODE");
   const accessFlags =
     getExportValue(orders, "SESSION_ACCESS_FLAGS") ||
@@ -266,6 +268,10 @@ function getAccess(orders, roles) {
         const bashVar = /\${?(\w+)}?/.exec(mask);
         if (bashVar && bashVar[1].includes("_ROLE_")) {
           const suffix = bashVar[1].split("_ROLE_")[1];
+          if (!legacyRoleMap[suffix]) {
+            unknownRoles.push(flag);
+            return;
+          }
           if (suffix === "GLG_ALLOW_ALL") {
             access["Allow All"] = true;
             return;
@@ -274,7 +280,13 @@ function getAccess(orders, roles) {
           mask = interpretedMask;
         }
         getMaskComponents(mask)
-          .map((maskComponent) => getRoleByClaim(roles, claim, maskComponent))
+          .map((maskComponent) => {
+            const claimSet = getRoleByClaim(roles, claim, maskComponent);
+            if (!claimSet) {
+              unknownRoles.push(`${claim}:${maskComponent}`);
+            }
+            return claimSet;
+          })
           .filter((claimSet) => claimSet)
           .forEach((claimSet) => {
             access[claimSet.name] = true;
@@ -282,9 +294,13 @@ function getAccess(orders, roles) {
       });
     } else if (!isNaN(accessFlags)) {
       getMaskComponents(accessFlags)
-        .map((maskComponent) =>
-          getRoleByClaim(roles, "role-glg", maskComponent)
-        )
+        .map((maskComponent) => {
+          const claimSet = getRoleByClaim(roles, "role-glg", maskComponent);
+          if (!claimSet) {
+            unknownRoles.push(`role-glg:${maskComponent}`);
+          }
+          return claimSet;
+        })
         .filter((claimSet) => claimSet)
         .forEach((claimSet) => {
           access[claimSet.name] = true;
@@ -298,19 +314,32 @@ function getAccess(orders, roles) {
         if (bashVar) {
           const flagVar = bashVar[1];
           const suffix = flagVar.split("_ROLE_")[1];
+          if (!legacyRoleMap[suffix]) {
+            unknownRoles.push(flagVar);
+            continue;
+          }
           if (suffix === "GLG_ALLOW_ALL") {
             access["Allow All"] = true;
             continue;
           }
           const { claim, mask } = legacyRoleMap[suffix];
           getMaskComponents(mask)
-            .map((maskComponent) => getRoleByClaim(roles, claim, maskComponent))
+            .map((maskComponent) => {
+              const claimSet = getRoleByClaim(roles, claim, maskComponent);
+              if (!claimSet) {
+                unknownRoles.push(`${claim}:${maskComponent}`);
+              }
+              return claimSet;
+            })
             .filter((claimSet) => claimSet)
             .forEach((claimSet) => {
               access[claimSet.name] = true;
             });
         }
       } while (bashVar);
+    }
+    if (unknownRoles.length) {
+      throw unknownRoles;
     }
     return access;
   }
