@@ -252,6 +252,7 @@ function getAccess(orders, roles) {
   };
 
   const unknownRoles = [];
+  const allClaims = [];
 
   const securityMode = getExportValue(orders, "SECURITY_MODE");
   const accessFlags =
@@ -281,6 +282,7 @@ function getAccess(orders, roles) {
         }
         getMaskComponents(mask)
           .map((maskComponent) => {
+            allClaims.push(`${claim}:${maskComponent}`);
             const claimSet = getRoleByClaim(roles, claim, maskComponent);
             if (!claimSet) {
               unknownRoles.push(`${claim}:${maskComponent}`);
@@ -295,6 +297,7 @@ function getAccess(orders, roles) {
     } else if (!isNaN(accessFlags)) {
       getMaskComponents(accessFlags)
         .map((maskComponent) => {
+          allClaims.push(`role-glg:${maskComponent}`);
           const claimSet = getRoleByClaim(roles, "role-glg", maskComponent);
           if (!claimSet) {
             unknownRoles.push(`role-glg:${maskComponent}`);
@@ -327,6 +330,7 @@ function getAccess(orders, roles) {
           const { claim, mask } = legacyRoleMap[suffix];
           getMaskComponents(mask)
             .map((maskComponent) => {
+              allClaims.push(`${claim}:${maskComponent}`);
               const claimSet = getRoleByClaim(roles, claim, maskComponent);
               if (!claimSet) {
                 unknownRoles.push(`${claim}:${maskComponent}`);
@@ -341,7 +345,7 @@ function getAccess(orders, roles) {
       } while (bashVar);
     }
     if (unknownRoles.length) {
-      throw unknownRoles;
+      throw { unknownRoles, allClaims };
     }
     return access;
   }

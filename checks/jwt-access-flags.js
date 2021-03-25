@@ -64,15 +64,19 @@ async function jwtAccessFlags(deployment, context, inputs, httpGet) {
             ],
           });
         }
-      } catch (unknownRoles) {
+      } catch ({ unknownRoles, allClaims }) {
+        const supportClaims = `Your access flags include the following claims: ${allClaims
+          .map((role) => `\`${role}\``)
+          .join(", ")}`;
         results.push({
           title: "Unknown Role",
           level: "failure",
           line: lineNumber,
           path: deployment.ordersPath,
-          problems: unknownRoles.map(
-            (role) => `The following role is unknown: ${role}`
-          ),
+          problems: [
+            supportClaims,
+            ...unknownRoles.map((role) => `**Unknown Claim**: \`${role}\``),
+          ],
         });
       }
     } catch (e) {

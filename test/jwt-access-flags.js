@@ -102,7 +102,7 @@ export SESSION_ACCESS_FLAGS=$(($SESSION_ROLE_GLG_USER | $SESSION_ROLE_GLG_CLIENT
     });
   });
 
-  describe("Valid syntax in SESSION_ACCESS_FLAGS", () => {
+  describe.only("Valid syntax in SESSION_ACCESS_FLAGS", () => {
     it("accepts valid roles in the legacy format", async () => {
       const deployment = {
         serviceName: "streamliner",
@@ -151,7 +151,7 @@ export SESSION_ACCESS_FLAGS=$(($SESSION_ROLE_GLG_USER | $SESSION_ROLE_GLG_CLIENT
       expect(results.length).to.equal(1);
       expect(results[0].level).to.equal("failure");
       expect(results[0].line).to.equal(1);
-      expect(/SESSION_ROLE_GLG_FAKE/.test(results[0].problems[0])).to.be.true;
+      expect(/SESSION_ROLE_GLG_FAKE/.test(results[0].problems[1])).to.be.true;
     });
 
     it("accepts valid roles in the new format", async () => {
@@ -202,7 +202,7 @@ export SESSION_ACCESS_FLAGS=$(($SESSION_ROLE_GLG_USER | $SESSION_ROLE_GLG_CLIENT
       expect(results.length).to.equal(1);
       expect(results[0].level).to.equal("failure");
       expect(results[0].line).to.equal(1);
-      expect(/role-glg:64/.test(results[0].problems[0])).to.be.true;
+      expect(/role-glg:64/.test(results[0].problems[1])).to.be.true;
     });
   });
 });
