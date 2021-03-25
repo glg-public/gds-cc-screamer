@@ -1,5 +1,5 @@
 require("../typedefs");
-const core = require("@actions/core");
+const log = require("loglevel");
 const { isAJob } = require("../util");
 
 /**
@@ -11,15 +11,15 @@ const { isAJob } = require("../util");
  */
 async function templateCheck(deployment, context) {
   if (!deployment.ordersContents) {
-    console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
+    log.info(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
 
   if (isAJob(deployment.ordersContents)) {
-    console.log("Jobs do not require a security mode, skipping.");
+    log.info("Jobs do not require a security mode, skipping.");
     return [];
   }
-  console.log(`Security Mode - ${deployment.ordersPath}`);
+  log.info(`Security Mode - ${deployment.ordersPath}`);
 
   /** @type {Array<Result>} */
   const results = [];

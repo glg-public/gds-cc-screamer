@@ -1,7 +1,15 @@
 const { expect } = require("chai");
 const path = require("path");
 const fs = require("fs");
-const { isAJob, getContents, getExportValue } = require("../../util/generic");
+const {
+  isAJob,
+  getContents,
+  getExportValue,
+  compareSecurity,
+  getMasks,
+  getMaskComponents,
+} = require("../../util/generic");
+const roles = require("../fixtures/roles");
 
 describe("isAJob", () => {
   it("takes file lines, and determines if it is a job deployment", () => {
@@ -64,5 +72,55 @@ describe("getExportValue", () => {
   it("returns null if the exported value is empty", () => {
     const value = getExportValue("export CAT=''", "CAT");
     expect(value).to.be.null;
+  });
+});
+
+describe("compareSecurity", () => {
+  it("returns false if no expected permissions are provided", () => {
+    const access = compareSecurity({}, { "jwt-role-glg": 1 });
+    expect(access).to.be.false;
+  });
+
+  it("assumes a jwt- prefix on the epi template side", () => {
+    const access = compareSecurity({ "role-glg": 1 }, { "jwt-role-glg": 1 });
+    expect(access).to.be.true;
+  });
+
+  it("requires the epi side to have AT LEAST enough permissions for the app", () => {
+    const access = compareSecurity({ "role-glg": 1 }, { "jwt-role-glg": 5 });
+    expect(access).to.be.true;
+  });
+});
+
+describe("getMasks", () => {
+  it("coverts a front-end access object into a mask object", () => {
+    const { masks, acceptableRoles } = getMasks(
+      {
+        "GLG Employees": true,
+        "External Applications": true,
+        "GLG Know": true,
+      },
+      roles
+    );
+    expect(masks).to.deep.equal({
+      "role-glg": 17,
+      "role-applications": 1,
+    });
+    expect(acceptableRoles)
+      .to.be.an("array")
+      .that.includes("GLG Employees", "External Applications", "GLG Know");
+  });
+});
+
+describe("getMaskComponents", () => {
+  it("returns a ClaimSet for each role supported by a given bitmask", () => {
+    let components = getMaskComponents(17);
+    expect(components).to.deep.equal([1, 16]);
+
+    components = getMaskComponents(21);
+    expect(components).to.deep.equal([1, 4, 16]);
+
+    components = getMaskComponents(16);
+    expect(components).to.deep.equal([16]);
   });
 });

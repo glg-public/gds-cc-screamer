@@ -254,6 +254,9 @@
  * secretsJsonContents: (Array<string>|undefined),
  * policyJsonPath: (string|undefined),
  * policyJsonContents: (Array<string>|undefined)
+ * templatesJson: (Object | undefined)
+ * templatesJsonPath: (string|undefined),
+ * templatesJsonContents: (Array<string>|undefined)
  * }} Deployment
  */
 
@@ -282,6 +285,11 @@
  * awsPartition: string,
  * secretsPrefix: string,
  * clusterMap: URI
+ * numServicesFailThreshold: number
+ * numServicesWarnThreshold: number
+ * clusterRoot: string
+ * deployinatorToken: string
+ * deployinatorURL: URI
  * }} ActionInputs
  */
 

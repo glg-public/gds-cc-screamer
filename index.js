@@ -3,6 +3,7 @@ const core = require("@actions/core");
 const github = require("@actions/github");
 const checks = require("./checks").all;
 const path = require("path");
+const log = require("loglevel");
 const {
   clearPreviousRunComments,
   getAllDeployments,
@@ -10,6 +11,8 @@ const {
   leaveComment,
   httpGet,
 } = require("./util");
+
+log.setLevel(process.env.LOG_LEVEL || "info");
 
 /**
  * Perform all checks on all deployments included in a PR
@@ -24,6 +27,17 @@ async function run() {
   const numServicesWarnThreshold = core.getInput("num_services_warn");
   const numServicesFailThreshold = core.getInput("num_services_fail");
   const clusterRoot = path.resolve(core.getInput("cluster_root"));
+  const deployinatorAppToken = core.getInput("deployinator_token");
+  const deployinatorURL = core.getInput("deployinator_url");
+  const sessionURL = core.getInput("session_url");
+
+  let deployinatorToken;
+  if (deployinatorAppToken && sessionURL) {
+    const { token: session } = await httpGet(
+      `${sessionURL}/${deployinatorAppToken}`
+    );
+    deployinatorToken = session;
+  }
 
   /** @type {ActionInputs} */
   const inputs = {
@@ -35,6 +49,8 @@ async function run() {
     numServicesFailThreshold,
     numServicesWarnThreshold,
     clusterRoot,
+    deployinatorURL,
+    deployinatorToken,
   };
 
   const octokit = github.getOctokit(token);
@@ -56,7 +72,12 @@ async function run() {
     });
 
     // These are all of the files that, if changed, will trigger the check suite
-    const filesToCheck = ["orders", "secrets.json", "policy.json"];
+    const filesToCheck = [
+      "orders",
+      "secrets.json",
+      "policy.json",
+      "templates.json",
+    ];
     const deployments = await getAllDeployments(files, filesToCheck);
 
     // We want to track how all the checks go
@@ -81,11 +102,11 @@ async function run() {
             pull_number,
           });
 
-          console.log(e);
+          log.info(e);
           continue;
         }
         if (results.length === 0) {
-          console.log("...Passed");
+          log.info("...Passed");
           counts.success += 1;
           continue;
         }
@@ -100,7 +121,7 @@ async function run() {
             });
           } else {
             counts.success += 1;
-            console.log("...Passed");
+            log.info("...Passed");
           }
         }
       }

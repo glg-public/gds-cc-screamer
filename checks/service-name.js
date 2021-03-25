@@ -1,6 +1,6 @@
-require('../typedefs');
+require("../typedefs");
 const path = require("path");
-const core = require("@actions/core");
+const log = require("loglevel");
 
 const validCharacters = /^[a-z][a-z0-9-]*$/;
 
@@ -11,7 +11,7 @@ const validCharacters = /^[a-z][a-z0-9-]*$/;
  * @returns {Array<Result>}
  */
 async function validateServiceName(deployment) {
-  console.log(`Valid Service Name - ${deployment.serviceName}`);
+  log.info(`Valid Service Name - ${deployment.serviceName}`);
 
   const { serviceName } = deployment;
 

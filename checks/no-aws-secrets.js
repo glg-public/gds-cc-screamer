@@ -1,5 +1,5 @@
 require("../typedefs");
-const core = require("@actions/core");
+const log = require("loglevel");
 
 /**
  * These regular expressions for finding aws access key id
@@ -20,10 +20,10 @@ const SAK_ENVVAR = /^export AWS_SECRET_ACCESS_KEY=/;
  */
 async function noAWSSecrets(deployment) {
   if (!deployment.ordersContents) {
-    console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
+    log.info(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
-  console.log(`No AWS Secrets - ${deployment.ordersPath}`);
+  log.info(`No AWS Secrets - ${deployment.ordersPath}`);
 
   /** @type {Array<Result>} */
   const results = [];

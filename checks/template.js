@@ -1,5 +1,5 @@
 require("../typedefs");
-const core = require("@actions/core");
+const log = require("loglevel");
 
 /**
  * Accepts a deployment object, and does some kind of check
@@ -14,14 +14,14 @@ async function templateCheck(deployment, context, inputs) {
    * You should check the existance of any file you're trying to check
    */
   if (!deployment.ordersContents) {
-    console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
+    log.info(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
-  console.log(`Template Check - ${deployment.ordersPath}`);
+  log.info(`Template Check - ${deployment.ordersPath}`);
 
   /** @type {Array<Result>} */
   const results = [];
-  
+
   deployment.ordersContents.forEach((line, i) => {
     const lineNumber = i + 1;
     // do something

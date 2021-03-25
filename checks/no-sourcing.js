@@ -1,20 +1,20 @@
-require('../typedefs');
-const core = require("@actions/core");
+require("../typedefs");
+const log = require("loglevel");
 
 const sourceUse = /^source (.*)/;
 
 /**
  * Rejects orders that source from another file
  * @param {Deployment} deployment
- * 
+ *
  * @returns {Array<Result>}
  */
 async function noSourcing(deployment) {
   if (!deployment.ordersContents) {
-    console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
+    log.info(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
-  console.log(`No Sourcing Other Files - ${deployment.ordersPath}`);
+  log.info(`No Sourcing Other Files - ${deployment.ordersPath}`);
 
   /** @type {Array<Result>} */
   const results = [];

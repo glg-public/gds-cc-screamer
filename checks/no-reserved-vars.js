@@ -1,5 +1,5 @@
 require("../typedefs");
-const core = require("@actions/core");
+const log = require("loglevel");
 const { getLineWithinObject } = require("../util");
 
 const reservedInOrders = new Set(["JWT_SECRET"]);
@@ -49,10 +49,10 @@ async function noReservedVars(deployment) {
    * You should check the existance of any file you're trying to check
    */
   if (!deployment.ordersContents) {
-    console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
+    log.info(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
-  console.log(`No Reserved Variables - ${deployment.serviceName}`);
+  log.info(`No Reserved Variables - ${deployment.serviceName}`);
 
   /** @type {Array<Result>} */
   const results = [];

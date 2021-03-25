@@ -1,20 +1,20 @@
-require('../typedefs');
-const core = require("@actions/core");
+require("../typedefs");
+const log = require("loglevel");
 
 const exportLine = /^export\s(?<variable>.*?)\s*=\s*(?<value>.*)/i;
 
 /**
  * Rejects improper syntax for bash variable definitions
  * @param {Deployment} deployment
- * 
+ *
  * @returns {Array<Result>}
  */
 async function noSpacesInExports(deployment) {
   if (!deployment.ordersContents) {
-    console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
+    log.info(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
-  console.log(`No Spaces in Exports - ${deployment.ordersPath}`);
+  log.info(`No Spaces in Exports - ${deployment.ordersPath}`);
 
   /** @type {Array<Result>} */
   const results = [];

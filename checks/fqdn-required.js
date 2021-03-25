@@ -1,5 +1,5 @@
 require("../typedefs");
-const core = require("@actions/core");
+const log = require("loglevel");
 const { isAJob, suggest } = require("../util");
 
 const envvar = /^(export |)(\w+)=['"]?(.+?)['"]?$/;
@@ -17,15 +17,15 @@ async function fqdnRequired(deployment, context, inputs, httpGet) {
    * You should check the existance of any file you're trying to check
    */
   if (!deployment.ordersContents) {
-    console.log(`No Orders Present - Skipping ${deployment.serviceName}`);
+    log.info(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
 
   if (isAJob(deployment.ordersContents)) {
-    console.log(`Jobs don't need domains - Skipping ${deployment.serviceName}`);
+    log.info(`Jobs don't need domains - Skipping ${deployment.serviceName}`);
     return [];
   }
-  console.log(`GDS_FQDN is set - ${deployment.ordersPath}`);
+  log.info(`GDS_FQDN is set - ${deployment.ordersPath}`);
 
   /** @type {Array<Result>} */
   const results = [];

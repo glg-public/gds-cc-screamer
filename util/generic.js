@@ -54,10 +54,10 @@ function getExportValue(text, varName) {
 }
 
 // No need to pull in axios just  for this
-function httpGet(url) {
+function httpGet(url, options = {}) {
   return new Promise((resolve, reject) => {
     https
-      .get(url, (resp) => {
+      .get(url, options, (resp) => {
         let data = "";
 
         // A chunk of data has been received.
@@ -67,7 +67,16 @@ function httpGet(url) {
 
         // The whole response has been received. Parse it and resolve the promise
         resp.on("end", () => {
-          resolve(JSON.parse(data));
+          try {
+            const retValue = JSON.parse(data);
+            if (resp.statusCode >= 400) {
+              reject(retValue);
+            } else {
+              resolve(retValue);
+            }
+          } catch (e) {
+            reject(data);
+          }
         });
       })
       .on("error", (err) => {
@@ -182,6 +191,154 @@ function getSecretsFromOrders(ordersLines, secretsPrefix) {
   return { secrets, results };
 }
 
+/**
+ *
+ * @param {GdsAccessMap} expected
+ * @param {EpiAccessMap} actual
+ */
+function compareSecurity(expected, actual) {
+  if (!expected || Object.keys(expected).length === 0) {
+    return false;
+  }
+  if (expected && !actual) {
+    return false;
+  }
+  for (let role in expected) {
+    const epiRole = `jwt-${role}`;
+    if (!actual[epiRole]) {
+      return false;
+    }
+    if ((expected[role] & actual[epiRole]) !== expected[role]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function getMasks(access, roles) {
+  const map = {};
+  roles.forEach((role) => {
+    map[role.name] = role;
+  });
+
+  const acceptableRoles = Object.keys(access).filter((key) => access[key]);
+
+  const masks = {};
+  acceptableRoles.forEach((roleName) => {
+    const role = map[roleName];
+    role.masks.forEach((mask) => {
+      if (!masks[mask.claim]) {
+        masks[mask.claim] = mask.mask;
+      } else {
+        masks[mask.claim] = masks[mask.claim] | mask.mask;
+      }
+    });
+  });
+
+  return { masks, acceptableRoles };
+}
+
+function getAccess(orders, roles) {
+  const legacyRoleMap = {
+    GLG_DENY_ALL: { claim: "role-glg", mask: 0 },
+    GLG_USER: { claim: "role-glg", mask: 1 },
+    GLG_CLIENT: { claim: "role-glg", mask: 2 },
+    GLG_COUNCILMEMBER: { claim: "role-glg", mask: 4 },
+    GLG_SURVEYRESPONDENT: { claim: "role-glg", mask: 8 },
+    GLG_APP: { claim: "role-glg", mask: 16 },
+    GLG_EXTERNAL_WORKER: { claim: "role-glg", mask: 32 },
+    GLG_ALLOW_ALL: { claim: "role-glg", mask: 2147483647 },
+  };
+
+  const securityMode = getExportValue(orders, "SECURITY_MODE");
+  const accessFlags =
+    getExportValue(orders, "SESSION_ACCESS_FLAGS") ||
+    getExportValue(orders, "JWT_ACCESS_FLAGS");
+
+  if (securityMode !== "public") {
+    const access = {};
+    // Is this the gds way to declare access flags?
+    if (/[\w-]+:\d+/.test(accessFlags)) {
+      const flags = accessFlags.split(" ");
+      flags.forEach((flag) => {
+        let [claim, mask] = flag.split(":");
+        const bashVar = /\${?(\w+)}?/.exec(mask);
+        if (bashVar && bashVar[1].includes("_ROLE_")) {
+          const suffix = bashVar[1].split("_ROLE_")[1];
+          if (suffix === "GLG_ALLOW_ALL") {
+            access["Allow All"] = true;
+            return;
+          }
+          const { mask: interpretedMask } = legacyRoleMap[suffix];
+          mask = interpretedMask;
+        }
+        getMaskComponents(mask)
+          .map((maskComponent) => getRoleByClaim(roles, claim, maskComponent))
+          .filter((claimSet) => claimSet)
+          .forEach((claimSet) => {
+            access[claimSet.name] = true;
+          });
+      });
+    } else if (!isNaN(accessFlags)) {
+      getMaskComponents(accessFlags)
+        .map((maskComponent) =>
+          getRoleByClaim(roles, "role-glg", maskComponent)
+        )
+        .filter((claimSet) => claimSet)
+        .forEach((claimSet) => {
+          access[claimSet.name] = true;
+        });
+    } else {
+      // The old starphleet way
+      const declaredRoles = /\${?(\w+)}?/g;
+      let bashVar;
+      do {
+        bashVar = declaredRoles.exec(accessFlags);
+        if (bashVar) {
+          const flagVar = bashVar[1];
+          const suffix = flagVar.split("_ROLE_")[1];
+          if (suffix === "GLG_ALLOW_ALL") {
+            access["Allow All"] = true;
+            continue;
+          }
+          const { claim, mask } = legacyRoleMap[suffix];
+          getMaskComponents(mask)
+            .map((maskComponent) => getRoleByClaim(roles, claim, maskComponent))
+            .filter((claimSet) => claimSet)
+            .forEach((claimSet) => {
+              access[claimSet.name] = true;
+            });
+        }
+      } while (bashVar);
+    }
+    return access;
+  }
+  return null;
+}
+
+function getMaskComponents(mask) {
+  const bits = (mask >>> 0).toString(2);
+  const components = Array.from(bits)
+    .reverse()
+    .map(Number)
+    .map((bit, i) => (2 * bit) ** (bit ? i : 1))
+    .filter((bit) => bit);
+
+  return components;
+}
+
+function getRoleByClaim(roles, claim, mask) {
+  for (let role of roles) {
+    for (let claimMask of role.masks) {
+      if (claimMask.claim === claim && claimMask.mask === mask) {
+        return { name: role.name, claim, mask };
+      }
+    }
+  }
+  return null;
+}
+
 module.exports = {
   isAJob,
   getContents,
@@ -190,4 +347,9 @@ module.exports = {
   generateSecretsPolicy,
   getSimpleSecret,
   getSecretsFromOrders,
+  compareSecurity,
+  getMasks,
+  getMaskComponents,
+  getRoleByClaim,
+  getAccess,
 };
