@@ -61,6 +61,7 @@ async function jwtAccessFlags(deployment, context, inputs, httpGet) {
             path: deployment.ordersPath,
             problems: [
               "Your security mode is set to `public`, but you have defined access controls.",
+              "[More About Access Controls](https://services.glgresearch.com/know/glg-deployment-system-gds/access-control/)",
             ],
           });
         }
@@ -76,6 +77,7 @@ async function jwtAccessFlags(deployment, context, inputs, httpGet) {
           problems: [
             supportClaims,
             ...unknownRoles.map((role) => `**Unknown Claim**: \`${role}\``),
+            "[More About Access Controls](https://services.glgresearch.com/know/glg-deployment-system-gds/access-control/)",
           ],
         });
       }

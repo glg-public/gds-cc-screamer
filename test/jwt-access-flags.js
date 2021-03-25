@@ -102,7 +102,7 @@ export SESSION_ACCESS_FLAGS=$(($SESSION_ROLE_GLG_USER | $SESSION_ROLE_GLG_CLIENT
     });
   });
 
-  describe.only("Valid syntax in SESSION_ACCESS_FLAGS", () => {
+  describe("Valid syntax in SESSION_ACCESS_FLAGS", () => {
     it("accepts valid roles in the legacy format", async () => {
       const deployment = {
         serviceName: "streamliner",
