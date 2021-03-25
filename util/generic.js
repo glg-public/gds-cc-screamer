@@ -69,7 +69,11 @@ function httpGet(url, options = {}) {
         resp.on("end", () => {
           try {
             const retValue = JSON.parse(data);
-            resolve(retValue);
+            if (resp.statusCode >= 400) {
+              reject(retValue);
+            } else {
+              resolve(retValue);
+            }
           } catch (e) {
             reject(data);
           }
