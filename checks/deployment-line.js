@@ -1,5 +1,6 @@
 require("../typedefs");
 const log = require("loglevel");
+const { httpGet } = require("../util");
 
 const dockerdeploy = /^dockerdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\w+)/;
 const jobdeploy = /^jobdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\w+)/;
@@ -22,10 +23,13 @@ function getDeployment(match) {
  * Accepts a deployment object, and validates the name of the repo and branch.
  * Also validates that there is a valid deployment line
  * @param {Deployment} deployment
+ * @param {GitHubContext} context The context object provided by github
+ * @param {ActionInputs} inputs The inputs (excluding the token) from the github action
+ * @param {function(string, (object | undefined)):Promise} httpGet
  *
  * @returns {Array<Result>}
  */
-async function validateDeploymentLine(deployment) {
+async function validateDeploymentLine(deployment, context, inputs, httpGet) {
   if (!deployment.ordersContents) {
     log.info(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
@@ -36,10 +40,12 @@ async function validateDeploymentLine(deployment) {
   let lineNumber = 0;
 
   let deploymentParts;
+  let deploymentType;
 
   for (let i = 0; i < deployment.ordersContents.length; i++) {
     const line = deployment.ordersContents[i];
     if (line.startsWith("dockerdeploy")) {
+      deploymentType = "dockerdeploy";
       lineNumber = i + 1;
       const match = dockerdeploy.exec(line);
 
@@ -53,6 +59,7 @@ async function validateDeploymentLine(deployment) {
       deploymentParts = getDeployment(match);
       break;
     } else if (line.startsWith("autodeploy")) {
+      deploymentType = "autodeploy";
       lineNumber = i + 1;
       const match = autodeploy.exec(line);
 
@@ -65,6 +72,7 @@ async function validateDeploymentLine(deployment) {
 
       deploymentParts = getDeployment(match);
     } else if (line.startsWith("jobdeploy")) {
+      deploymentType = "jobdeploy";
       lineNumber = i + 1;
       const match = jobdeploy.exec(line);
 
@@ -103,6 +111,52 @@ async function validateDeploymentLine(deployment) {
       `**${deployment.ordersPath}** - Missing deployment. Must include either an \`autodeploy\` line, a \`dockerdeploy\` line, or a \`jobdeploy\` line.`
     );
     lineNumber = 0;
+  }
+
+  if (
+    problems.length === 0 &&
+    deploymentParts &&
+    inputs.deployinatorToken &&
+    inputs.deployinatorURL
+  ) {
+    const httpOpts = {
+      headers: {
+        Authorization: `Bearer ${inputs.deployinatorToken}`,
+      },
+    };
+
+    const { org: owner, repo, branch, tag } = deploymentParts;
+
+    if (deploymentType === "autodeploy") {
+      try {
+        const url = `${inputs.deployinatorURL}/enumerate/branches?owner=${owner}&repo=${repo}`;
+        const branches = await httpGet(url, httpOpts);
+        if (!branches.includes(branch)) {
+          problems.push(
+            `The specified repo \`${owner}/${repo}\` does not have a branch named \`${branch}\``
+          );
+        }
+      } catch (e) {
+        problems.push(
+          `The specified repo \`${deploymentParts.org}/${deploymentParts.repo}\` could not be found.`
+        );
+      }
+    } else {
+      const image = `github/${owner}/${repo}/${branch}`;
+      try {
+        const url = `${inputs.deployinatorURL}/enumerate/ecr/tags?image=${image}`;
+        const tags = await httpGet(url, httpOpts);
+        if (!tags.includes(tag)) {
+          problems.push(
+            `The docker image \`${image}\` does not have a tag named \`${tag}\``
+          );
+        }
+      } catch (e) {
+        problems.push(
+          `The specified docker image \`${image}:${tag}\` could not be found.`
+        );
+      }
+    }
   }
 
   return [
