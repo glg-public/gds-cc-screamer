@@ -88,7 +88,7 @@ async function validTemplatesJson(deployment, context, inputs, httpGet) {
   if (inputs.deployinatorToken && inputs.deployinatorURL) {
     const httpOpts = {
       headers: {
-        Authorization: `bearer ${inputs.deployinatorToken}`,
+        Authorization: `Bearer ${inputs.deployinatorToken}`,
       },
     };
     const rolesURL = `${inputs.deployinatorURL}/enumerate/roles`;
