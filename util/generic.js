@@ -67,6 +67,7 @@ function httpGet(url, options = {}) {
 
         // The whole response has been received. Parse it and resolve the promise
         resp.on("end", () => {
+          console.log(data);
           resolve(JSON.parse(data));
         });
       })

@@ -38,7 +38,6 @@ async function run() {
     );
     deployinatorToken = session;
   }
-  console.log(deployinatorToken);
 
   /** @type {ActionInputs} */
   const inputs = {
