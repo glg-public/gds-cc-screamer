@@ -148,12 +148,14 @@ async function validateDeploymentLine(deployment, context, inputs, httpGet) {
         const tags = await httpGet(url, httpOpts);
         if (!tags.includes(tag)) {
           problems.push(
-            `The docker image \`${image}\` does not have a tag named \`${tag}\``
+            `The docker image \`${image}\` does not have a tag named \`${tag}\``,
+            `[More About Deploying To GDS](https://services.glgresearch.com/know/glg-deployment-system-gds/deploying-a-service/)`
           );
         }
       } catch (e) {
         problems.push(
-          `The specified docker image \`${image}:${tag}\` could not be found.`
+          `The specified docker image \`${image}:${tag}\` could not be found.`,
+          `[More About Deploying To GDS](https://services.glgresearch.com/know/glg-deployment-system-gds/deploying-a-service/)`
         );
       }
     }
