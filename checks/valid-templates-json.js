@@ -107,7 +107,21 @@ async function validTemplatesJson(deployment, context, inputs, httpGet) {
       });
       return results;
     }
-    const access = getAccess(orders, roles);
+    let access;
+    try {
+      access = getAccess(orders, roles);
+    } catch (e) {
+      results.push({
+        title: "Cannot Check Template Access Controls",
+        line: 0,
+        level: "warning",
+        path: deployment.templatesJsonPath,
+        problems: [
+          `Your app has invalid access controls, so templates cannot be checked.`,
+        ],
+      });
+      return results;
+    }
     if (!access) {
       results.push({
         title: "No Access Flags with Secure Templates",
