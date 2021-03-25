@@ -20,10 +20,14 @@ async function jwtAccessFlags(deployment) {
 
   for (let i = 0; i < deployment.ordersContents.length; i++) {
     const line = deployment.ordersContents[i];
-    const accessFlags = getExportValue(line, "JWT_ACCESS_FLAGS");
+    const jwtFlags = getExportValue(line, "JWT_ACCESS_FLAGS");
+    const sessionFlags = getExportValue(line, "SESSION_ACCESS_FLAGS");
+    const accessFlags = sessionFlags || jwtFlags;
     if (accessFlags && accessFlags.includes("+")) {
       results.push({
-        title: "Syntax Error in JWT_ACCESS_FLAGS",
+        title: `Syntax Error in ${
+          sessionFlags ? "SESSION" : "JWT"
+        }_ACCESS_FLAGS`,
         problems: [suggest("Use a `|` instead", line.replace(/\+/g, "|"))],
         line: i + 1,
         level: "failure",
