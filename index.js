@@ -27,8 +27,17 @@ async function run() {
   const numServicesWarnThreshold = core.getInput("num_services_warn");
   const numServicesFailThreshold = core.getInput("num_services_fail");
   const clusterRoot = path.resolve(core.getInput("cluster_root"));
-  const deployinatorToken = core.getInput("deployinator_token");
+  const deployinatorAppToken = core.getInput("deployinator_token");
   const deployinatorURL = core.getInput("deployinator_url");
+  const sessionURL = core.getInput("session_url");
+
+  let deployinatorToken;
+  if (deployinatorAppToken && sessionURL) {
+    const { token: session } = await httpGet(
+      `${sessionURL}/${deployinatorAppToken}`
+    );
+    deployinatorToken = session;
+  }
 
   /** @type {ActionInputs} */
   const inputs = {
@@ -40,8 +49,8 @@ async function run() {
     numServicesFailThreshold,
     numServicesWarnThreshold,
     clusterRoot,
-    deployinatorToken,
     deployinatorURL,
+    deployinatorToken,
   };
 
   const octokit = github.getOctokit(token);

@@ -45,6 +45,10 @@ inputs:
     description: A fully qualified url for an instance of Deployinator
     required: false
     default: ""
+  session_url:
+    description: A URL that can trade the app token for a session_url
+    required: false
+    default: ""
 runs:
   using: "node12"
   main: "index.js"
