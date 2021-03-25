@@ -49,7 +49,7 @@ function getExportValue(text, varName) {
 
   if (!match || match.length < 2 || match[1].length < 1) return null;
 
-  const value = match[1].replace(/['|"]/gm, "");
+  const value = match[1].replace(/['"]/gm, "");
   return value && value.length > 0 ? value : null;
 }
 
@@ -309,8 +309,10 @@ function getAccess(orders, roles) {
       // The old starphleet way
       const declaredRoles = /\${?(\w+)}?/g;
       let bashVar;
+      let i = 0;
       do {
         bashVar = declaredRoles.exec(accessFlags);
+        i += 1;
         if (bashVar) {
           const flagVar = bashVar[1];
           const suffix = flagVar.split("_ROLE_")[1];
