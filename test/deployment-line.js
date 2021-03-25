@@ -4,7 +4,7 @@ const deploymentLineCheck = require("../checks/deployment-line");
 describe("Deployment Line Check", () => {
   it("skips if there is no orders file", async () => {
     const deployment = {
-      serviceName: "streamliner"
+      serviceName: "streamliner",
     };
 
     const results = await deploymentLineCheck(deployment);
@@ -19,7 +19,7 @@ describe("Deployment Line Check", () => {
       ordersContents: ["autodeploy git@github.com:glg/price-service.git#main"],
     };
 
-    let results = await deploymentLineCheck(deployment);
+    let results = await deploymentLineCheck(deployment, {}, {});
 
     expect(results[0].problems.length).to.equal(0);
 
@@ -30,7 +30,7 @@ describe("Deployment Line Check", () => {
       ordersContents: ["dockerdeploy github/glg/price-service/main:latest"],
     };
 
-    results = await deploymentLineCheck(deployment);
+    results = await deploymentLineCheck(deployment, {}, {});
 
     expect(results[0].problems.length).to.equal(0);
 
@@ -41,7 +41,7 @@ describe("Deployment Line Check", () => {
       ordersContents: ["jobdeploy github/glg/price-service/main:latest"],
     };
 
-    results = await deploymentLineCheck(deployment);
+    results = await deploymentLineCheck(deployment, {}, {});
 
     expect(results[0].problems.length).to.equal(0);
   });
@@ -59,6 +59,7 @@ describe("Deployment Line Check", () => {
     expect(results[0].problems[0]).to.equal(
       "Incorrect Formatting: must be `dockerdeploy github/<org>/<repo>/<branch>:<tag>`"
     );
+    expect(results[0].level).to.equal("failure");
   });
 
   it("rejects an improperly formatted jobdeploy line", async () => {
@@ -74,6 +75,7 @@ describe("Deployment Line Check", () => {
     expect(results[0].problems[0]).to.equal(
       "Incorrect Formatting: must be `jobdeploy github/<org>/<repo>/<branch>:<tag>`"
     );
+    expect(results[0].level).to.equal("failure");
   });
 
   it("rejects an improperly formatted autodeploy line", async () => {
@@ -89,6 +91,7 @@ describe("Deployment Line Check", () => {
     expect(results[0].problems[0]).to.equal(
       "Incorrect Formatting: must be `autodeploy git@github.com:<org>/<repo>[.git]#<branch>`"
     );
+    expect(results[0].level).to.equal("failure");
   });
 
   it("requires either a dockerdeploy or an autodeploy line", async () => {
@@ -104,6 +107,7 @@ describe("Deployment Line Check", () => {
     expect(results[0].problems[0]).to.equal(
       `**${deployment.ordersPath}** - Missing deployment. Must include either an \`autodeploy\` line, a \`dockerdeploy\` line, or a \`jobdeploy\` line.`
     );
+    expect(results[0].level).to.equal("failure");
   });
 
   it("rejects repository names with invalid characters", async () => {
@@ -120,6 +124,7 @@ describe("Deployment Line Check", () => {
     expect(results[0].problems[0]).to.equal(
       "**PriceService** - Repository name must be only lowercase alphanumeric characters and hyphens."
     );
+    expect(results[0].level).to.equal("failure");
 
     // works with dockerdeploy
     deployment = {
@@ -134,6 +139,7 @@ describe("Deployment Line Check", () => {
     expect(results[0].problems[0]).to.equal(
       "**PriceService** - Repository name must be only lowercase alphanumeric characters and hyphens."
     );
+    expect(results[0].level).to.equal("failure");
   });
 
   it("rejects branch names with invalid characters", async () => {
@@ -152,6 +158,7 @@ describe("Deployment Line Check", () => {
     expect(results[0].problems[0]).to.equal(
       "**Wrong_Branch!** - Branch name must be only lowercase alphanumeric characters and hyphens."
     );
+    expect(results[0].level).to.equal("failure");
 
     // works with dockerdeploy
     deployment = {
@@ -168,6 +175,7 @@ describe("Deployment Line Check", () => {
     expect(results[0].problems[0]).to.equal(
       "**Wrong_Branch!** - Branch name must be only lowercase alphanumeric characters and hyphens."
     );
+    expect(results[0].level).to.equal("failure");
   });
 
   it("rejects branch names that contain --", async () => {
@@ -202,5 +210,118 @@ describe("Deployment Line Check", () => {
     expect(results[0].problems[0]).to.equal(
       "**too--many** - Branch name cannot contain `--`"
     );
+    expect(results[0].level).to.equal("failure");
+  });
+
+  it("rejects autodeploys with non-existant repos", async () => {
+    const deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: ["autodeploy git@github.com:glg/notrealatall.git#main"],
+    };
+
+    const inputs = {
+      deployinatorToken: "token",
+      deployinatorURL: "someurl",
+    };
+
+    const localGet = async (url, options) => {
+      throw { error: "not found" };
+    };
+
+    let results = await deploymentLineCheck(
+      deployment,
+      undefined,
+      inputs,
+      localGet
+    );
+
+    expect(results[0].problems.length).to.equal(1);
+    expect(/not.*?found/i.test(results[0].problems[0])).to.be.true;
+    expect(results[0].level).to.equal("failure");
+  });
+
+  it("rejects autodeploys with non-existant branches", async () => {
+    const deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: ["autodeploy git@github.com:glg/echo.git#fakebranch"],
+    };
+
+    const inputs = {
+      deployinatorToken: "token",
+      deployinatorURL: "someurl",
+    };
+
+    const localGet = async (url, options) => {
+      return ["main", "another"];
+    };
+
+    let results = await deploymentLineCheck(
+      deployment,
+      undefined,
+      inputs,
+      localGet
+    );
+
+    expect(results[0].problems.length).to.equal(1);
+    expect(/branch/i.test(results[0].problems[0])).to.be.true;
+    expect(results[0].level).to.equal("failure");
+  });
+
+  it("rejects dockerdeploys and jobdeploys with non-existant ecr repos", async () => {
+    const deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: ["dockerdeploy github/glg/fakerepo/main:latest"],
+    };
+
+    const inputs = {
+      deployinatorToken: "token",
+      deployinatorURL: "someurl",
+    };
+
+    const localGet = async (url, options) => {
+      throw { error: "not found" };
+    };
+
+    let results = await deploymentLineCheck(
+      deployment,
+      undefined,
+      inputs,
+      localGet
+    );
+
+    expect(results[0].problems.length).to.equal(2);
+    expect(/not.*?found/i.test(results[0].problems[0])).to.be.true;
+    expect(results[0].level).to.equal("failure");
+  });
+
+  it("rejects dockerdeploys and jobdeploys with non-existant tags on ecr repos", async () => {
+    const deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: ["dockerdeploy github/glg/realrepo/main:faketag"],
+    };
+
+    const inputs = {
+      deployinatorToken: "token",
+      deployinatorURL: "someurl",
+    };
+
+    const localGet = async (url, options) => {
+      return ["latest", "asdlkfjsdlfkjdsalk"];
+    };
+
+    let results = await deploymentLineCheck(
+      deployment,
+      undefined,
+      inputs,
+      localGet
+    );
+
+    expect(results[0].problems.length).to.equal(2);
+    expect(/tag/i.test(results[0].problems[0])).to.be.true;
+    expect(results[0].level).to.equal("failure");
   });
 });
