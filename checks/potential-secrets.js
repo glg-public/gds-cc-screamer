@@ -1,12 +1,13 @@
 require("../typedefs");
 const log = require("loglevel");
+const validator = require("validator");
 
 const envvar = /^(export +|)(\w+)=['"]?([^\n\r]+?)['"]?$/;
 const dockerdeploy = /^dockerdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\w+)/;
 const jobdeploy = /^jobdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\w+)/;
 const autodeploy = /^autodeploy git@github.com:(?<org>[\w-]+)\/(?<repo>.+?)(.git|)#(?<branch>.+)/;
 const bashVar = /\$\{?(?<variable>\w+)\}?/;
-const url = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
+const reservedVars = new Set(["GDS_FQDN", "SESSION_ACCESS_FLAGS"]);
 
 /**
  * Checks orders file for potential secrets
@@ -49,11 +50,28 @@ async function potentialSecrets(deployment, context, inputs, httpGet) {
     );
   }
 
-  function _isAnException(str) {
-    const tests = [dockerdeploy, jobdeploy, autodeploy, bashVar, url];
+  function _isAnExceptionValue(str) {
+    const regex = [dockerdeploy, jobdeploy, autodeploy, bashVar];
 
-    for (let test of tests) {
+    const validators = [
+      "isEmail",
+      "isFQDN",
+      "isIMEI",
+      "isISBN",
+      "isISO8601",
+      "isMACAddress",
+      "isRFC3339",
+      "isURL",
+    ];
+
+    for (const test of regex) {
       if (test.test(str)) {
+        return true;
+      }
+    }
+
+    for (const test of validators) {
+      if (validator[test](str)) {
         return true;
       }
     }
@@ -81,7 +99,11 @@ async function potentialSecrets(deployment, context, inputs, httpGet) {
         result.title = "Passwords Should Be In Secrets Manager";
       } else if (/secret/i.test(name)) {
         result.title = "Secrets Should Be In Secrets Manager";
-      } else if (_entropy(value) > 3 && !_isAnException(value)) {
+      } else if (
+        !reservedVars.has(name) &&
+        _entropy(value) > 3 &&
+        !_isAnExceptionValue(value)
+      ) {
         result.title = "Possible Secret?";
         result.problems.push(
           "This was flagged because of high entropy in the value. If this is definitely not a secret, disregard."

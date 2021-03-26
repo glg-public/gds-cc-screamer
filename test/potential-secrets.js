@@ -93,7 +93,8 @@ describe("Potential Secrets", () => {
         "export PANTS='https://github.com/glg-public/gds-cc-screamer/issues'",
         "export SANDWICH=mustard",
         "export CHICKEN=$(($SESSION_ROLE_GLG_USER | $SESSION_ROLE_GLG_CLIENT))",
-        "export DOG='dockerdeploy github/glg/echo/gds:latest'",
+        "export GDS_FQDN='screamer-test.glgresearch.com'",
+        "dockerdeploy github/glg/echo/gds:latest",
       ],
     };
 
