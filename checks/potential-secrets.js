@@ -85,8 +85,6 @@ async function potentialSecrets(deployment, context, inputs, httpGet) {
 
   function _isProblem(str) {
     const validators = [
-      "isBase64",
-      "isBIC",
       "isBtcAddress",
       "isCreditCard",
       "isEthereumAddress",
@@ -99,11 +97,14 @@ async function potentialSecrets(deployment, context, inputs, httpGet) {
 
     for (const test of validators) {
       if (validator[test](str)) {
-        return true;
+        return test;
       }
     }
 
-    return _entropy(str) > 4;
+    if (_entropy(str) > 4) {
+      return "highEntropy";
+    }
+    return false;
   }
 
   /** @type {Array<Result>} */
@@ -127,15 +128,14 @@ async function potentialSecrets(deployment, context, inputs, httpGet) {
         result.title = "Passwords Should Be In Secrets Manager";
       } else if (/secret/i.test(name)) {
         result.title = "Secrets Should Be In Secrets Manager";
-      } else if (
-        !reservedVars.has(name) &&
-        !_isAnException(value) &&
-        _isProblem(value)
-      ) {
-        result.title = "Possible Secret?";
-        result.problems.push(
-          "This was flagged because of high entropy in the value. If this is definitely not a secret, disregard."
-        );
+      } else if (!reservedVars.has(name) && !_isAnException(value)) {
+        const reason = _isProblem(value);
+        if (reason) {
+          result.title = "Possible Secret?";
+          result.problems.push(
+            `This was flagged as \`${reason}\`. If this is definitely not a secret, disregard.`
+          );
+        }
       }
 
       if (result.title) {

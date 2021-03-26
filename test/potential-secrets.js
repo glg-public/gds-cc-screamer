@@ -77,7 +77,7 @@ describe("Potential Secrets", () => {
         line: i + 1,
         problems: [
           "This looks like it might be a secret. You should probably store this in AWS Secrets Manager.",
-          "This was flagged because of high entropy in the value. If this is definitely not a secret, disregard.",
+          "This was flagged as `isStrongPassword`. If this is definitely not a secret, disregard.",
         ],
         title: "Possible Secret?",
       });
@@ -95,6 +95,7 @@ describe("Potential Secrets", () => {
         "export CHICKEN=$(($SESSION_ROLE_GLG_USER | $SESSION_ROLE_GLG_CLIENT))",
         "export GDS_FQDN='screamer-test.glgresearch.com'",
         "dockerdeploy github/glg/echo/gds:latest",
+        "export A='somecrap'",
       ],
     };
 
