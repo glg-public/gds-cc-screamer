@@ -7,7 +7,12 @@ const dockerdeploy = /^dockerdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)
 const jobdeploy = /^jobdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\w+)/;
 const autodeploy = /^autodeploy git@github.com:(?<org>[\w-]+)\/(?<repo>.+?)(.git|)#(?<branch>.+)/;
 const bashVar = /\$\{?(?<variable>\w+)\}?/;
-const reservedVars = new Set(["GDS_FQDN", "SESSION_ACCESS_FLAGS"]);
+const reservedVars = new Set([
+  "GDS_FQDN",
+  "SESSION_ACCESS_FLAGS",
+  "SECURITY_MODE",
+  "JWT_ACCESS_FLAGS",
+]);
 
 /**
  * Checks orders file for potential secrets
@@ -50,7 +55,7 @@ async function potentialSecrets(deployment, context, inputs, httpGet) {
     );
   }
 
-  function _isAnExceptionValue(str) {
+  function _isAnException(str) {
     const regex = [dockerdeploy, jobdeploy, autodeploy, bashVar];
 
     const validators = [
@@ -78,6 +83,29 @@ async function potentialSecrets(deployment, context, inputs, httpGet) {
     return false;
   }
 
+  function _isProblem(str) {
+    const validators = [
+      "isBase64",
+      "isBIC",
+      "isBtcAddress",
+      "isCreditCard",
+      "isEthereumAddress",
+      "isIBAN",
+      "isJWT",
+      "isStrongPassword",
+      "isTaxID",
+      "isUUID",
+    ];
+
+    for (const test of validators) {
+      if (validator[test](str)) {
+        return true;
+      }
+    }
+
+    return _entropy(str) > 4;
+  }
+
   /** @type {Array<Result>} */
   const results = [];
 
@@ -101,8 +129,8 @@ async function potentialSecrets(deployment, context, inputs, httpGet) {
         result.title = "Secrets Should Be In Secrets Manager";
       } else if (
         !reservedVars.has(name) &&
-        _entropy(value) > 3 &&
-        !_isAnExceptionValue(value)
+        !_isAnException(value) &&
+        _isProblem(value)
       ) {
         result.title = "Possible Secret?";
         result.problems.push(
