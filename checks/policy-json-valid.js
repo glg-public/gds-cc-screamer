@@ -181,7 +181,7 @@ ${policyDoc}
     if (/delete/i.test(line)) {
       title = "Delete Access";
       problem =
-        "It is extremeley rare that a service needs Delete access. Make sure you have discussed this with SRE before merging.";
+        "It is extremely rare that a service needs Delete access. Make sure you have discussed this with SRE before merging.";
     }
     return {
       title,

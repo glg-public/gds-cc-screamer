@@ -991,7 +991,7 @@ describe("policy.json is valid", () => {
     );
     expect(results.length).to.equal(1);
     const problem =
-      "It is extremeley rare that a service needs Delete access. Make sure you have discussed this with SRE before merging.";
+      "It is extremely rare that a service needs Delete access. Make sure you have discussed this with SRE before merging.";
 
     expect(results[0]).to.deep.equal({
       title: "Delete Access",
