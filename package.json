@@ -21,7 +21,8 @@
   "dependencies": {
     "@actions/core": "^1.2.6",
     "@actions/github": "^4.0.0",
-    "loglevel": "^1.7.1"
+    "loglevel": "^1.7.1",
+    "validator": "^13.5.2"
   },
   "devDependencies": {
     "chai": "^4.2.0",
