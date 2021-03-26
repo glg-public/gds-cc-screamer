@@ -24,6 +24,7 @@ async function templateCheck(deployment, context, inputs, httpGet) {
   const results = [];
 
   deployment.ordersContents.forEach((line, i) => {
+    // GitHub lines are 1-indexed
     const lineNumber = i + 1;
     // do something
   });
