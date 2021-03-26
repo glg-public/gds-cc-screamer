@@ -4,7 +4,10 @@ const { getExportValue, suggest, getAccess } = require("../util");
 
 /**
  * Requires the use of | instead of + to combine jwt access flags
- * @param {Deployment} deployment
+ * @param {Deployment} deployment An object containing information about a deployment
+ * @param {GitHubContext} context The context object provided by github
+ * @param {ActionInputs} inputs The inputs (excluding the token) from the github action
+ * @param {function(string, (object | undefined)):Promise} httpGet
  *
  * @returns {Array<Result>}
  */
