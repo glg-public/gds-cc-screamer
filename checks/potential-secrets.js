@@ -12,6 +12,7 @@ const reservedVars = new Set([
   "SESSION_ACCESS_FLAGS",
   "SECURITY_MODE",
   "JWT_ACCESS_FLAGS",
+  "CMD",
 ]);
 
 /**
@@ -67,6 +68,9 @@ async function potentialSecrets(deployment, context, inputs, httpGet) {
       "isMACAddress",
       "isRFC3339",
       "isURL",
+      "isJSON",
+      "isMD5",
+      "isHash",
     ];
 
     for (const test of regex) {
