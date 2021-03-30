@@ -21,6 +21,7 @@ const maxServicesPerCluster = require("./max-services-per-cluster");
 const fqdnRequired = require("./fqdn-required");
 const validTemplatesJson = require("./valid-templates-json");
 const potentialSecrets = require("./potential-secrets");
+const secretsExist = require("./secrets-exist");
 
 /**
  * Exports an array of async functions
@@ -49,6 +50,7 @@ module.exports = {
   fqdnRequired,
   validTemplatesJson,
   potentialSecrets,
+  secretsExist,
 
   // Also export as an array for use by checksuite
   all: [
@@ -74,6 +76,7 @@ module.exports = {
     fqdnRequired,
     validTemplatesJson,
     potentialSecrets,
+    secretsExist,
 
     /**
      *  This should probably always be last, because it verifies that the
