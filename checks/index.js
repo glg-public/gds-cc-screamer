@@ -22,6 +22,7 @@ const fqdnRequired = require("./fqdn-required");
 const validTemplatesJson = require("./valid-templates-json");
 const potentialSecrets = require("./potential-secrets");
 const secretsExist = require("./secrets-exist");
+const validateCron = require("./validate-cron");
 
 /**
  * Exports an array of async functions
@@ -51,6 +52,7 @@ module.exports = {
   validTemplatesJson,
   potentialSecrets,
   secretsExist,
+  validateCron,
 
   // Also export as an array for use by checksuite
   all: [
@@ -73,6 +75,7 @@ module.exports = {
     useCNAME,
     noReservedVars,
     maxServicesPerCluster,
+    validateCron,
     fqdnRequired,
     validTemplatesJson,
     potentialSecrets,
