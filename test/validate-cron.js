@@ -89,7 +89,7 @@ describe("Validate Cron", () => {
       problems: [
         suggest(
           "Consider Adding A Comment",
-          `${deployment.ordersContents[0]}\n# At 07:00 PM (UTC)`
+          `# At 07:00 PM (UTC)\n${deployment.ordersContents[0]}`
         ),
       ],
     });

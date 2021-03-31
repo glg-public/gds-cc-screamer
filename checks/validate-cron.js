@@ -80,7 +80,7 @@ async function validateCron(deployment, context, inputs, httpGet) {
       problems: [
         suggest(
           "Consider Adding A Comment",
-          `${deployment.ordersContents[line - 1]}\n${comment}`
+          `${comment}\n${deployment.ordersContents[line - 1]}`
         ),
       ],
     });
