@@ -46,7 +46,7 @@ describe("Validate Cron", () => {
     expect(results.length).to.equal(0);
   });
 
-  it("suggests an accurate comment above a cron statement if it is missing", async () => {
+  it("suggests an accurate comment above a cron statement if it is missing #1", async () => {
     const orders = await fs.readFile(
       path.join(fixturesDir, "cron-orders-no-comment"),
       "utf8"
@@ -65,6 +65,33 @@ describe("Validate Cron", () => {
       path: "somejob/orders",
       line: 7,
       problems: [suggest("Consider Adding A Comment", "\n# At 07:00 PM (UTC)")],
+    });
+  });
+
+  it("suggests an accurate comment above a cron statement if it is missing #2", async () => {
+    const orders = await fs.readFile(
+      path.join(fixturesDir, "cron-orders-no-comment-top"),
+      "utf8"
+    );
+    const deployment = {
+      serviceName: "somejob",
+      ordersContents: orders.split("\n"),
+      ordersPath: "somejob/orders",
+    };
+
+    const results = await validateCron(deployment);
+    expect(results.length).to.equal(1);
+    expect(results[0]).to.deep.equal({
+      title: "Add A Comment",
+      level: "notice",
+      path: "somejob/orders",
+      line: 1,
+      problems: [
+        suggest(
+          "Consider Adding A Comment",
+          `${deployment.ordersContents[0]}\n# At 07:00 PM (UTC)`
+        ),
+      ],
     });
   });
 
