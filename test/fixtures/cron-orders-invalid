@@ -1,0 +1,10 @@
+ # THIS IS A TEST BRANCH
+
+# Env vars
+export INSERT_RECORDS="True"
+export ENV="prod"
+export LOGLEVEL="debug"
+
+export ECS_SCHEDULED_TASK_CRON='0 41 * * W'
+
+jobdeploy github/owner/repo/test:latest
