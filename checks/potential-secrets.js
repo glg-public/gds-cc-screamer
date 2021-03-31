@@ -13,6 +13,7 @@ const reservedVars = new Set([
   "SECURITY_MODE",
   "JWT_ACCESS_FLAGS",
   "CMD",
+  "ECS_SCHEDULED_TASK_CRON",
 ]);
 
 /**
