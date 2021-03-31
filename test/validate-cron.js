@@ -31,6 +31,21 @@ describe("Validate Cron", () => {
     expect(results.length).to.equal(0);
   });
 
+  it("accepts orders with an accurate cron comment", async () => {
+    const orders = await fs.readFile(
+      path.join(fixturesDir, "cron-orders-with-comment"),
+      "utf8"
+    );
+    const deployment = {
+      serviceName: "somejob",
+      ordersContents: orders.split("\n"),
+      ordersPath: "somejob/orders",
+    };
+
+    const results = await validateCron(deployment);
+    expect(results.length).to.equal(0);
+  });
+
   it("suggests an accurate comment above a cron statement if it is missing", async () => {
     const orders = await fs.readFile(
       path.join(fixturesDir, "cron-orders-no-comment"),

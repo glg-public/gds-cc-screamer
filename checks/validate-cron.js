@@ -38,7 +38,7 @@ async function validateCron(deployment, context, inputs, httpGet) {
 
   let comment;
   try {
-    comment = cronstrue.toString(cronStatement);
+    comment = `# ${cronstrue.toString(cronStatement)} (UTC)`;
   } catch (e) {
     results.push({
       title: "Invalid Cron Statement",
@@ -52,23 +52,23 @@ async function validateCron(deployment, context, inputs, httpGet) {
 
   if (line > 2) {
     const commentLine = deployment.ordersContents[line - 2];
-    if (/\s*/.test(commentLine) || !commentLine.startsWith("#")) {
+    if (/^\s*$/.test(commentLine) || !commentLine.startsWith("#")) {
       results.push({
         title: "Add A Comment",
         level: "notice",
         path: deployment.ordersPath,
         line: line - 1,
-        problems: [
-          suggest("Consider Adding A Comment", `\n# ${comment} (UTC)`),
-        ],
+        problems: [suggest("Consider Adding A Comment", `\n${comment}`)],
       });
-    } else if (commentLine != `# ${comment}`) {
+    } else if (commentLine != comment) {
+      console.log(commentLine);
+      console.log(`# ${comment}`);
       results.push({
         title: "Update This Comment",
         level: "notice",
         path: deployment.ordersPath,
         line: line - 1,
-        problems: [suggest("Update This Comment", `# ${comment} (UTC)`)],
+        problems: [suggest("Update This Comment", comment)],
       });
     }
   }
