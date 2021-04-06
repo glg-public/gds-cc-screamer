@@ -204,6 +204,9 @@ function prLink({ owner, repo, pull_number }) {
 function lineLink({ owner, repo, sha, path: filePath, line }) {
   let link = `https://github.com/${owner}/${repo}/blob/${sha}/${filePath}`;
 
+  if (typeof line === "undefined") {
+    return link;
+  }
   if (
     isNaN(line) &&
     line.hasOwnProperty("start") &&

@@ -1,0 +1,16 @@
+# Needs to be accessible by all the Outlook clients
+# System Engineering handles the deploys via Exchange Admin
+export SECURITY_MODE="public"
+
+export HEALTHCHECK="/healthcheck"
+
+# used for the app to identify itself in requests to other GLG services
+export ORDERS_NAME="outlook-new-consultation"
+
+# Mosaic endpoint to create a new consultation shell from an email
+export MOSAIC_BASE_URL="https://search.glgresearch.com/mosaic-new-project"
+
+# Preferred Fully Qualified Domain Name
+export GDS_FQDN="office-add-ins.glgresearch.com"
+
+dockerdeploy github/glg/outlook-new-consultation/main:latest
