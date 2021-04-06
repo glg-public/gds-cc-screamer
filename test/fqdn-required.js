@@ -13,11 +13,35 @@ const inputs = {
 };
 
 describe("FQDN is Required", () => {
-  it("accepts orders with a fqdn that is associated with the cluster", async () => {
+  it("accepts orders with a fqdn that is associated with the cluster #1", async () => {
     const deployment = {
       serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["export GDS_FQDN='streamliner.glgresearch.com'"],
+    };
+
+    const context = {
+      payload: {
+        pull_request: {
+          base: {
+            repo: {
+              name: "gds.clusterconfig.s99",
+            },
+          },
+        },
+      },
+    };
+
+    const results = await fqdnRequired(deployment, context, inputs, localGet);
+
+    expect(results.length).to.equal(0);
+  });
+
+  it("accepts orders with a fqdn that is associated with the cluster #2", async () => {
+    const deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: ['export GDS_FQDN="streamliner.glgresearch.com"'],
     };
 
     const context = {
