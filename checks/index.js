@@ -23,6 +23,7 @@ const validTemplatesJson = require("./valid-templates-json");
 const potentialSecrets = require("./potential-secrets");
 const secretsExist = require("./secrets-exist");
 const validateCron = require("./validate-cron");
+const ecsScheduledTaskCount = require("./ecs-scheduled-task-count");
 
 /**
  * Exports an array of async functions
@@ -53,6 +54,7 @@ module.exports = {
   potentialSecrets,
   secretsExist,
   validateCron,
+  ecsScheduledTaskCount,
 
   // Also export as an array for use by checksuite
   all: [
@@ -80,6 +82,7 @@ module.exports = {
     validTemplatesJson,
     potentialSecrets,
     secretsExist,
+    ecsScheduledTaskCount,
 
     /**
      *  This should probably always be last, because it verifies that the

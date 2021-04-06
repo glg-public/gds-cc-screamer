@@ -91,6 +91,7 @@ describe("Potential Secrets", () => {
       ordersContents: [
         "export CATS=pants",
         "export PANTS='https://github.com/glg-public/gds-cc-screamer/issues'",
+        'export SHIRT="https://github.com/glg-public/gds-cc-screamer/issues "',
         "export SANDWICH=mustard",
         "export CHICKEN=$(($SESSION_ROLE_GLG_USER | $SESSION_ROLE_GLG_CLIENT))",
         "export GDS_FQDN='screamer-test.glgresearch.com'",
