@@ -58,6 +58,7 @@ async function potentialSecrets(deployment, context, inputs, httpGet) {
   }
 
   function _isAnException(str) {
+    str = str.trim();
     const regex = [dockerdeploy, jobdeploy, autodeploy, bashVar];
 
     const validators = [
@@ -89,6 +90,7 @@ async function potentialSecrets(deployment, context, inputs, httpGet) {
   }
 
   function _isProblem(str) {
+    str = str.trim();
     const validators = [
       "isBtcAddress",
       "isCreditCard",
