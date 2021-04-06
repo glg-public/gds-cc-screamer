@@ -1,6 +1,8 @@
 const { expect } = require("chai");
 const jwtAccessFlags = require("../checks/jwt-access-flags");
 const roles = require("./fixtures/roles");
+const fs = require("fs").promises;
+const path = require("path");
 
 describe("Access Flags are Valid", () => {
   it("skips if there is no orders file", async () => {
@@ -203,6 +205,32 @@ export SESSION_ACCESS_FLAGS=$(($SESSION_ROLE_GLG_USER | $SESSION_ROLE_GLG_CLIENT
       expect(results[0].level).to.equal("failure");
       expect(results[0].line).to.equal(1);
       expect(/role-glg:64/.test(results[0].problems[1])).to.be.true;
+    });
+
+    it("does not flag public services with no access flags", async () => {
+      const orders = await fs.readFile(
+        path.join(process.cwd(), "test", "fixtures", "public-orders"),
+        "utf8"
+      );
+      const deployment = {
+        serviceName: "outlook-new-consultation",
+        ordersContents: orders.split("\n"),
+        ordersPath: "outlook-new-consultation/orders",
+      };
+
+      const inputs = {
+        deployinatorToken: "token",
+        deployinatorURL: "deployinator.glgresearch.com/deployinator",
+      };
+
+      const localGet = async (url, opts) => {
+        if (/roles/.test(url)) {
+          return roles;
+        }
+      };
+
+      const results = await jwtAccessFlags(deployment, {}, inputs, localGet);
+      expect(results.length).to.equal(0);
     });
   });
 });

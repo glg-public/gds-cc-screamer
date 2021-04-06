@@ -23,6 +23,10 @@ async function jwtAccessFlags(deployment, context, inputs, httpGet) {
 
   let lineNumber;
   let accessFlags;
+  const securityMode = getExportValue(
+    deployment.ordersContents.join("\n"),
+    "SECURITY_MODE"
+  );
   for (let i = 0; i < deployment.ordersContents.length; i++) {
     const line = deployment.ordersContents[i];
     const jwtFlags = getExportValue(line, "JWT_ACCESS_FLAGS");
@@ -56,7 +60,7 @@ async function jwtAccessFlags(deployment, context, inputs, httpGet) {
       roles = await httpGet(rolesURL, httpOpts);
       try {
         const access = getAccess(deployment.ordersContents.join("\n"), roles);
-        if (!access) {
+        if (access && securityMode === "public") {
           results.push({
             title: "Public Deployments do not need access controls",
             level: "warning",
