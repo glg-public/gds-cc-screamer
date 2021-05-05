@@ -159,4 +159,52 @@ describe("Secrets Exist", () => {
 
     expect(results.length).to.equal(0);
   });
+
+  it("works when the secret name includes a version tag", async () => {
+    const secretsJson = [
+      {
+        name: "SECRET",
+        valueFrom:
+          "arn:aws:secretsmanager:us-east-1:868468680417:secret:us-east-1/devopsonly/GDS_INSTANCES_PRIVATE_KEY-JAPhnA",
+      },
+    ];
+    const deployment = {
+      serviceName: "streamliner",
+      secretsJson,
+      secretsJsonPath: "streamliner/secrets.json",
+      secretsJsonContents: JSON.stringify(secretsJson, null, 2).split("\n"),
+    };
+
+    const context = {};
+
+    const inputs = {
+      deployinatorURL: "someurl",
+      deployinatorToken: "abcdefg",
+    };
+
+    const localGet = async () => {
+      return [
+        { name: "us-east-1/testsuite/PHRED-test" },
+        { name: "us-east-1/developmentkeys/MARKLAR_DYNAMO_AWS_ACCESS_KEY" },
+        { name: "us-east-1/testsuite/23ff0652-fc09-444b-a14d-d0d989c46cf8" },
+        {
+          name: "us-east-1/testsuite/f1b83d2f-35fb-4268-81db-2e501f0c79bc",
+          description:
+            "f1b83d2f-35fb-4268-81db-2e501f0c79bc is an object like { key }",
+        },
+        {
+          name: "us-east-1/devopsonly/GDS_INSTANCES_PRIVATE_KEY",
+        },
+        {
+          name: "us-east-1/testsuite/97e33653-dad7-41b7-b140-d503445df4e4",
+          description:
+            "97e33653-dad7-41b7-b140-d503445df4e4 is an object like { key }",
+        },
+      ];
+    };
+
+    const results = await secretsExist(deployment, context, inputs, localGet);
+
+    expect(results.length).to.equal(0);
+  });
 });
