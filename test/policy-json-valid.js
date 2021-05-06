@@ -6,6 +6,10 @@ const {
   getNewFileLink,
   getOwnerRepoBranch,
 } = require("../util");
+const fs = require("fs").promises;
+const path = require("path");
+
+const fixturesDir = path.join(process.cwd(), "test", "fixtures");
 
 const actionFmtError =
   '"Action" must be either a valid [Action String](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_action.html), or an array of valid action strings. SRE recommends as specific of an Action String as possible.';
@@ -24,7 +28,7 @@ describe("policy.json is valid", () => {
     expect(results.length).to.equal(0);
   });
 
-  it("accepts valid policy.json", async () => {
+  it("accepts valid policy.json #1", async () => {
     const policyJson = JSON.stringify(
       {
         Version: "2012-10-17",
@@ -58,6 +62,31 @@ describe("policy.json is valid", () => {
 
     const results = await policyJsonIsValid(deployment);
     expect(results.length).to.equal(0);
+  });
+
+  it("accepts valid policy.json #2", async () => {
+    const policyJson = await fs.readFile(
+      path.join(fixturesDir, "issues51-53", "policy.json"),
+      "utf8"
+    );
+    const secretsJson = await fs.readFile(
+      path.join(fixturesDir, "issues51-53", "secrets.json"),
+      "utf8"
+    );
+    const deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
+      policyJsonPath: "streamliner/policy.json",
+      policyJsonContents: policyJson.split("\n"),
+      secretsJson: JSON.parse(secretsJson),
+      secretsJsonContents: secretsJson.split("\n"),
+      secretsJsonPath: "streamliner/secrets.json",
+    };
+
+    const results = await policyJsonIsValid(deployment);
+    const failures = results.filter(({ level }) => level === "failure");
+    expect(failures.length).to.equal(0);
   });
 
   it("rejects policy.json that is not valid JSON", async () => {

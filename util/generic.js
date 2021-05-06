@@ -85,7 +85,7 @@ function httpGet(url, options = {}) {
   });
 }
 
-const secretArn = /arn:([\w\*\-]*):secretsmanager:([\w-]*):(\d*):secret:([\w\-\/]*):?(\S*?):+(\S*?):+(\w*)/;
+const secretArn = /arn:([\w\*\-]*):secretsmanager:([\w-]*):(\d*):secret:([\w\-\/]*):?([^\s:]*):?([^\s:]*):?(\w*)/;
 function getSimpleSecret(secret) {
   const match = secretArn.exec(secret);
   if (match) {
@@ -99,6 +99,11 @@ function getSimpleSecret(secret) {
       versionId,
     ] = match.slice(1);
     let arn = `arn:${partition}:secretsmanager:${region}:${account}:secret:${secretName}`;
+
+    // If it already ends in a version ID, just return as is.
+    if (/\-\w{6}$/.test(secretName)) {
+      return arn;
+    }
 
     if (versionId) {
       arn += `-${versionId}`;
