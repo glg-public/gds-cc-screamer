@@ -19,7 +19,7 @@ describe("Secrets Exist", () => {
         {
           name: "SECRET",
           valueFrom:
-            "arn:aws:secretsmanager:us-east-1:868468680417:secret:prod/deployanator/github_token:::",
+            "arn:aws:secretsmanager:us-east-1:111111111111:secret:prod/deployanator/github_token:::",
         },
       ],
     };
@@ -40,7 +40,7 @@ describe("Secrets Exist", () => {
         {
           name: "SECRET",
           valueFrom:
-            "arn:aws:secretsmanager:us-east-1:868468680417:secret:prod/deployanator/github_token:::",
+            "arn:aws:secretsmanager:us-east-1:111111111111:secret:prod/deployanator/github_token:::",
         },
       ],
     };
@@ -66,7 +66,7 @@ describe("Secrets Exist", () => {
       {
         name: "SECRET",
         valueFrom:
-          "arn:aws:secretsmanager:us-east-1:868468680417:secret:prod/deployanator/github_token:::",
+          "arn:aws:secretsmanager:us-east-1:111111111111:secret:prod/deployanator/github_token:::",
       },
     ];
     const deployment = {
@@ -120,7 +120,7 @@ describe("Secrets Exist", () => {
       {
         name: "SECRET",
         valueFrom:
-          "arn:aws:secretsmanager:us-east-1:868468680417:secret:us-east-1/testsuite/PHRED-test:::",
+          "arn:aws:secretsmanager:us-east-1:111111111111:secret:us-east-1/testsuite/PHRED-test:::",
       },
     ];
     const deployment = {
@@ -165,7 +165,7 @@ describe("Secrets Exist", () => {
       {
         name: "SECRET",
         valueFrom:
-          "arn:aws:secretsmanager:us-east-1:868468680417:secret:us-east-1/devopsonly/GDS_INSTANCES_PRIVATE_KEY-JAPhnA",
+          "arn:aws:secretsmanager:us-east-1:111111111111:secret:us-east-1/devopsonly/GDS_INSTANCES_PRIVATE_KEY-JAPhnA",
       },
     ];
     const deployment = {

@@ -41,7 +41,7 @@ describe("policy.json is valid", () => {
               "secretsmanager:GetSecretValue",
             ],
             Resource:
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
+              "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret",
           },
         ],
       },
@@ -92,7 +92,7 @@ describe("policy.json is valid", () => {
               Effect: "Allow",
               Action: "resource:action",
               Resource:
-                "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
+                "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret",
             },
           ],
         },
@@ -136,7 +136,7 @@ describe("policy.json is valid", () => {
               "secretsmanager:GetSecretValue",
             ],
             resource:
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
+              "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret",
           },
         ],
       },
@@ -194,7 +194,7 @@ describe("policy.json is valid", () => {
       problems: [
         suggest(
           "Capitalize this key",
-          '      "Resource": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret"'
+          '      "Resource": "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret"'
         ),
       ],
       line: 15,
@@ -218,7 +218,7 @@ describe("policy.json is valid", () => {
               "secretsmanager:GetSecretValue",
             ],
             Resource:
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
+              "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret",
           },
         ],
       },
@@ -261,7 +261,7 @@ describe("policy.json is valid", () => {
               "secretsmanager:GetSecretValue",
             ],
             Resource:
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
+              "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret",
           },
         ],
       },
@@ -331,12 +331,12 @@ describe("policy.json is valid", () => {
               "secretsmanager:GetSecretValue",
             ],
             Resource:
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
+              "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret",
           },
           {
             Action: "resource:action",
             Resource:
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
+              "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret",
           },
         ],
       },
@@ -373,7 +373,7 @@ describe("policy.json is valid", () => {
             Effect: "Allow",
             Action: "resource:action",
             Resource:
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
+              "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret",
           },
           {
             Effect: "allow", // This needs to be capitalized
@@ -387,7 +387,7 @@ describe("policy.json is valid", () => {
               "secretsmanager:GetSecretValue",
             ],
             Resource:
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
+              "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret",
           },
         ],
       },
@@ -430,13 +430,13 @@ describe("policy.json is valid", () => {
               "secretsmanager:GetSecretValue",
             ],
             Resource:
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
+              "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret",
           },
           {
             Effect: "Allow",
             Action: "wrong",
             Resource:
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
+              "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret",
           },
         ],
       },
@@ -469,7 +469,7 @@ describe("policy.json is valid", () => {
             Effect: "Allow",
             Action: "resource:action",
             Resource:
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
+              "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret",
           },
           {
             Effect: "Allow",
@@ -485,7 +485,7 @@ describe("policy.json is valid", () => {
               "secretsmanager:GetSecretValue",
             ],
             Resource:
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
+              "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret",
           },
         ],
       },
@@ -523,7 +523,7 @@ describe("policy.json is valid", () => {
             Effect: "Allow",
             Action: "resource:action",
             Resource:
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
+              "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret",
           },
           {
             Effect: "Allow",
@@ -577,13 +577,13 @@ describe("policy.json is valid", () => {
               "secretsmanager:GetSecretValue",
             ],
             Resource:
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
+              "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret",
           },
           {
             Effect: "Allow",
             Action: ["resource:*", "other:action"],
             Resource: [
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
+              "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret",
               "wrong",
             ],
           },
@@ -623,7 +623,7 @@ describe("policy.json is valid", () => {
             Effect: "Allow",
             Action: "resource:action",
             Resource:
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
+              "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret",
           },
           {
             Effect: "Allow",
@@ -632,7 +632,7 @@ describe("policy.json is valid", () => {
               "logs:*",
             ],
             Resource:
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
+              "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret",
           },
         ],
       },
@@ -672,7 +672,7 @@ describe("policy.json is valid", () => {
             Effect: "Allow",
             Action: "secretsmanager:GetSecretValue",
             Resource:
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret-??????",
+              "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret-??????",
           },
           {
             Effect: "Allow",
@@ -698,12 +698,12 @@ describe("policy.json is valid", () => {
         {
           name: "MY_SECRET",
           valueFrom:
-            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:::",
+            "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret:::",
         },
         {
           name: "MY_OTHER_SECRET",
           valueFrom:
-            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else:::",
+            "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/something_else:::",
         },
       ],
     };
@@ -715,7 +715,7 @@ describe("policy.json is valid", () => {
       title: "Policy is missing required secrets",
       path: "streamliner/policy.json",
       problems: [
-        "Your secrets.json requests arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else-??????, but your policy does not allow access.",
+        "Your secrets.json requests arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/something_else-??????, but your policy does not allow access.",
         "Add the following statement block\n" +
           "```suggestion\n" +
           "    },\n" +
@@ -724,7 +724,7 @@ describe("policy.json is valid", () => {
           '      "Effect": "Allow",\n' +
           '      "Action": "secretsmanager:GetSecretValue",\n' +
           '      "Resource": [\n' +
-          '        "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else-??????"\n' +
+          '        "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/something_else-??????"\n' +
           "      ]\n" +
           "    }\n" +
           "```",
@@ -742,8 +742,8 @@ describe("policy.json is valid", () => {
             Effect: "Allow",
             Action: "secretsmanager:GetSecretValue",
             Resource: [
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret-??????",
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else-??????",
+              "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret-??????",
+              "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/something_else-??????",
             ], // supports wildcards
           },
           {
@@ -770,12 +770,12 @@ describe("policy.json is valid", () => {
         {
           name: "MY_SECRET",
           valueFrom:
-            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:example::",
+            "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret:example::",
         },
         {
           name: "MY_OTHER_SECRET",
           valueFrom:
-            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else:::",
+            "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/something_else:::",
         },
       ],
     };
@@ -794,8 +794,8 @@ describe("policy.json is valid", () => {
             Effect: "Allow",
             Action: "secretsmanager:GetSecretValue",
             Resource: [
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
-              "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else",
+              "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret",
+              "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/something_else",
             ],
           },
           {
@@ -822,12 +822,12 @@ describe("policy.json is valid", () => {
         {
           name: "MY_SECRET",
           valueFrom:
-            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:::",
+            "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret:::",
         },
         {
           name: "MY_OTHER_SECRET",
           valueFrom:
-            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else:::",
+            "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/something_else:::",
         },
       ],
     };
@@ -842,8 +842,8 @@ describe("policy.json is valid", () => {
         suggest(
           "IAM policies should specifiy a version suffix for secrets. This can be `??????` when you always want the latest version.",
           deployment.policyJsonContents[7].replace(
-            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret",
-            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret-??????"
+            "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret",
+            "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret-??????"
           )
         ),
       ],
@@ -858,8 +858,8 @@ describe("policy.json is valid", () => {
         suggest(
           "IAM policies should specifiy a version suffix for secrets. This can be `??????` when you always want the latest version.",
           deployment.policyJsonContents[8].replace(
-            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else",
-            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else-??????"
+            "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/something_else",
+            "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/something_else-??????"
           )
         ),
       ],
@@ -877,7 +877,7 @@ describe("policy.json is valid", () => {
           {
             Effect: "Allow",
             Action: "secretsmanager:GetSecretValue",
-            Resource: "arn:aws:secretsmanager:us-east-1:868468680417:secret:*", // supports wildcards
+            Resource: "arn:aws:secretsmanager:us-east-1:111111111111:secret:*", // supports wildcards
           },
           {
             Effect: "Allow",
@@ -903,12 +903,12 @@ describe("policy.json is valid", () => {
         {
           name: "MY_SECRET",
           valueFrom:
-            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:example::",
+            "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret:example::",
         },
         {
           name: "MY_OTHER_SECRET",
           valueFrom:
-            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else:::",
+            "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/something_else:::",
         },
       ],
     };
@@ -952,14 +952,14 @@ describe("policy.json is valid", () => {
           {
             Effect: "Allow",
             Action: "secretsmanager:GetSecretValue",
-            Resource: "arn:aws:secretsmanager:us-east-1:868468680417:secret:*", // supports wildcards
+            Resource: "arn:aws:secretsmanager:us-east-1:111111111111:secret:*", // supports wildcards
           },
           {
             Effect: "Allow",
             Action: [
               "ecr:DeleteSomething", // will warn about this delete
             ],
-            Resource: "arn:aws:secretsmanager:us-east-1:868468680417:secret:*", // doesn't care that this is the wrong resource type
+            Resource: "arn:aws:secretsmanager:us-east-1:111111111111:secret:*", // doesn't care that this is the wrong resource type
           },
         ],
       },
@@ -977,12 +977,12 @@ describe("policy.json is valid", () => {
         {
           name: "MY_SECRET",
           valueFrom:
-            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:example::",
+            "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret:example::",
         },
         {
           name: "MY_OTHER_SECRET",
           valueFrom:
-            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else:::",
+            "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/something_else:::",
         },
       ],
     };
@@ -1009,12 +1009,12 @@ describe("policy.json is valid", () => {
         {
           name: "MY_SECRET",
           valueFrom:
-            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:example::",
+            "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret:example::",
         },
         {
           name: "MY_OTHER_SECRET",
           valueFrom:
-            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else:::abcdef",
+            "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/something_else:::abcdef",
         },
       ],
     };
@@ -1037,8 +1037,8 @@ describe("policy.json is valid", () => {
           Effect: "Allow",
           Action: "secretsmanager:GetSecretValue",
           Resource: [
-            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret-??????",
-            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/something_else-abcdef",
+            "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret-??????",
+            "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/something_else-abcdef",
           ],
         },
       ],
