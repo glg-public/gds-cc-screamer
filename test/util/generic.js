@@ -8,6 +8,7 @@ const {
   compareSecurity,
   getMasks,
   getMaskComponents,
+  getSimpleSecret,
 } = require("../../util/generic");
 const roles = require("../fixtures/roles");
 
@@ -122,5 +123,31 @@ describe("getMaskComponents", () => {
 
     components = getMaskComponents(16);
     expect(components).to.deep.equal([16]);
+  });
+});
+
+describe("getSimpleSecret", () => {
+  it("returns the secret arn without the json key or other bits #1", () => {
+    const arn =
+      "arn:aws:secretsmanager:us-east-1:111111111111:secret:us-east-1/devopsonly/GDS_INSTANCES_PRIVATE_KEY-JAPhnA";
+    const simpleSecret =
+      "arn:aws:secretsmanager:us-east-1:111111111111:secret:us-east-1/devopsonly/GDS_INSTANCES_PRIVATE_KEY-JAPhnA";
+    expect(getSimpleSecret(arn)).to.equal(simpleSecret);
+  });
+
+  it("returns the secret arn without the json key or other bits #2", () => {
+    const arn =
+      "arn:aws:secretsmanager:us-east-1:111111111111:secret:us-east-1/production/MY_SECRET:someKey::";
+    const simpleSecret =
+      "arn:aws:secretsmanager:us-east-1:111111111111:secret:us-east-1/production/MY_SECRET-??????";
+    expect(getSimpleSecret(arn)).to.equal(simpleSecret);
+  });
+
+  it("returns the secret arn without the json key or other bits #3", () => {
+    const arn =
+      "arn:aws:secretsmanager:us-east-1:111111111111:secret:us-east-1/production/MY_SECRET:::";
+    const simpleSecret =
+      "arn:aws:secretsmanager:us-east-1:111111111111:secret:us-east-1/production/MY_SECRET-??????";
+    expect(getSimpleSecret(arn)).to.equal(simpleSecret);
   });
 });

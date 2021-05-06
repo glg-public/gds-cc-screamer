@@ -1,0 +1,50 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "BaseLineRequirements",
+      "Effect": "Allow",
+      "Action": [
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:BatchGetImage",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:GetAuthorizationToken",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "WatchdogECSPermissions",
+      "Effect": "Allow",
+      "Action": [
+        "ecs:ListClusters",
+        "ecs:ListContainerInstances",
+        "ecs:DescribeContainerInstances",
+        "ecs:UpdateContainerInstancesState"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "PublishToWatchdogSNSTopic",
+      "Effect": "Allow",
+      "Action": "sns:Publish",
+      "Resource": "arn:aws:sns:us-east-1:111111111111:ecs-instance-watchdog"
+    },
+    {
+      "Sid": "SSMToInstance",
+      "Effect": "Allow",
+      "Action": "ssm:StartSession",
+      "Resource": [
+        "arn:aws:ec2:*:*:instance/*",
+        "arn:aws:ssm:*:*:document/AWS-StartSSHSession"
+      ]
+    },
+    {
+      "Sid": "RetrieveSSHKey",
+      "Effect": "Allow",
+      "Action": "secretsmanager:GetSecretValue",
+      "Resource": "arn:aws:secretsmanager:us-east-1:111111111111:secret:us-east-1/devopsonly/GDS_INSTANCES_PRIVATE_KEY-JAPhnA"
+    }
+  ]
+}

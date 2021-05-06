@@ -1,6 +1,6 @@
 require("../typedefs");
 const log = require("loglevel");
-const { getLineWithinObject } = require("../util");
+const { getLineWithinObject, escapeRegExp } = require("../util");
 
 const secretArn = /arn:([\w\*\-]*):secretsmanager:([\w-]*):(\d*):secret:([\w\-\/]*):?([^\s:]*):?([^\s:]*):?(\w*)/;
 
@@ -38,10 +38,21 @@ async function secretsExist(deployment, context, inputs, httpGet) {
   let secretNames;
   try {
     const allSecrets = await httpGet(secretsURL, httpOpts);
-    secretNames = new Set(allSecrets.map(({ name }) => name));
+    secretNames = allSecrets.map(
+      ({ name }) => new RegExp(`^${escapeRegExp(name)}(\\-\\w{6})?`)
+    );
   } catch (e) {
     log.info("Could not connect to deployinator for secrets validation.");
     return [];
+  }
+
+  function _secretExists(secretName) {
+    for (const name of secretNames) {
+      if (name.test(secretName)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   deployment.secretsJson.forEach((secret) => {
@@ -57,7 +68,7 @@ async function secretsExist(deployment, context, inputs, httpGet) {
         versionStage,
         versionId,
       ] = match;
-      if (!secretNames.has(value)) {
+      if (!_secretExists(value)) {
         const regex = new RegExp(`"valueFrom":\\s*"${secret.valueFrom}"`);
         const line = getLineWithinObject(
           deployment.secretsJsonContents,

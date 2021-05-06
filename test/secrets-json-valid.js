@@ -17,11 +17,11 @@ describe("secrets.json is valid check", () => {
     const secretsJson = `[
       {
         "name": "JSON_SECRET",
-        "valueFrom": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:example::"
+        "valueFrom": "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret:example::"
       },
       {
         "name": "OTHER_VALUE",
-        "valueFrom": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:newkey::"
+        "valueFrom": "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret:newkey::"
       },
       {
         "name": "MORE_PLAIN",
@@ -71,7 +71,7 @@ describe("secrets.json is valid check", () => {
 
   it("rejects secrets.json that is not an array", async () => {
     const secretsJson = `{
-      "JSON_SECRET": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:example::"
+      "JSON_SECRET": "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret:example::"
     }`;
 
     const deployment = {
@@ -99,11 +99,11 @@ describe("secrets.json is valid check", () => {
     const secretsJson = `[
       {
         "name": "JSON_SECRET",
-        "valueFrom": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:example::"
+        "valueFrom": "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret:example::"
       },
       {
         "name": "OTHER_VALUE",
-        "valueFrom": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:newkey::"
+        "valueFrom": "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret:newkey::"
       },
       ["some array"]
     ]`;
@@ -132,11 +132,11 @@ describe("secrets.json is valid check", () => {
   it("rejects a secrets.json where any secret is missing a required key", async () => {
     const secretsJson = `[
       {
-        "valueFrom": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:example::"
+        "valueFrom": "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret:example::"
       },
       {
         "name": "OTHER_VALUE",
-        "valueFrom": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:newkey::"
+        "valueFrom": "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret:newkey::"
       }
     ]`;
 
@@ -166,11 +166,11 @@ describe("secrets.json is valid check", () => {
     const secretsJson = `[
       {
         "name": "MY_SECRET",
-        "valueFrom": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:example::"
+        "valueFrom": "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret:example::"
       },
       {
         "name": "OTHER_VALUE",
-        "valueFrom": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:newkey::",
+        "valueFrom": "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret:newkey::",
         "extraKey": "this shouldn't be here"
       }
     ]`;
@@ -203,7 +203,7 @@ describe("secrets.json is valid check", () => {
     const secretsJson = `[
       {
         "name": "JSON_SECRET",
-        "valueFrom": "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/json_secret:example::"
+        "valueFrom": "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret:example::"
       },
       {
         "name": "OTHER_VALUE",
