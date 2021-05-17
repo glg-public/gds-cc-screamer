@@ -129,7 +129,10 @@ async function leaveComment(
       e.errors.filter(
         (err) =>
           err.resource === "PullRequestReviewComment" &&
-          ["path", "line"].includes(err.field)
+          [
+            "pull_request_review_thread.path",
+            "pull_request_review_thread.line",
+          ].includes(err.field)
       ).length > 0
     ) {
       result.problems.unshift(
