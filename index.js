@@ -15,10 +15,10 @@ const {
 log.setLevel(process.env.LOG_LEVEL || "info");
 
 /**
- * Perform all checks on all deployments included in a PR
+ * Return an object with user inputs to the action
+ * @returns {ActionInputs}
  */
-async function run() {
-  const token = core.getInput("token", { required: true });
+function getInputs() {
   const awsAccount = core.getInput("aws_account_id");
   const secretsPrefix = core.getInput("aws_secrets_prefix");
   const awsRegion = core.getInput("aws_region");
@@ -27,20 +27,11 @@ async function run() {
   const numServicesWarnThreshold = core.getInput("num_services_warn");
   const numServicesFailThreshold = core.getInput("num_services_fail");
   const clusterRoot = path.resolve(core.getInput("cluster_root"));
-  const deployinatorAppToken = core.getInput("deployinator_token");
+  const deployinatorToken = core.getInput("deployinator_token");
   const deployinatorURL = core.getInput("deployinator_url");
-  const sessionURL = core.getInput("session_url");
-
-  let deployinatorToken;
-  if (deployinatorAppToken && sessionURL) {
-    const { token: session } = await httpGet(
-      `${sessionURL}/${deployinatorAppToken}`
-    );
-    deployinatorToken = session;
-  }
 
   /** @type {ActionInputs} */
-  const inputs = {
+  return {
     awsAccount,
     secretsPrefix,
     awsRegion,
@@ -52,6 +43,14 @@ async function run() {
     deployinatorURL,
     deployinatorToken,
   };
+}
+
+/**
+ * Perform all checks on all deployments included in a PR
+ */
+async function run() {
+  const token = core.getInput("token", { required: true });
+  const inputs = getInputs();
 
   const octokit = github.getOctokit(token);
 
