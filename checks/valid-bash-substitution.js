@@ -1,7 +1,11 @@
 require("../typedefs");
 const log = require("loglevel");
 
-const singleQuoteSubsitution = /export \w+='.*\$({|)\w+(}|).*'/;
+// we expect these to match the regex, but they should not be flagged
+const EXCLUDED_VARIABLE_NAMES = [
+  'CMD',
+];
+const singleQuoteSubsitution = /export (?<variable>\w+)='.*\$({|)\w+(}|).*'/;
 
 /**
  * Flags the use of single quotes for bash substitution
@@ -19,7 +23,8 @@ async function validBashSubsitutions(deployment) {
   const results = [];
 
   deployment.ordersContents.forEach((line, i) => {
-    if (singleQuoteSubsitution.test(line)) {
+    const match = line.match(singleQuoteSubsitution);
+    if (match && !EXCLUDED_VARIABLE_NAMES.includes(match.groups.variable)) {
       results.push({
         title: "Bad Substitution",
         problems: [
