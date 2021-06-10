@@ -26,6 +26,18 @@ describe("Valid Bash Substitution Checker", async () => {
     expect(results.length).to.equal(0);
   });
 
+  it("ignores CMD bash subsitutions", async () => {
+    const result = await validSubstitutionCheck({
+      serviceName: "catpants",
+      ordersPath: "catpants/orders",
+      ordersContents: [
+        'export CMD=\'["bash", "-c", "source /catpants; echo $CAT + $PANTS" = glorious"]\''
+      ],
+    });
+
+    expect(result).to.have.lengthOf(0);
+  });
+
   it("rejects bash subsitutions contained in single quotes", async () => {
     let deployment = {
       serviceName: "streamliner",
