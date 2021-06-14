@@ -116,6 +116,9 @@ async function validateDeploymentLine(deployment, context, inputs, httpGet) {
     lineNumber = 0;
   }
 
+  let level = "failure";
+  let title = "Invalid Deployment";
+
   if (
     problems.length === 0 &&
     deploymentParts &&
@@ -133,45 +136,63 @@ async function validateDeploymentLine(deployment, context, inputs, httpGet) {
     if (deploymentType === "autodeploy") {
       try {
         const url = `${inputs.deployinatorURL}/enumerate/branches?owner=${owner}&repo=${repo}`;
-        const branches = await httpGet(url, httpOpts);
+        const { data: branches } = await httpGet(url, httpOpts);
         if (!branches.includes(branch)) {
           problems.push(
             `The specified repo \`${owner}/${repo}\` does not have a branch named \`${branch}\``
           );
         }
-      } catch (e) {
-        log.info(JSON.stringify(e));
-        problems.push(
-          `The specified repo \`${deploymentParts.org}/${deploymentParts.repo}\` could not be found.`
-        );
+      } catch ({ error, statusCode }) {
+        if (statusCode === 401) {
+          title = "401 From Deployinator API";
+          problems.push(
+            "CC Screamer received a 401 from the Deployinator API. This most likely indicates an expired or invalid app token."
+          );
+          level = "info";
+        } else if (statusCode === 404) {
+          problems.push(
+            `The specified repo \`${deploymentParts.org}/${deploymentParts.repo}\` could not be found.`
+          );
+        } else {
+          throw new Error(error);
+        }
       }
     } else {
       const image = `github/${owner}/${repo}/${branch}`;
       try {
         const url = `${inputs.deployinatorURL}/enumerate/ecr/tags?image=${image}`;
-        const tags = await httpGet(url, httpOpts);
+        const { data: tags } = await httpGet(url, httpOpts);
         if (!tags.includes(tag)) {
           problems.push(
             `The docker image \`${image}\` does not have a tag named \`${tag}\``,
             `[More About Deploying To GDS](https://services.glgresearch.com/know/glg-deployment-system-gds/deploying-a-service/)`
           );
         }
-      } catch (e) {
-        log.info(JSON.stringify(e));
-        problems.push(
-          `The specified docker image \`${image}:${tag}\` could not be found.`,
-          `[More About Deploying To GDS](https://services.glgresearch.com/know/glg-deployment-system-gds/deploying-a-service/)`
-        );
+      } catch ({ error, statusCode }) {
+        if (statusCode === 401) {
+          title = "401 From Deployinator API";
+          problems.push(
+            "CC Screamer received a 401 from the Deployinator API. This most likely indicates an expired or invalid app token."
+          );
+          level = "info";
+        } else if (statusCode === 404) {
+          problems.push(
+            `The specified docker image \`${image}:${tag}\` could not be found.`,
+            `[More About Deploying To GDS](https://services.glgresearch.com/know/glg-deployment-system-gds/deploying-a-service/)`
+          );
+        } else {
+          throw new Error(error);
+        }
       }
     }
   }
 
   return [
     {
-      title: "Invalid Deployment",
+      title,
       problems,
       line: lineNumber,
-      level: "failure",
+      level,
     },
   ];
 }

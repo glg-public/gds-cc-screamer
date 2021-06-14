@@ -226,7 +226,7 @@ describe("Deployment Line Check", () => {
     };
 
     const localGet = async (url, options) => {
-      throw { error: "not found" };
+      throw { error: "not found", statusCode: 404 };
     };
 
     let results = await deploymentLineCheck(
@@ -254,7 +254,7 @@ describe("Deployment Line Check", () => {
     };
 
     const localGet = async (url, options) => {
-      return ["main", "another"];
+      return { data: ["main", "another"] };
     };
 
     let results = await deploymentLineCheck(
@@ -282,7 +282,7 @@ describe("Deployment Line Check", () => {
     };
 
     const localGet = async (url, options) => {
-      throw { error: "not found" };
+      throw { error: "not found", statusCode: 404 };
     };
 
     let results = await deploymentLineCheck(
@@ -310,7 +310,7 @@ describe("Deployment Line Check", () => {
     };
 
     const localGet = async (url, options) => {
-      return ["latest", "asdlkfjsdlfkjdsalk"];
+      return { data: ["latest", "asdlkfjsdlfkjdsalk"] };
     };
 
     let results = await deploymentLineCheck(

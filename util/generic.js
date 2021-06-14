@@ -71,17 +71,17 @@ function httpGet(url, options = {}) {
           try {
             const retValue = JSON.parse(data);
             if (resp.statusCode >= 400) {
-              reject(retValue);
+              reject({ data: retValue, statusCode: resp.statusCode });
             } else {
-              resolve(retValue);
+              resolve({ data: retValue, statusCode: resp.statusCode });
             }
           } catch (error) {
-            reject({ data, error });
+            reject({ data, error, statusCode: resp.statusCode });
           }
         });
       })
       .on("error", (error) => {
-        reject({ data, error });
+        reject({ data, error, statusCode: resp.statusCode });
       });
   });
 }
