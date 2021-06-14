@@ -148,7 +148,7 @@ describe("Valid templates.json", () => {
     expect(results.length).to.equal(0);
   });
 
-  it("infos if it can't fetch roles", async () => {
+  it("presents a notice if it can't fetch roles", async () => {
     const deployment = {
       serviceName: "streamliner",
       templatesJsonContents: JSON.stringify(
@@ -181,7 +181,7 @@ describe("Valid templates.json", () => {
     );
 
     expect(results.length).to.equal(1);
-    expect(results[0].level).to.equal("info");
+    expect(results[0].level).to.equal("notice");
     expect(results[0].line).to.equal(0);
     expect(results[0].path).to.equal(deployment.templatesJsonPath);
   });

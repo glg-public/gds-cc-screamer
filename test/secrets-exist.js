@@ -60,7 +60,7 @@ describe("Secrets Exist", () => {
     const results = await secretsExist(deployment, context, inputs, localGet);
 
     expect(results.length).to.equal(1);
-    expect(results[0].level).to.equal("info");
+    expect(results[0].level).to.equal("notice");
   });
 
   it("warns if a specified secret does not exist", async () => {
