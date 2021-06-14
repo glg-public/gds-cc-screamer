@@ -3,9 +3,12 @@ const log = require("loglevel");
 const validator = require("validator");
 
 const envvar = /^(export +|)(\w+)=['"]?([^\n\r]+?)['"]?$/;
-const dockerdeploy = /^dockerdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\w+)/;
-const jobdeploy = /^jobdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\w+)/;
-const autodeploy = /^autodeploy git@github.com:(?<org>[\w-]+)\/(?<repo>.+?)(.git|)#(?<branch>.+)/;
+const dockerdeploy =
+  /^dockerdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\w+)/;
+const jobdeploy =
+  /^jobdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\w+)/;
+const autodeploy =
+  /^autodeploy git@github.com:(?<org>[\w-]+)\/(?<repo>.+?)(.git|)#(?<branch>.+)/;
 const bashVar = /\$\{?(?<variable>\w+)\}?/;
 const reservedVars = new Set([
   "GDS_FQDN",
@@ -19,13 +22,10 @@ const reservedVars = new Set([
 /**
  * Checks orders file for potential secrets
  * @param {Deployment} deployment An object containing information about a deployment
- * @param {GitHubContext} context The context object provided by github
- * @param {ActionInputs} inputs The inputs (excluding the token) from the github action
- * @param {function(string, (object | undefined)):Promise} httpGet
  *
  * @returns {Array<Result>}
  */
-async function potentialSecrets(deployment, context, inputs, httpGet) {
+async function potentialSecrets(deployment) {
   /**
    * You should check the existance of any file you're trying to check
    */
