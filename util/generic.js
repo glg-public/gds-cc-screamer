@@ -4,7 +4,8 @@ const { camelCaseFileName } = require("./text");
 const fs = require("fs").promises;
 const https = require("https");
 
-const jobdeploy = /^jobdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\w+)/;
+const jobdeploy =
+  /^jobdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\w+)/;
 
 /**
  *
@@ -74,18 +75,19 @@ function httpGet(url, options = {}) {
             } else {
               resolve(retValue);
             }
-          } catch (e) {
-            reject(data);
+          } catch (error) {
+            reject({ data, error });
           }
         });
       })
-      .on("error", (err) => {
-        reject(err);
+      .on("error", (error) => {
+        reject({ data, error });
       });
   });
 }
 
-const secretArn = /arn:([\w\*\-]*):secretsmanager:([\w-]*):(\d*):secret:([\w\-\/]*):?([^\s:]*):?([^\s:]*):?(\w*)/;
+const secretArn =
+  /arn:([\w\*\-]*):secretsmanager:([\w-]*):(\d*):secret:([\w\-\/]*):?([^\s:]*):?([^\s:]*):?(\w*)/;
 function getSimpleSecret(secret) {
   const match = secretArn.exec(secret);
   if (match) {
@@ -135,7 +137,8 @@ function generateSecretsPolicy(secretsJson) {
 
 function getSecretsFromOrders(ordersLines, secretsPrefix) {
   const secretsUse = /^(export +|)(\w+)=\$\(\s*secrets\s*(\w*)\s*\)$/;
-  const fromJsonUse = /^export +(\w+)=\$\(\s*fromJson\s+"?\${?(\w+)}?"?\s+"?(\w+)"?\)$/;
+  const fromJsonUse =
+    /^export +(\w+)=\$\(\s*fromJson\s+"?\${?(\w+)}?"?\s+"?(\w+)"?\)$/;
   const removeLineSuggestion = "Remove this line\n```suggestion\n```";
   const secrets = [];
   const results = [];
