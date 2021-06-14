@@ -100,7 +100,7 @@ async function validTemplatesJson(deployment, context, inputs, httpGet) {
       if (statusCode === 401) {
         results.push({
           title: "401 From Deployinator API",
-          level: "info",
+          level: "notice",
           line: 0,
           path: deployment.templatesJsonPath,
           problems: [

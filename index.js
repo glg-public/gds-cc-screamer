@@ -110,7 +110,7 @@ async function run() {
             deployments[0],
             {
               title: "401 From Deployinator API",
-              level: "info",
+              level: "notice",
               line: 0,
               path: deployments[0].ordersPath,
               problems: [

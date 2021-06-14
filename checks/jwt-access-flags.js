@@ -92,7 +92,7 @@ async function jwtAccessFlags(deployment, context, inputs, httpGet) {
         return [
           {
             title: "401 From Deployinator API",
-            level: "info",
+            level: "notice",
             line: 0,
             problems: [
               "CC Screamer received a 401 from the Deployinator API. This most likely indicates an expired or invalid app token.",

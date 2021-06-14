@@ -121,7 +121,7 @@ async function fqdnRequired(deployment, context, inputs, httpGet) {
       return [
         {
           title: "401 While Fetching Cluster Map",
-          level: "info",
+          level: "notice",
           line: 0,
           problems: [
             `CC Screamer received a 401 while fetching the cluster map from ${inputs.clusterMap}`,
