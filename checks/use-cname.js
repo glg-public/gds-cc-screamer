@@ -27,52 +27,69 @@ async function useCNAME(deployment, context, inputs, httpGet) {
   const splitName = repo.split(".");
   const repoCluster = splitName.pop();
 
-  const clusterMap = await httpGet(inputs.clusterMap);
+  try {
+    const { data: clusterMap } = await httpGet(inputs.clusterMap);
 
-  let myCluster = { hosts: [] };
-  if (clusterMap[repoCluster]) {
-    myCluster = clusterMap[repoCluster];
-  }
-  if (!myCluster.hosts) {
-    myCluster.hosts = [];
-  }
-
-  deployment.ordersContents.forEach((line, i) => {
-    const lineNumber = i + 1;
-    const envvarMatch = envvar.exec(line);
-    if (envvarMatch) {
-      const { value } = envvarMatch.groups;
-
-      const clusterDNSMatch = clusterDNS.exec(value);
-      if (clusterDNSMatch) {
-        const { clusterId } = clusterDNSMatch.groups;
-        const result = {
-          title: "Use friendly CNAME instead",
-          line: lineNumber,
-          level: "warning",
-          path: deployment.ordersPath,
-          problems: [],
-        };
-
-        const msg = `Rather than using the cluster dns (\`${clusterId}.glgresearch.com\`), consider using a friendly CNAME`;
-
-        if (myCluster.hosts.length === 0) {
-          result.problems.push(`${msg} (e.g. \`streamliner.glgresearch.com\`)`);
-        } else {
-          result.problems.push(
-            `${msg} like one of the following:\n${myCluster.hosts
-              .map((host) =>
-                suggest("", line.replace(`${clusterId}.glgresearch.com`, host))
-              )
-              .join("\n")}`
-          );
-        }
-        results.push(result);
-      }
+    let myCluster = { hosts: [] };
+    if (clusterMap[repoCluster]) {
+      myCluster = clusterMap[repoCluster];
     }
-  });
+    if (!myCluster.hosts) {
+      myCluster.hosts = [];
+    }
 
-  return results;
+    deployment.ordersContents.forEach((line, i) => {
+      const lineNumber = i + 1;
+      const envvarMatch = envvar.exec(line);
+      if (envvarMatch) {
+        const { value } = envvarMatch.groups;
+
+        const clusterDNSMatch = clusterDNS.exec(value);
+        if (clusterDNSMatch) {
+          const { clusterId } = clusterDNSMatch.groups;
+          const result = {
+            title: "Use friendly CNAME instead",
+            line: lineNumber,
+            level: "warning",
+            path: deployment.ordersPath,
+            problems: [],
+          };
+
+          const msg = `Rather than using the cluster dns (\`${clusterId}.glgresearch.com\`), consider using a friendly CNAME`;
+
+          if (myCluster.hosts.length === 0) {
+            result.problems.push(
+              `${msg} (e.g. \`streamliner.glgresearch.com\`)`
+            );
+          } else {
+            result.problems.push(
+              `${msg} like one of the following:\n${myCluster.hosts
+                .map((host) =>
+                  suggest(
+                    "",
+                    line.replace(`${clusterId}.glgresearch.com`, host)
+                  )
+                )
+                .join("\n")}`
+            );
+          }
+          results.push(result);
+        }
+      }
+    });
+
+    return results;
+  } catch ({ error, statusCode }) {
+    if (statusCode === 401) {
+      title = "401 From Deployinator API";
+      problems.push(
+        "CC Screamer received a 401 from the Deployinator API. This most likely indicates an expired or invalid app token."
+      );
+      level = "info";
+    } else {
+      throw new Error(error);
+    }
+  }
 }
 
 module.exports = useCNAME;

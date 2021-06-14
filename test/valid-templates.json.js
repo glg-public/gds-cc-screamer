@@ -110,7 +110,7 @@ describe("Valid templates.json", () => {
 
     const localGet = async (url, opts) => {
       if (/roles/.test(url)) {
-        return roles;
+        return { data: roles };
       }
     };
 
@@ -148,7 +148,7 @@ describe("Valid templates.json", () => {
     expect(results.length).to.equal(0);
   });
 
-  it("warns if it can't fetch roles", async () => {
+  it("infos if it can't fetch roles", async () => {
     const deployment = {
       serviceName: "streamliner",
       templatesJsonContents: JSON.stringify(
@@ -169,7 +169,7 @@ describe("Valid templates.json", () => {
 
     const localGet = async (url, opts) => {
       if (/roles/.test(url)) {
-        throw new Error("No Roles!");
+        throw { error: "No Roles!", statusCode: 401 };
       }
     };
 
@@ -181,7 +181,7 @@ describe("Valid templates.json", () => {
     );
 
     expect(results.length).to.equal(1);
-    expect(results[0].level).to.equal("warning");
+    expect(results[0].level).to.equal("info");
     expect(results[0].line).to.equal(0);
     expect(results[0].path).to.equal(deployment.templatesJsonPath);
   });
@@ -207,9 +207,9 @@ describe("Valid templates.json", () => {
 
     const localGet = async (url, opts) => {
       if (/roles/.test(url)) {
-        return roles;
+        return { data: roles };
       } else if (/\/security\//.test(url)) {
-        throw new Error("no template!");
+        throw { error: "no template!", statusCode: 404 };
       }
     };
 
@@ -250,9 +250,9 @@ describe("Valid templates.json", () => {
 
     const localGet = async (url, opts) => {
       if (/roles/.test(url)) {
-        return roles;
+        return { data: roles };
       } else if (/\/security\//.test(url)) {
-        return { executionMasks: { "jwt-role-glg": 1 } };
+        return { data: { executionMasks: { "jwt-role-glg": 1 } } };
       }
     };
 

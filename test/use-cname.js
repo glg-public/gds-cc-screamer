@@ -6,7 +6,7 @@ const { suggest } = require("../util");
 // This makes unit testing much simpler
 async function localGet(path) {
   const content = await fs.readFile(path, "utf8");
-  return JSON.parse(content);
+  return { data: JSON.parse(content) };
 }
 
 const inputs = {
@@ -47,7 +47,7 @@ describe("Use CNAME instead of cluster dns", () => {
     const results = await useCNAME(deployment, context, inputs, localGet);
     expect(results.length).to.equal(1);
 
-    const clusterMap = await localGet(inputs.clusterMap);
+    const { data: clusterMap } = await localGet(inputs.clusterMap);
 
     const problem =
       "Rather than using the cluster dns (`s99.glgresearch.com`), consider using a friendly CNAME like one of the following:\n" +

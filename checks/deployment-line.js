@@ -1,6 +1,5 @@
 require("../typedefs");
 const log = require("loglevel");
-const { httpGet } = require("../util");
 
 const dockerdeploy =
   /^dockerdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\w+)/;
