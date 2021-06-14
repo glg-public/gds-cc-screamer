@@ -2,9 +2,12 @@ require("../typedefs");
 const log = require("loglevel");
 const { httpGet } = require("../util");
 
-const dockerdeploy = /^dockerdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\w+)/;
-const jobdeploy = /^jobdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\w+)/;
-const autodeploy = /^autodeploy git@github.com:(?<org>[\w-]+)\/(?<repo>.+?)(.git|)#(?<branch>.+)/;
+const dockerdeploy =
+  /^dockerdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\w+)/;
+const jobdeploy =
+  /^jobdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\w+)/;
+const autodeploy =
+  /^autodeploy git@github.com:(?<org>[\w-]+)\/(?<repo>.+?)(.git|)#(?<branch>.+)/;
 const validCharacters = /^[a-z][a-z0-9-]*$/;
 
 function getDeployment(match) {
@@ -137,6 +140,7 @@ async function validateDeploymentLine(deployment, context, inputs, httpGet) {
           );
         }
       } catch (e) {
+        console.log(e);
         problems.push(
           `The specified repo \`${deploymentParts.org}/${deploymentParts.repo}\` could not be found.`
         );
