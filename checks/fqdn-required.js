@@ -33,88 +33,106 @@ async function fqdnRequired(deployment, context, inputs, httpGet) {
   const repo = context.payload.pull_request.base.repo.name;
   const splitName = repo.split(".");
   const repoCluster = splitName.pop();
-  const clusterMap = await httpGet(inputs.clusterMap);
+  try {
+    const { data: clusterMap } = await httpGet(inputs.clusterMap);
 
-  let myCluster = { hosts: [] };
-  if (clusterMap[repoCluster]) {
-    myCluster = clusterMap[repoCluster];
-  }
-  if (!myCluster.hosts) {
-    myCluster.hosts = [];
-  }
+    let myCluster = { hosts: [] };
+    if (clusterMap[repoCluster]) {
+      myCluster = clusterMap[repoCluster];
+    }
+    if (!myCluster.hosts) {
+      myCluster.hosts = [];
+    }
 
-  let isSet = false;
-  let lastEnvLine = 1;
-  deployment.ordersContents.forEach((line, i) => {
-    const lineNumber = i + 1;
-    const match = envvar.exec(line);
-    if (match) {
-      const [, , variable, value] = match;
-      if (!["SECURITY_MODE", "SESSION_ACCESS_FLAGS"].includes(variable)) {
-        lastEnvLine = lineNumber;
-      }
+    let isSet = false;
+    let lastEnvLine = 1;
+    deployment.ordersContents.forEach((line, i) => {
+      const lineNumber = i + 1;
+      const match = envvar.exec(line);
+      if (match) {
+        const [, , variable, value] = match;
+        if (!["SECURITY_MODE", "SESSION_ACCESS_FLAGS"].includes(variable)) {
+          lastEnvLine = lineNumber;
+        }
 
-      if (variable === "GDS_FQDN") {
-        isSet = true;
-        if (myCluster.hosts.length > 0 && !myCluster.hosts.includes(value)) {
-          const result = {
-            title: "You Must Specify A Valid Domain Name For This Cluster",
-            level: "failure",
-            problems: [],
-            path: deployment.ordersPath,
-            line: lineNumber,
-          };
-          result.problems.push(
-            `Like one of the following:\n${myCluster.hosts
-              .map((host) => suggest("", line.replace(value, host)))
-              .join("\n")}`
-          );
-          results.push(result);
-        } else if (myCluster.hosts.length === 0) {
-          results.push({
-            title: "This Cluster Does Not Have Any Associated Hostnames",
-            level: "warning",
-            problems: [
-              "It is likely that your service will not be reachable at this address, as there are currently no domains associated with this cluster.",
-            ],
-            path: deployment.ordersPath,
-            line: lineNumber,
-          });
+        if (variable === "GDS_FQDN") {
+          isSet = true;
+          if (myCluster.hosts.length > 0 && !myCluster.hosts.includes(value)) {
+            const result = {
+              title: "You Must Specify A Valid Domain Name For This Cluster",
+              level: "failure",
+              problems: [],
+              path: deployment.ordersPath,
+              line: lineNumber,
+            };
+            result.problems.push(
+              `Like one of the following:\n${myCluster.hosts
+                .map((host) => suggest("", line.replace(value, host)))
+                .join("\n")}`
+            );
+            results.push(result);
+          } else if (myCluster.hosts.length === 0) {
+            results.push({
+              title: "This Cluster Does Not Have Any Associated Hostnames",
+              level: "warning",
+              problems: [
+                "It is likely that your service will not be reachable at this address, as there are currently no domains associated with this cluster.",
+              ],
+              path: deployment.ordersPath,
+              line: lineNumber,
+            });
+          }
         }
       }
-    }
-  });
+    });
 
-  if (!isSet) {
-    const result = {
-      title: "You Must Specify a Preferred Domain Name",
-      level: "failure",
-      problems: [],
-      path: deployment.ordersPath,
-      line: lastEnvLine,
-    };
+    if (!isSet) {
+      const result = {
+        title: "You Must Specify a Preferred Domain Name",
+        level: "failure",
+        problems: [],
+        path: deployment.ordersPath,
+        line: lastEnvLine,
+      };
 
-    if (myCluster.hosts.length === 0) {
-      result.problems.push("(e.g. `streamliner.glgresearch.com`)");
-    } else {
-      result.problems.push(
-        `Like one of the following:\n${myCluster.hosts
-          .map((host) =>
-            suggest(
-              "",
-              `${
-                deployment.ordersContents[result.line - 1] || ""
-              }\n\n# Preferred Fully Qualified Domain Name\nexport GDS_FQDN='${host}'\n`
+      if (myCluster.hosts.length === 0) {
+        result.problems.push("(e.g. `streamliner.glgresearch.com`)");
+      } else {
+        result.problems.push(
+          `Like one of the following:\n${myCluster.hosts
+            .map((host) =>
+              suggest(
+                "",
+                `${
+                  deployment.ordersContents[result.line - 1] || ""
+                }\n\n# Preferred Fully Qualified Domain Name\nexport GDS_FQDN='${host}'\n`
+              )
             )
-          )
-          .join("\n")}`
-      );
+            .join("\n")}`
+        );
+      }
+
+      results.push(result);
     }
 
-    results.push(result);
+    return results;
+  } catch ({ error, statusCode }) {
+    if (statusCode === 401) {
+      return [
+        {
+          title: "401 While Fetching Cluster Map",
+          level: "notice",
+          line: 0,
+          problems: [
+            `CC Screamer received a 401 while fetching the cluster map from ${inputs.clusterMap}`,
+          ],
+          path: deployment.ordersPath,
+        },
+      ];
+    } else {
+      throw new Error(error);
+    }
   }
-
-  return results;
 }
 
 module.exports = fqdnRequired;

@@ -2,7 +2,8 @@ require("../typedefs");
 const log = require("loglevel");
 const { getLineWithinObject, escapeRegExp } = require("../util");
 
-const secretArn = /arn:([\w\*\-]*):secretsmanager:([\w-]*):(\d*):secret:([\w\-\/]*):?([^\s:]*):?([^\s:]*):?(\w*)/;
+const secretArn =
+  /arn:([\w\*\-]*):secretsmanager:([\w-]*):(\d*):secret:([\w\-\/]*):?([^\s:]*):?([^\s:]*):?(\w*)/;
 
 /**
  * Accepts a deployment object, and does some kind of check
@@ -23,6 +24,7 @@ async function secretsExist(deployment, context, inputs, httpGet) {
   }
   if (!inputs.deployinatorURL || !inputs.deployinatorToken) {
     log.info("No Deployinator Config, Skipping");
+    return [];
   }
   log.info(`Secrets Exist - ${deployment.ordersPath}`);
 
@@ -37,13 +39,26 @@ async function secretsExist(deployment, context, inputs, httpGet) {
   const secretsURL = `${inputs.deployinatorURL}/enumerate/secrets`;
   let secretNames;
   try {
-    const allSecrets = await httpGet(secretsURL, httpOpts);
+    const { data: allSecrets } = await httpGet(secretsURL, httpOpts);
     secretNames = allSecrets.map(
       ({ name }) => new RegExp(`^${escapeRegExp(name)}(\\-\\w{6})?`)
     );
-  } catch (e) {
-    log.info("Could not connect to deployinator for secrets validation.");
-    return [];
+  } catch ({ error, statusCode }) {
+    if (statusCode === 401) {
+      return [
+        {
+          title: "401 From Deployinator API",
+          level: "notice",
+          line: 0,
+          problems: [
+            "CC Screamer received a 401 from the Deployinator API. This most likely indicates an expired or invalid app token.",
+          ],
+          path: deployment.ordersPath,
+        },
+      ];
+    } else {
+      throw new Error(error);
+    }
   }
 
   function _secretExists(secretName) {

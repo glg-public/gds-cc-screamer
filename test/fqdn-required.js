@@ -5,7 +5,7 @@ const fqdnRequired = require("../checks/fqdn-required");
 // This makes unit testing much simpler
 async function localGet(path) {
   const content = await fs.readFile(path, "utf8");
-  return JSON.parse(content);
+  return { data: JSON.parse(content) };
 }
 
 const inputs = {

@@ -30,6 +30,7 @@ describe("Secrets Exist", () => {
 
     const results = await secretsExist(deployment, context, inputs);
 
+    console.log(results);
     expect(results.length).to.equal(0);
   });
 
@@ -53,12 +54,13 @@ describe("Secrets Exist", () => {
     };
 
     const localGet = async () => {
-      throw new Error("It didn't work!");
+      throw { error: "It didn't work!", statusCode: 401 };
     };
 
     const results = await secretsExist(deployment, context, inputs, localGet);
 
-    expect(results.length).to.equal(0);
+    expect(results.length).to.equal(1);
+    expect(results[0].level).to.equal("notice");
   });
 
   it("warns if a specified secret does not exist", async () => {
@@ -84,21 +86,23 @@ describe("Secrets Exist", () => {
     };
 
     const localGet = async () => {
-      return [
-        { name: "us-east-1/testsuite/PHRED-test" },
-        { name: "us-east-1/developmentkeys/MARKLAR_DYNAMO_AWS_ACCESS_KEY" },
-        { name: "us-east-1/testsuite/23ff0652-fc09-444b-a14d-d0d989c46cf8" },
-        {
-          name: "us-east-1/testsuite/f1b83d2f-35fb-4268-81db-2e501f0c79bc",
-          description:
-            "f1b83d2f-35fb-4268-81db-2e501f0c79bc is an object like { key }",
-        },
-        {
-          name: "us-east-1/testsuite/97e33653-dad7-41b7-b140-d503445df4e4",
-          description:
-            "97e33653-dad7-41b7-b140-d503445df4e4 is an object like { key }",
-        },
-      ];
+      return {
+        data: [
+          { name: "us-east-1/testsuite/PHRED-test" },
+          { name: "us-east-1/developmentkeys/MARKLAR_DYNAMO_AWS_ACCESS_KEY" },
+          { name: "us-east-1/testsuite/23ff0652-fc09-444b-a14d-d0d989c46cf8" },
+          {
+            name: "us-east-1/testsuite/f1b83d2f-35fb-4268-81db-2e501f0c79bc",
+            description:
+              "f1b83d2f-35fb-4268-81db-2e501f0c79bc is an object like { key }",
+          },
+          {
+            name: "us-east-1/testsuite/97e33653-dad7-41b7-b140-d503445df4e4",
+            description:
+              "97e33653-dad7-41b7-b140-d503445df4e4 is an object like { key }",
+          },
+        ],
+      };
     };
 
     const results = await secretsExist(deployment, context, inputs, localGet);
@@ -138,21 +142,23 @@ describe("Secrets Exist", () => {
     };
 
     const localGet = async () => {
-      return [
-        { name: "us-east-1/testsuite/PHRED-test" },
-        { name: "us-east-1/developmentkeys/MARKLAR_DYNAMO_AWS_ACCESS_KEY" },
-        { name: "us-east-1/testsuite/23ff0652-fc09-444b-a14d-d0d989c46cf8" },
-        {
-          name: "us-east-1/testsuite/f1b83d2f-35fb-4268-81db-2e501f0c79bc",
-          description:
-            "f1b83d2f-35fb-4268-81db-2e501f0c79bc is an object like { key }",
-        },
-        {
-          name: "us-east-1/testsuite/97e33653-dad7-41b7-b140-d503445df4e4",
-          description:
-            "97e33653-dad7-41b7-b140-d503445df4e4 is an object like { key }",
-        },
-      ];
+      return {
+        data: [
+          { name: "us-east-1/testsuite/PHRED-test" },
+          { name: "us-east-1/developmentkeys/MARKLAR_DYNAMO_AWS_ACCESS_KEY" },
+          { name: "us-east-1/testsuite/23ff0652-fc09-444b-a14d-d0d989c46cf8" },
+          {
+            name: "us-east-1/testsuite/f1b83d2f-35fb-4268-81db-2e501f0c79bc",
+            description:
+              "f1b83d2f-35fb-4268-81db-2e501f0c79bc is an object like { key }",
+          },
+          {
+            name: "us-east-1/testsuite/97e33653-dad7-41b7-b140-d503445df4e4",
+            description:
+              "97e33653-dad7-41b7-b140-d503445df4e4 is an object like { key }",
+          },
+        ],
+      };
     };
 
     const results = await secretsExist(deployment, context, inputs, localGet);
@@ -183,24 +189,26 @@ describe("Secrets Exist", () => {
     };
 
     const localGet = async () => {
-      return [
-        { name: "us-east-1/testsuite/PHRED-test" },
-        { name: "us-east-1/developmentkeys/MARKLAR_DYNAMO_AWS_ACCESS_KEY" },
-        { name: "us-east-1/testsuite/23ff0652-fc09-444b-a14d-d0d989c46cf8" },
-        {
-          name: "us-east-1/testsuite/f1b83d2f-35fb-4268-81db-2e501f0c79bc",
-          description:
-            "f1b83d2f-35fb-4268-81db-2e501f0c79bc is an object like { key }",
-        },
-        {
-          name: "us-east-1/devopsonly/GDS_INSTANCES_PRIVATE_KEY",
-        },
-        {
-          name: "us-east-1/testsuite/97e33653-dad7-41b7-b140-d503445df4e4",
-          description:
-            "97e33653-dad7-41b7-b140-d503445df4e4 is an object like { key }",
-        },
-      ];
+      return {
+        data: [
+          { name: "us-east-1/testsuite/PHRED-test" },
+          { name: "us-east-1/developmentkeys/MARKLAR_DYNAMO_AWS_ACCESS_KEY" },
+          { name: "us-east-1/testsuite/23ff0652-fc09-444b-a14d-d0d989c46cf8" },
+          {
+            name: "us-east-1/testsuite/f1b83d2f-35fb-4268-81db-2e501f0c79bc",
+            description:
+              "f1b83d2f-35fb-4268-81db-2e501f0c79bc is an object like { key }",
+          },
+          {
+            name: "us-east-1/devopsonly/GDS_INSTANCES_PRIVATE_KEY",
+          },
+          {
+            name: "us-east-1/testsuite/97e33653-dad7-41b7-b140-d503445df4e4",
+            description:
+              "97e33653-dad7-41b7-b140-d503445df4e4 is an object like { key }",
+          },
+        ],
+      };
     };
 
     const results = await secretsExist(deployment, context, inputs, localGet);

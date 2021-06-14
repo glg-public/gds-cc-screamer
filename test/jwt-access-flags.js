@@ -121,7 +121,7 @@ export SESSION_ACCESS_FLAGS=$(($SESSION_ROLE_GLG_USER | $SESSION_ROLE_GLG_CLIENT
 
       const localGet = async (url, opts) => {
         if (/roles/.test(url)) {
-          return roles;
+          return { data: roles };
         }
       };
 
@@ -145,7 +145,7 @@ export SESSION_ACCESS_FLAGS=$(($SESSION_ROLE_GLG_USER | $SESSION_ROLE_GLG_CLIENT
 
       const localGet = async (url, opts) => {
         if (/roles/.test(url)) {
-          return roles;
+          return { data: roles };
         }
       };
 
@@ -172,7 +172,7 @@ export SESSION_ACCESS_FLAGS=$(($SESSION_ROLE_GLG_USER | $SESSION_ROLE_GLG_CLIENT
 
       const localGet = async (url, opts) => {
         if (/roles/.test(url)) {
-          return roles;
+          return { data: roles };
         }
       };
 
@@ -196,7 +196,7 @@ export SESSION_ACCESS_FLAGS=$(($SESSION_ROLE_GLG_USER | $SESSION_ROLE_GLG_CLIENT
 
       const localGet = async (url, opts) => {
         if (/roles/.test(url)) {
-          return roles;
+          return { data: roles };
         }
       };
 
@@ -225,7 +225,7 @@ export SESSION_ACCESS_FLAGS=$(($SESSION_ROLE_GLG_USER | $SESSION_ROLE_GLG_CLIENT
 
       const localGet = async (url, opts) => {
         if (/roles/.test(url)) {
-          return roles;
+          return { data: roles };
         }
       };
 

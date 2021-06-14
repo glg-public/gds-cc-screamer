@@ -55,9 +55,8 @@ async function jwtAccessFlags(deployment, context, inputs, httpGet) {
       },
     };
     const rolesURL = `${inputs.deployinatorURL}/enumerate/roles`;
-    let roles;
     try {
-      roles = await httpGet(rolesURL, httpOpts);
+      const { data: roles } = await httpGet(rolesURL, httpOpts);
       try {
         const access = getAccess(deployment.ordersContents.join("\n"), roles);
         if (access && securityMode === "public") {
@@ -88,17 +87,22 @@ async function jwtAccessFlags(deployment, context, inputs, httpGet) {
           ],
         });
       }
-    } catch (e) {
-      results.push({
-        title: `Could not fetch roles`,
-        level: "warning",
-        line: 0,
-        path: deployment.ordersPath,
-        problems: [
-          "This most likely implies an incorrectly configured connection to Deployinator",
-        ],
-      });
-      return results;
+    } catch ({ error, statusCode }) {
+      if (statusCode === 401) {
+        return [
+          {
+            title: "401 From Deployinator API",
+            level: "notice",
+            line: 0,
+            problems: [
+              "CC Screamer received a 401 from the Deployinator API. This most likely indicates an expired or invalid app token.",
+            ],
+            path: deployment.ordersPath,
+          },
+        ];
+      } else {
+        throw new Error(error);
+      }
     }
   }
 

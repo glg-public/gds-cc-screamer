@@ -94,18 +94,23 @@ async function validTemplatesJson(deployment, context, inputs, httpGet) {
     const rolesURL = `${inputs.deployinatorURL}/enumerate/roles`;
     let roles;
     try {
-      roles = await httpGet(rolesURL, httpOpts);
-    } catch (e) {
-      results.push({
-        title: `Could not fetch roles`,
-        level: "warning",
-        line: 0,
-        path: deployment.templatesJsonPath,
-        problems: [
-          "This most likely implies an incorrectly configured connection to Deployinator",
-        ],
-      });
-      return results;
+      const { data } = await httpGet(rolesURL, httpOpts);
+      roles = data;
+    } catch ({ error, statusCode }) {
+      if (statusCode === 401) {
+        results.push({
+          title: "401 From Deployinator API",
+          level: "notice",
+          line: 0,
+          path: deployment.templatesJsonPath,
+          problems: [
+            "CC Screamer received a 401 from the Deployinator API. This most likely indicates an expired or invalid app token.",
+          ],
+        });
+        return results;
+      } else {
+        throw new Error(error);
+      }
     }
     let access;
     try {
@@ -143,7 +148,7 @@ async function validTemplatesJson(deployment, context, inputs, httpGet) {
           regex
         );
         try {
-          const frontMatter = await httpGet(frontMatterURL, httpOpts);
+          const { data: frontMatter } = await httpGet(frontMatterURL, httpOpts);
           const expected = getMasks(access, roles).masks;
           const securityMatches = compareSecurity(
             expected,

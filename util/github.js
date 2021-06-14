@@ -311,7 +311,6 @@ async function clearPreviousRunComments(octokit, { owner, repo, pull_number }) {
     await Promise.all(allDeletions);
   } catch (e) {
     console.log(e);
-    throw e;
   }
 }
 
