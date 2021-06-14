@@ -120,11 +120,11 @@ async function fqdnRequired(deployment, context, inputs, httpGet) {
     if (statusCode === 401) {
       return [
         {
-          title: "401 From Deployinator API",
+          title: "401 While Fetching Cluster Map",
           level: "info",
           line: 0,
           problems: [
-            "CC Screamer received a 401 from the Deployinator API. This most likely indicates an expired or invalid app token.",
+            `CC Screamer received a 401 while fetching the cluster map from ${inputs.clusterMap}`,
           ],
           path: deployment.ordersPath,
         },

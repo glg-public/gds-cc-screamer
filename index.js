@@ -87,6 +87,47 @@ async function run() {
       notice: 0,
     };
 
+    if (
+      inputs.deployinatorToken &&
+      inputs.deployinatorURL &&
+      deployments.length > 0
+    ) {
+      try {
+        const { data } = await httpGet(
+          `${inputs.deployinatorURL}/cluster-map.json`,
+          {
+            headers: {
+              authorization: `Bearer ${inputs.deployinatorToken}`,
+            },
+          }
+        );
+      } catch ({ error, statusCode }) {
+        if (statusCode === 401) {
+          delete inputs.deployinatorToken;
+          delete inputs.deployinatorURL;
+          await leaveComment(
+            octokit,
+            deployments[0],
+            {
+              title: "401 From Deployinator API",
+              level: "info",
+              line: 0,
+              path: deployments[0].ordersPath,
+              problems: [
+                "CC Screamer received a 401 from the Deployinator API. This most likely indicates an expired or invalid app token. As a result, certain checks will not run, or will run in a degraded fashion.",
+              ],
+            },
+            {
+              owner,
+              repo,
+              pull_number,
+              sha,
+            }
+          );
+        }
+      }
+    }
+
     // Run every check against each deployment. Each check can have
     // multiple results. Each result can have multiple problems.
     for (const deployment of deployments) {
