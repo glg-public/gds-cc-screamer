@@ -89,6 +89,57 @@ describe("policy.json is valid", () => {
     expect(failures.length).to.equal(0);
   });
 
+  it("accepts valid policy.json #3", async () => {
+    const policyJson = JSON.stringify(
+      {
+        Version: "2012-10-17",
+        Statement: [
+          {
+            Effect: "Allow",
+            Action: [
+              "ecr:GetAuthorizationToken",
+              "ecr:BatchCheckLayerAvailability",
+              "ecr:GetDownloadUrlForLayer",
+              "ecr:BatchGetImage",
+              "logs:CreateLogStream",
+              "logs:PutLogEvents",
+              "secretsmanager:GetSecretValue",
+            ],
+            Resource: [
+              "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret-??????",
+              "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/something_else-??????",
+            ],
+          },
+        ],
+      },
+      null,
+      2
+    );
+    const deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
+      policyJsonPath: "streamliner/policy.json",
+      policyJsonContents: policyJson.split("\n"),
+      secretsJsonContents: [], // indicates presence of a secrets.json
+      secretsJson: [
+        {
+          name: "MY_SECRET",
+          valueFrom:
+            "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret:::",
+        },
+        {
+          name: "MY_OTHER_SECRET",
+          valueFrom:
+            "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/something_else:::",
+        },
+      ],
+    };
+
+    const results = await policyJsonIsValid(deployment);
+    expect(results.length).to.equal(0);
+  });
+
   it("rejects policy.json that is not valid JSON", async () => {
     const deployment = {
       serviceName: "streamliner",
