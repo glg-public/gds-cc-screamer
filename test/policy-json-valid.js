@@ -137,7 +137,6 @@ describe("policy.json is valid", () => {
     };
 
     const results = await policyJsonIsValid(deployment);
-    console.log('results', results);
     expect(results.length).to.equal(0);
   });
 

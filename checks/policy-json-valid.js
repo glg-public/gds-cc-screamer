@@ -27,7 +27,8 @@ const lowerResource = /"resource"/;
 const lowerNotResource = /"(notResource|notresource|Notresource)"/;
 const lowerCondition = /"condition"/;
 const actionString = /(^\*$|^\w+:[\w\*]+$)/;
-const arnRegex = /(arn:(?<partition>[\w\*\-]*):(?<service>[\w\*\-]*):(?<region>[\w\*\-]*):(?<accountId>[\d\*]*):(?<resourceId>[\w\*\-\/\:]*)|^\*$)/;
+const arnRegex =
+  /(arn:(?<partition>[\w\*\-]*):(?<service>[\w\*\-]*):(?<region>[\w\*\-]*):(?<accountId>[\d\*]*):(?<resourceId>[\w\*\-\/\:]*)|^\*$)/;
 
 const warnActions = [/^\*$/, /[\w\*]+:Delete[\w\*]/, /[\w\*]+:\*/];
 
@@ -143,15 +144,16 @@ ${policyDoc}
       const keyRegex = new RegExp(action.replace(/\*/g, "\\w+"));
       return keyRegex.test(secretsAction);
     } else if (Array.isArray(action)) {
+      let isAboutSecrets = false;
       action
         .filter((item) => actionString.test(item))
         .forEach((item) => {
           const keyRegex = new RegExp(item.replace(/\*/g, "\\w+"));
           if (keyRegex.test(secretsAction)) {
-            return true;
+            isAboutSecrets = true;
           }
         });
-      return false;
+      return isAboutSecrets;
     }
   }
 
