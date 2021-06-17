@@ -2,6 +2,10 @@ require("../typedefs");
 const log = require("loglevel");
 
 const exported = /^(export |)(?<variable>\w+)=.+/;
+// we expect these to match the regex, but they should not be flagged
+const EXCLUDED_VARIABLE_NAMES = [
+  'CMD',
+];
 
 /**
  * Checks to make sure all used bash variables are defined within the orders file
@@ -29,6 +33,9 @@ async function noOutOfScopeVars(deployment) {
     let match = exported.exec(line);
     if (match) {
       const { variable } = match.groups;
+      if (EXCLUDED_VARIABLE_NAMES.includes(variable)) {
+        return;
+      }
       exportedVars.add(variable);
     }
 
