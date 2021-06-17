@@ -18,6 +18,13 @@ const reservedVars = new Set([
   "CMD",
   "ECS_SCHEDULED_TASK_CRON",
 ]);
+const allowSecretVars = new Set([
+  'SECRETS_AWS_REGION',
+  'SECRETS_CREDENTIAL_SOURCE',
+  'SECRETS_LOG_LEVEL',
+  'SECRETS_NAMESPACE',
+]);
+
 
 /**
  * Checks orders file for potential secrets
@@ -133,7 +140,7 @@ async function potentialSecrets(deployment) {
       };
       if (/password/i.test(name)) {
         result.title = "Passwords Should Be In Secrets Manager";
-      } else if (/secret/i.test(name)) {
+      } else if (/secret/i.test(name) && !allowSecretVars.has(name)) {
         result.title = "Secrets Should Be In Secrets Manager";
       } else if (!reservedVars.has(name) && !_isAnException(value)) {
         const reason = _isProblem(value);

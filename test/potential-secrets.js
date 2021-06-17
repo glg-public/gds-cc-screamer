@@ -54,6 +54,21 @@ describe("Potential Secrets", () => {
     });
   });
 
+  it('should ignore known variables named "secret" with secret contents', async () => {
+    const deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: [
+        'export SECRETS_AWS_REGION="us-east-1"',
+        'export SECRETS_CREDENTIAL_SOURCE="ims"',
+        'export SECRETS_LOG_LEVEL="error"',
+        'export SECRETS_NAMESPACE="production"',
+      ],
+    };
+
+    expect(await potentialSecrets(deployment)).to.have.lengthOf(0);
+  });
+
   it("warns for environment variables with high entropy", async () => {
     const deployment = {
       serviceName: "streamliner",
