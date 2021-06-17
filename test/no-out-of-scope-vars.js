@@ -26,6 +26,22 @@ describe("No Out Of Scope Variables", () => {
     expect(results.length).to.equal(0);
   });
 
+  it("should ignore variables in `export CMD`", async () => {
+    const deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: [
+        "export SOMETHING=hello",
+        'MORE="You had me at $SOMETHING"',
+        'echo "${MORE}"',
+        `export CMD='["bash", "-c", "source /home/ubuntu/start; $HEADQUARTERS_LOCAL/consultation-outreach-etl-stats-emailer/cadences.sh"]`
+      ]
+    }
+
+    const results = await noOutOfScopeVars(deployment);
+    expect(results.length).to.equal(0);
+  });
+
   it("rejects orders that reference undefined variables.", async () => {
     const deployment = {
       serviceName: "streamliner",
