@@ -38,8 +38,7 @@ describe("No Out Of Scope Variables", () => {
       ]
     }
 
-    const results = await noOutOfScopeVars(deployment);
-    expect(results.length).to.equal(0);
+    expect(await noOutOfScopeVars(deployment)).to.have.lengthOf(0);
   });
 
   it("rejects orders that reference undefined variables.", async () => {
