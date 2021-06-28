@@ -147,10 +147,16 @@ async function validateDeploymentLine(deployment, context, inputs, httpGet) {
           problems.push(
             "CC Screamer received a 401 from the Deployinator API. This most likely indicates an expired or invalid app token."
           );
-          level = "info";
+          level = "notice";
         } else if (statusCode === 404) {
           problems.push(
             `The specified repo \`${deploymentParts.org}/${deploymentParts.repo}\` could not be found.`
+          );
+        } else if (statusCode >= 500) {
+          title = "Internal Server Error";
+          level = "notice";
+          problems.push(
+            "An unknown error was encountered while accessing the Deployinator API. Please manually confirm the existence of the repo and branch you are deploying."
           );
         } else {
           throw new Error(error);
@@ -173,13 +179,20 @@ async function validateDeploymentLine(deployment, context, inputs, httpGet) {
           problems.push(
             "CC Screamer received a 401 from the Deployinator API. This most likely indicates an expired or invalid app token."
           );
-          level = "info";
+          level = "notice";
         } else if (statusCode === 404) {
           problems.push(
             `The specified docker image \`${image}:${tag}\` could not be found.`,
             `[More About Deploying To GDS](https://services.glgresearch.com/know/glg-deployment-system-gds/deploying-a-service/)`
           );
+        } else if (statusCode >= 500) {
+          title = "Internal Server Error";
+          level = "notice";
+          problems.push(
+            "An unknown error was encountered while accessing the Deployinator API. Please manually confirm the existence of the repo and branch you are deploying."
+          );
         } else {
+          log.error(JSON.stringify({ statusCode, error }));
           throw new Error(error);
         }
       }

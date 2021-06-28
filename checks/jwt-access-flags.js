@@ -100,7 +100,19 @@ async function jwtAccessFlags(deployment, context, inputs, httpGet) {
             path: deployment.ordersPath,
           },
         ];
+      } else if (statusCode >= 500) {
+        return [
+          {
+            title: "Internal Server Error",
+            level: "notice",
+            line: lineNumber,
+            problems: [
+              "An unknown error was encountered while accessing the Deployinator API. Please manually confirm that your access flags are valid",
+            ],
+          },
+        ];
       } else {
+        log.error(JSON.stringify({ statusCode, error }));
         throw new Error(error);
       }
     }

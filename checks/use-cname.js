@@ -77,16 +77,32 @@ async function useCNAME(deployment, context, inputs, httpGet) {
         }
       }
     });
-
     return results;
   } catch ({ error, statusCode }) {
     if (statusCode === 401) {
-      title = "401 From Deployinator API";
-      problems.push(
-        "CC Screamer received a 401 from the Deployinator API. This most likely indicates an expired or invalid app token."
-      );
-      level = "info";
+      return [
+        {
+          title: "Internal Server Error",
+          level: "notice",
+          line: lineNumber,
+          problems: [
+            "CC Screamer received a 401 from the Deployinator API. This most likely indicates an expired or invalid app token.",
+          ],
+        },
+      ];
+    } else if (statusCode >= 500) {
+      return [
+        {
+          title: "Internal Server Error",
+          level: "notice",
+          line: lineNumber,
+          problems: [
+            "An unknown error was encountered while accessing the Deployinator API. Please manually confirm that your access flags are valid",
+          ],
+        },
+      ];
     } else {
+      log.error(JSON.stringify({ statusCode, error }));
       throw new Error(error);
     }
   }

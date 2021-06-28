@@ -129,7 +129,19 @@ async function fqdnRequired(deployment, context, inputs, httpGet) {
           path: deployment.ordersPath,
         },
       ];
+    } else if (statusCode >= 500) {
+      return [
+        {
+          title: "Internal Server Error",
+          level: "notice",
+          line: 0,
+          problems: [
+            "An unknown error was encountered while accessing the Deployinator API. Please manually confirm that your preferred domain name is associated with this cluster.",
+          ],
+        },
+      ];
     } else {
+      log.error(JSON.stringify({ statusCode, error }));
       throw new Error(error);
     }
   }
