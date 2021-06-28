@@ -112,6 +112,7 @@ async function jwtAccessFlags(deployment, context, inputs, httpGet) {
           },
         ];
       } else {
+        log.error(JSON.stringify({ statusCode, error }));
         throw new Error(error);
       }
     }

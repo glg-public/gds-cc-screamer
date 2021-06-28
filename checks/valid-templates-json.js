@@ -202,6 +202,9 @@ async function validTemplatesJson(deployment, context, inputs, httpGet) {
                 "An unknown error was encountered while accessing the Deployinator API. Please manually confirm that your access flags are valid",
               ],
             });
+          } else {
+            log.error(JSON.stringify({ statusCode, error }));
+            throw new Error(error);
           }
         }
       })
