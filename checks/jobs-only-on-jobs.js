@@ -50,6 +50,8 @@ async function jobsOnlyOnJobs(deployment, context, inputs, httpGet) {
       },
     ];
   }
+
+  return [];
 }
 
 module.exports = jobsOnlyOnJobs;
