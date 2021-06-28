@@ -171,17 +171,38 @@ async function validTemplatesJson(deployment, context, inputs, httpGet) {
               path: deployment.templatesJsonPath,
             });
           }
-        } catch (e) {
-          results.push({
-            title: `${templateName} could not be found.`,
-            level: "warning",
-            line: lineNumber,
-            path: deployment.templatesJsonPath,
-            problems: [
-              `The specified template \`${templateName}\` could not be found.`,
-              "This can happen for several reasons, including a bad connection to Deployinator.",
-            ],
-          });
+        } catch ({ statusCode, error }) {
+          if (statusCode === 401) {
+            results.push({
+              title: "401 From Deployinator API",
+              level: "notice",
+              line: 0,
+              problems: [
+                "CC Screamer received a 401 from the Deployinator API. This most likely indicates an expired or invalid app token.",
+              ],
+              path: deployment.ordersPath,
+            });
+          } else if (statusCode === 404) {
+            results.push({
+              title: `${templateName} could not be found.`,
+              level: "warning",
+              line: lineNumber,
+              path: deployment.templatesJsonPath,
+              problems: [
+                `The specified template \`${templateName}\` could not be found.`,
+                "This can happen for several reasons, including a bad connection to Deployinator.",
+              ],
+            });
+          } else if (statusCode >= 500) {
+            results.push({
+              title: "Internal Server Error",
+              level: "notice",
+              line: lineNumber,
+              problems: [
+                "An unknown error was encountered while accessing the Deployinator API. Please manually confirm that your access flags are valid",
+              ],
+            });
+          }
         }
       })
     );
