@@ -1,6 +1,6 @@
 require("../typedefs");
 const log = require("loglevel");
-const { isAJob } = require("../util");
+const { isAJob, getClusterType, getExportValue } = require("../util");
 
 /**
  * Validates that the declared security mode matches the cluster type
@@ -60,28 +60,15 @@ async function templateCheck(deployment, context) {
   return results;
 }
 
-function getExportValue(text, varName) {
-  const regex = new RegExp(`^export ${varName}=(.*)`, "mi");
-  const match = regex.exec(text);
-
-  if (!match || match.length < 2 || match[1].length < 1) return null;
-
-  const value = match[1].replace(/['|"]/gm, "");
-  return value && value.length > 0 ? value : null;
-}
-
 function getExpectedModes(context) {
-  const repo = context.payload.pull_request.base.repo.name;
-  const splitName = repo.split(".");
-  const identifier = splitName[splitName.length - 1].charAt(0);
-
+  const clusterType = getClusterType(context);
   const modes = {
-    i: ["public"], // this is for internal-only clusters
-    s: ["jwt", "verifiedSession", "htpasswd"], // this is for secured clusters
-    p: ["public"], // this is for
+    internal: ["public"], // this is for internal-only clusters
+    secure: ["jwt", "verifiedSession", "htpasswd"], // this is for secured clusters
+    public: ["public"], // this is for public, unsecured clusters
   };
 
-  return modes[identifier] || [];
+  return modes[clusterType] || [];
 }
 
 module.exports = templateCheck;
