@@ -24,6 +24,7 @@ const potentialSecrets = require("./potential-secrets");
 const secretsExist = require("./secrets-exist");
 const validateCron = require("./validate-cron");
 const ecsScheduledTaskCount = require("./ecs-scheduled-task-count");
+const jobsOnlyOnJobs = require("./jobs-only-on-jobs");
 
 /**
  * Exports an array of async functions
@@ -55,6 +56,7 @@ module.exports = {
   secretsExist,
   validateCron,
   ecsScheduledTaskCount,
+  jobsOnlyOnJobs,
 
   // Also export as an array for use by checksuite
   all: [
@@ -83,6 +85,7 @@ module.exports = {
     potentialSecrets,
     secretsExist,
     ecsScheduledTaskCount,
+    jobsOnlyOnJobs,
 
     /**
      *  This should probably always be last, because it verifies that the
