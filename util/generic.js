@@ -135,6 +135,18 @@ function generateSecretsPolicy(secretsJson) {
   return policyDoc;
 }
 
+function getClusterType(context) {
+  const repo = context.payload.pull_request.base.repo.name;
+  const splitName = repo.split(".");
+  const identifier = splitName[splitName.length - 1].charAt(0);
+  return {
+    i: "internal",
+    s: "secure",
+    p: "public",
+    j: "jobs",
+  }[identifier];
+}
+
 function getSecretsFromOrders(ordersLines, secretsPrefix) {
   const secretsUse = /^(export +|)(\w+)=\$\(\s*secrets\s*(\w*)\s*\)$/;
   const fromJsonUse =
@@ -395,4 +407,5 @@ module.exports = {
   getMaskComponents,
   getRoleByClaim,
   getAccess,
+  getClusterType,
 };

@@ -34,6 +34,7 @@ const {
   getAccess,
   getMaskComponents,
   getRoleByClaim,
+  getClusterType,
 } = require("./generic");
 
 module.exports = {
@@ -66,4 +67,5 @@ module.exports = {
   getAccess,
   getMaskComponents,
   getRoleByClaim,
+  getClusterType,
 };
