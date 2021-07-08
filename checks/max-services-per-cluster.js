@@ -2,6 +2,7 @@ require("../typedefs");
 const log = require("loglevel");
 const path = require("path");
 const fs = require("fs").promises;
+const { getClusterType } = require("../util");
 
 /**
  * Accepts a deployment object, and does some kind of check
@@ -12,13 +13,15 @@ const fs = require("fs").promises;
  * @returns {Array<Result>}
  */
 async function maxServicesPerCluster(deployment, context, inputs) {
+  const clusterType = getClusterType(context);
+  if (clusterType === "jobs") {
+    log.info(`Jobs Cluster - Skipping Check: Max Services Per Cluster`);
+    return [];
+  }
   log.info(`Max Services Per Cluster - ${deployment.serviceName}`);
 
-  const {
-    numServicesWarnThreshold,
-    numServicesFailThreshold,
-    clusterRoot,
-  } = inputs;
+  const { numServicesWarnThreshold, numServicesFailThreshold, clusterRoot } =
+    inputs;
 
   const numDeployments = await getNumDeployments(clusterRoot);
 
