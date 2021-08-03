@@ -107,7 +107,10 @@ async function secretsExist(deployment, context, inputs, httpGet) {
           level: "warning",
           line,
           path: deployment.secretsJsonPath,
-          problems: [`The following secret could not be found: \`${value}\``],
+          problems: [
+            `The following secret could not be found: \`${value}\``,
+            `Sometimes this happens because of a stale cache. You can try [refreshing the cache](${secretsURL}?bust=true), and then re-running this check suite.`,
+          ],
         });
       }
     }

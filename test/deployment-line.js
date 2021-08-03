@@ -236,7 +236,7 @@ describe("Deployment Line Check", () => {
       localGet
     );
 
-    expect(results[0].problems.length).to.equal(1);
+    expect(results[0].problems.length).to.equal(2);
     expect(/not.*?found/i.test(results[0].problems[0])).to.be.true;
     expect(results[0].level).to.equal("failure");
   });
@@ -264,7 +264,7 @@ describe("Deployment Line Check", () => {
       localGet
     );
 
-    expect(results[0].problems.length).to.equal(1);
+    expect(results[0].problems.length).to.equal(2);
     expect(/branch/i.test(results[0].problems[0])).to.be.true;
     expect(results[0].level).to.equal("failure");
   });
@@ -292,7 +292,7 @@ describe("Deployment Line Check", () => {
       localGet
     );
 
-    expect(results[0].problems.length).to.equal(2);
+    expect(results[0].problems.length).to.equal(3);
     expect(/not.*?found/i.test(results[0].problems[0])).to.be.true;
     expect(results[0].level).to.equal("failure");
   });
@@ -320,7 +320,7 @@ describe("Deployment Line Check", () => {
       localGet
     );
 
-    expect(results[0].problems.length).to.equal(2);
+    expect(results[0].problems.length).to.equal(3);
     expect(/tag/i.test(results[0].problems[0])).to.be.true;
     expect(results[0].level).to.equal("failure");
   });
