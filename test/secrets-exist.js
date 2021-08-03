@@ -115,6 +115,7 @@ describe("Secrets Exist", () => {
       path: "streamliner/secrets.json",
       problems: [
         "The following secret could not be found: `prod/deployanator/github_token`",
+        `Sometimes this happens because of a stale cache. You can try [refreshing the cache](${inputs.deployinatorURL}/enumerate/secrets?bust=true), and then re-running this check suite.`,
       ],
     });
   });

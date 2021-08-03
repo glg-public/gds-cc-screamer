@@ -133,12 +133,13 @@ async function validateDeploymentLine(deployment, context, inputs, httpGet) {
     const { org: owner, repo, branch, tag } = deploymentParts;
 
     if (deploymentType === "autodeploy") {
+      const url = `${inputs.deployinatorURL}/enumerate/branches?owner=${owner}&repo=${repo}`;
       try {
-        const url = `${inputs.deployinatorURL}/enumerate/branches?owner=${owner}&repo=${repo}`;
         const { data: branches } = await httpGet(url, httpOpts);
         if (!branches.includes(branch)) {
           problems.push(
-            `The specified repo \`${owner}/${repo}\` does not have a branch named \`${branch}\``
+            `The specified repo \`${owner}/${repo}\` does not have a branch named \`${branch}\``,
+            `Sometimes this happens because of a stale cache. You can try [refreshing the cache](${url}&bust=true), and then re-running this check suite.`
           );
         }
       } catch ({ error, statusCode }) {
@@ -150,7 +151,8 @@ async function validateDeploymentLine(deployment, context, inputs, httpGet) {
           level = "notice";
         } else if (statusCode === 404) {
           problems.push(
-            `The specified repo \`${deploymentParts.org}/${deploymentParts.repo}\` could not be found.`
+            `The specified repo \`${deploymentParts.org}/${deploymentParts.repo}\` could not be found.`,
+            `Sometimes this happens because of a stale cache. You can try [refreshing the cache](${url}&bust=true), and then re-running this check suite.`
           );
         } else if (statusCode >= 500) {
           title = "Internal Server Error";
@@ -164,12 +166,13 @@ async function validateDeploymentLine(deployment, context, inputs, httpGet) {
       }
     } else {
       const image = `github/${owner}/${repo}/${branch}`;
+      const url = `${inputs.deployinatorURL}/enumerate/ecr/tags?image=${image}`;
       try {
-        const url = `${inputs.deployinatorURL}/enumerate/ecr/tags?image=${image}`;
         const { data: tags } = await httpGet(url, httpOpts);
         if (!tags.includes(tag)) {
           problems.push(
             `The docker image \`${image}\` does not have a tag named \`${tag}\``,
+            `Sometimes this happens because of a stale cache. You can try [refreshing the cache](${url}&bust=true), and then re-running this check suite.`,
             `[More About Deploying To GDS](https://services.glgresearch.com/know/glg-deployment-system-gds/deploying-a-service/)`
           );
         }
@@ -183,6 +186,7 @@ async function validateDeploymentLine(deployment, context, inputs, httpGet) {
         } else if (statusCode === 404) {
           problems.push(
             `The specified docker image \`${image}:${tag}\` could not be found.`,
+            `Sometimes this happens because of a stale cache. You can try [refreshing the cache](${url}&bust=true), and then re-running this check suite.`,
             `[More About Deploying To GDS](https://services.glgresearch.com/know/glg-deployment-system-gds/deploying-a-service/)`
           );
         } else if (statusCode >= 500) {
