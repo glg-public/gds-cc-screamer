@@ -400,7 +400,7 @@ ${policyDoc}
     results.push(result);
   }
 
-  if (results.length === 0) {
+  if (results.filter((result) => result.level === "failure").length === 0) {
     deployment.policyJson = document;
   }
 
