@@ -291,6 +291,7 @@
  * clusterRoot: string
  * deployinatorToken: string
  * deployinatorURL: URI
+ * restrictedBuckets: string
  * }} ActionInputs
  */
 

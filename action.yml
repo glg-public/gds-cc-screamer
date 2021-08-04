@@ -45,6 +45,10 @@ inputs:
     description: A fully qualified url for an instance of Deployinator
     required: false
     default: ""
+  restricted_buckets:
+    description: A comma separated list of s3 buckets/prefixes that should not be accessed. e.g "nope/*,wrong/prefex"
+    required: false
+    default: ""
 runs:
   using: "node12"
   main: "index.js"

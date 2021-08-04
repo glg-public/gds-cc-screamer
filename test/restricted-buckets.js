@@ -1,7 +1,7 @@
 const { expect } = require("chai");
 const restrictedBuckets = require("../checks/restricted-buckets");
 
-describe.only("Restricted Buckets", () => {
+describe("Restricted Buckets", () => {
   it("skips if there is no policy.json or an invalid policy.json", async () => {
     const deployment = {
       serviceName: "bucker-abuser",
@@ -30,7 +30,7 @@ describe.only("Restricted Buckets", () => {
     const deployment = {
       serviceName: "bucker-abuser",
       policyJson,
-      policyJsonContents: JSON.stringify(policyJson, null, 2),
+      policyJsonContents: JSON.stringify(policyJson, null, 2).split("\n"),
       policyJsonPath: "bucket-abuser/policy.json",
     };
 
@@ -57,7 +57,7 @@ describe.only("Restricted Buckets", () => {
     const deployment = {
       serviceName: "bucker-abuser",
       policyJson,
-      policyJsonContents: JSON.stringify(policyJson, null, 2),
+      policyJsonContents: JSON.stringify(policyJson, null, 2).split("\n"),
       policyJsonPath: "bucket-abuser/policy.json",
     };
 
@@ -93,7 +93,7 @@ describe.only("Restricted Buckets", () => {
     const deployment = {
       serviceName: "bucker-abuser",
       policyJson,
-      policyJsonContents: JSON.stringify(policyJson, null, 2),
+      policyJsonContents: JSON.stringify(policyJson, null, 2).split("\n"),
       policyJsonPath: "bucket-abuser/policy.json",
     };
 
@@ -125,7 +125,7 @@ describe.only("Restricted Buckets", () => {
     const deployment = {
       serviceName: "bucker-abuser",
       policyJson,
-      policyJsonContents: JSON.stringify(policyJson, null, 2),
+      policyJsonContents: JSON.stringify(policyJson, null, 2).split("\n"),
       policyJsonPath: "bucket-abuser/policy.json",
     };
 
