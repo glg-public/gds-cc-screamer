@@ -400,6 +400,10 @@ ${policyDoc}
     results.push(result);
   }
 
+  if (results.length === 0) {
+    deployment.policyJson = document;
+  }
+
   return results;
 }
 

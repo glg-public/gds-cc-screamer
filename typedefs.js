@@ -252,6 +252,7 @@
  * secretsJson: (Array<Object>|undefined),
  * secretsJsonPath: (string|undefined),
  * secretsJsonContents: (Array<string>|undefined),
+ * policyJson: (Object|undefined),
  * policyJsonPath: (string|undefined),
  * policyJsonContents: (Array<string>|undefined)
  * templatesJson: (Object | undefined)
