@@ -25,6 +25,7 @@ const secretsExist = require("./secrets-exist");
 const validateCron = require("./validate-cron");
 const ecsScheduledTaskCount = require("./ecs-scheduled-task-count");
 const jobsOnlyOnJobs = require("./jobs-only-on-jobs");
+const restrictedBuckets = require("./restricted-buckets");
 
 /**
  * Exports an array of async functions
@@ -57,6 +58,7 @@ module.exports = {
   validateCron,
   ecsScheduledTaskCount,
   jobsOnlyOnJobs,
+  restrictedBuckets,
 
   // Also export as an array for use by checksuite
   all: [
@@ -88,9 +90,14 @@ module.exports = {
     jobsOnlyOnJobs,
 
     /**
-     *  This should probably always be last, because it verifies that the
+     *  This should always be after checks for orders and secrets.json, because it verifies that the
      *  policy includes permissions that are implied by orders and secrets.json
      * */
     policyJsonValid,
+
+    /**
+     * These checks should be after policyJsonValid, because they depend on a valid policy.json
+     */
+    restrictedBuckets,
   ],
 };

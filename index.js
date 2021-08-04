@@ -29,6 +29,7 @@ function getInputs() {
   const clusterRoot = path.resolve(core.getInput("cluster_root"));
   const deployinatorToken = core.getInput("deployinator_token");
   const deployinatorURL = core.getInput("deployinator_url");
+  const restrictedBuckets = core.getInput("restricted_buckets");
 
   /** @type {ActionInputs} */
   return {
@@ -42,6 +43,7 @@ function getInputs() {
     clusterRoot,
     deployinatorURL,
     deployinatorToken,
+    restrictedBuckets,
   };
 }
 
