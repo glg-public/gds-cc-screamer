@@ -1,7 +1,7 @@
 const { expect } = require("chai");
 const potentialSecrets = require("../checks/potential-secrets");
 
-describe("Potential Secrets", () => {
+describe.only("Potential Secrets", () => {
   it("skips if no orderes", async () => {
     const deployment = {
       serviceName: "streamliner",
@@ -112,6 +112,8 @@ describe("Potential Secrets", () => {
         "export GDS_FQDN='screamer-test.glgresearch.com'",
         "dockerdeploy github/glg/echo/gds:latest",
         "export A='somecrap'",
+        'export AWS_INFRASTRUCTURE_REPO="git@github.com:glg/aws-infrastructure.git"',
+        "export REDIS_EXPERT_CACHE_URI='redis://fkfkf-sdfasdf-cache.jtxypa.0001.use1.cache.amazonaws.com'",
       ],
     };
 

@@ -10,6 +10,7 @@ const jobdeploy =
 const autodeploy =
   /^autodeploy git@github.com:(?<org>[\w-]+)\/(?<repo>.+?)(.git|)#(?<branch>.+)/;
 const bashVar = /\$\{?(?<variable>\w+)\}?/;
+const gitURL = /git@github\.com:\w+\/[\w\d\-]+/;
 const reservedVars = new Set([
   "GDS_FQDN",
   "SESSION_ACCESS_FLAGS",
@@ -19,12 +20,11 @@ const reservedVars = new Set([
   "ECS_SCHEDULED_TASK_CRON",
 ]);
 const allowSecretVars = new Set([
-  'SECRETS_AWS_REGION',
-  'SECRETS_CREDENTIAL_SOURCE',
-  'SECRETS_LOG_LEVEL',
-  'SECRETS_NAMESPACE',
+  "SECRETS_AWS_REGION",
+  "SECRETS_CREDENTIAL_SOURCE",
+  "SECRETS_LOG_LEVEL",
+  "SECRETS_NAMESPACE",
 ]);
-
 
 /**
  * Checks orders file for potential secrets
@@ -66,20 +66,23 @@ async function potentialSecrets(deployment) {
 
   function _isAnException(str) {
     str = str.trim();
-    const regex = [dockerdeploy, jobdeploy, autodeploy, bashVar];
+    const regex = [dockerdeploy, jobdeploy, autodeploy, bashVar, gitURL];
 
     const validators = [
-      "isEmail",
-      "isFQDN",
-      "isIMEI",
-      "isISBN",
-      "isISO8601",
-      "isMACAddress",
-      "isRFC3339",
-      "isURL",
-      "isJSON",
-      "isMD5",
-      "isHash",
+      { test: "isEmail" },
+      { test: "isFQDN" },
+      { test: "isIMEI" },
+      { test: "isISBN" },
+      { test: "isISO8601" },
+      { test: "isMACAddress" },
+      { test: "isRFC3339" },
+      {
+        test: "isURL",
+        options: { protocols: ["http", "https", "ftp", "redis"] },
+      },
+      { test: "isJSON" },
+      { test: "isMD5" },
+      { test: "isHash" },
     ];
 
     for (const test of regex) {
@@ -88,8 +91,8 @@ async function potentialSecrets(deployment) {
       }
     }
 
-    for (const test of validators) {
-      if (validator[test](str)) {
+    for (const { test, options } of validators) {
+      if (validator[test](str, options)) {
         return true;
       }
     }
