@@ -19,6 +19,10 @@ async function useCNAME(deployment, context, inputs, httpGet) {
     log.info(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
+  if (!inputs.deployinatorURL || !inputs.deployinatorToken) {
+    log.info("No Deployinator Config, Skipping");
+    return [];
+  }
   log.info(`Use CNAME instead of cluster DNS - ${deployment.ordersPath}`);
   /** @type {Array<Result>} */
   const results = [];
@@ -28,7 +32,13 @@ async function useCNAME(deployment, context, inputs, httpGet) {
   const repoCluster = splitName.pop();
 
   try {
-    const { data: clusterMap } = await httpGet(inputs.clusterMap);
+    const httpOpts = {
+      headers: {
+        Authorization: `Bearer ${inputs.deployinatorToken}`,
+      },
+    };
+    const clusterMapURL = `${inputs.deployinatorURL}/cluster-map.json?bust=true`;
+    const { data: clusterMap } = await httpGet(clusterMapURL, httpOpts);
 
     let myCluster = { hosts: [] };
     if (clusterMap[repoCluster]) {
