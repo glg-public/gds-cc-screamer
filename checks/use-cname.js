@@ -37,7 +37,7 @@ async function useCNAME(deployment, context, inputs, httpGet) {
         Authorization: `Bearer ${inputs.deployinatorToken}`,
       },
     };
-    const clusterMapURL = `${inputs.deployinatorURL}/cluster-map.json`;
+    const clusterMapURL = `${inputs.deployinatorURL}/cluster-map.json?bust=true`;
     const { data: clusterMap } = await httpGet(clusterMapURL, httpOpts);
 
     let myCluster = { hosts: [] };

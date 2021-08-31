@@ -10,10 +10,9 @@ const inputs = {
 };
 
 // This makes unit testing much simpler
-async function localGet(url) {
-  const file = url.split(`${inputs.deployinatorURL}/`)[1];
+async function localGet() {
   const content = await fs.readFile(
-    path.join(process.cwd(), "test", "fixtures", file),
+    path.join(process.cwd(), "test", "fixtures", "cluster-map.json"),
     "utf8"
   );
   return { data: JSON.parse(content) };
