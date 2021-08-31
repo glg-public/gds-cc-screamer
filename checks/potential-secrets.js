@@ -11,6 +11,7 @@ const autodeploy =
   /^autodeploy git@github.com:(?<org>[\w-]+)\/(?<repo>.+?)(.git|)#(?<branch>.+)/;
 const bashVar = /\$\{?(?<variable>\w+)\}?/;
 const gitURL = /git@github\.com:\w+\/[\w\d\-]+/;
+const isPlainNumber = /^[\d\.]+$/;
 const reservedVars = new Set([
   "GDS_FQDN",
   "SESSION_ACCESS_FLAGS",
@@ -66,7 +67,14 @@ async function potentialSecrets(deployment) {
 
   function _isAnException(str) {
     str = str.trim();
-    const regex = [dockerdeploy, jobdeploy, autodeploy, bashVar, gitURL];
+    const regex = [
+      dockerdeploy,
+      jobdeploy,
+      autodeploy,
+      bashVar,
+      gitURL,
+      isPlainNumber,
+    ];
 
     const validators = [
       { test: "isEmail" },

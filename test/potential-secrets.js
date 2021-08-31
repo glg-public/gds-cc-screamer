@@ -114,6 +114,7 @@ describe.only("Potential Secrets", () => {
         "export A='somecrap'",
         'export AWS_INFRASTRUCTURE_REPO="git@github.com:glg/aws-infrastructure.git"',
         "export REDIS_EXPERT_CACHE_URI='redis://fkfkf-sdfasdf-cache.jtxypa.0001.use1.cache.amazonaws.com'",
+        "export SUCCESS_THRESHOLD=0.85",
       ],
     };
 
