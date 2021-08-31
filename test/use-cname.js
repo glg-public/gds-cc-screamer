@@ -2,16 +2,22 @@ const { expect } = require("chai");
 const fs = require("fs").promises;
 const useCNAME = require("../checks/use-cname");
 const { suggest } = require("../util");
-
-// This makes unit testing much simpler
-async function localGet(path) {
-  const content = await fs.readFile(path, "utf8");
-  return { data: JSON.parse(content) };
-}
+const path = require("path");
 
 const inputs = {
-  clusterMap: "test/fixtures/cluster-map.json",
+  deployinatorURL: "https://deployinator.com",
+  deployinatorToken: "abcdefg",
 };
+
+// This makes unit testing much simpler
+async function localGet(url) {
+  const file = url.split(`${inputs.deployinatorURL}/`)[1];
+  const content = await fs.readFile(
+    path.join(process.cwd(), "test", "fixtures", file),
+    "utf8"
+  );
+  return { data: JSON.parse(content) };
+}
 
 describe("Use CNAME instead of cluster dns", () => {
   it("skips if there is no orders file", async () => {
@@ -47,7 +53,9 @@ describe("Use CNAME instead of cluster dns", () => {
     const results = await useCNAME(deployment, context, inputs, localGet);
     expect(results.length).to.equal(1);
 
-    const { data: clusterMap } = await localGet(inputs.clusterMap);
+    const { data: clusterMap } = await localGet(
+      `${inputs.deployinatorURL}/cluster-map.json`
+    );
 
     const problem =
       "Rather than using the cluster dns (`s99.glgresearch.com`), consider using a friendly CNAME like one of the following:\n" +
