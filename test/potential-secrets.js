@@ -1,7 +1,7 @@
 const { expect } = require("chai");
 const potentialSecrets = require("../checks/potential-secrets");
 
-describe.only("Potential Secrets", () => {
+describe("Potential Secrets", () => {
   it("skips if no orderes", async () => {
     const deployment = {
       serviceName: "streamliner",
