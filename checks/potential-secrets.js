@@ -25,6 +25,7 @@ const allowSecretVars = new Set([
   "SECRETS_CREDENTIAL_SOURCE",
   "SECRETS_LOG_LEVEL",
   "SECRETS_NAMESPACE",
+  "BLOCKED_SECRET_NAMESPACES",
 ]);
 
 /**
