@@ -26,6 +26,7 @@ const validateCron = require("./validate-cron");
 const ecsScheduledTaskCount = require("./ecs-scheduled-task-count");
 const jobsOnlyOnJobs = require("./jobs-only-on-jobs");
 const restrictedBuckets = require("./restricted-buckets");
+const doubleQuotes = require("./double-quotes");
 
 /**
  * Exports an array of async functions
@@ -59,6 +60,7 @@ module.exports = {
   ecsScheduledTaskCount,
   jobsOnlyOnJobs,
   restrictedBuckets,
+  doubleQuotes,
 
   // Also export as an array for use by checksuite
   all: [
@@ -88,6 +90,7 @@ module.exports = {
     secretsExist,
     ecsScheduledTaskCount,
     jobsOnlyOnJobs,
+    doubleQuotes,
 
     /**
      *  This should always be after checks for orders and secrets.json, because it verifies that the
