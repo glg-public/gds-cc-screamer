@@ -30,6 +30,7 @@ function getInputs() {
   const deployinatorToken = core.getInput("deployinator_token");
   const deployinatorURL = core.getInput("deployinator_url");
   const restrictedBuckets = core.getInput("restricted_buckets");
+  const skipChecks = new Set(core.getInput("skip_checks").split(","));
 
   /** @type {ActionInputs} */
   return {
@@ -44,6 +45,7 @@ function getInputs() {
     deployinatorURL,
     deployinatorToken,
     restrictedBuckets,
+    skipChecks,
   };
 }
 
@@ -134,6 +136,10 @@ async function run() {
     // multiple results. Each result can have multiple problems.
     for (const deployment of deployments) {
       for (const checkName of Object.keys(checks)) {
+        if (inputs.skipChecks.has(checkName)) {
+          log.info(`Skipping ${checkName}`);
+          continue;
+        }
         const check = checks[checkName];
         let results = [];
         try {

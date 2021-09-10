@@ -49,6 +49,10 @@ inputs:
     description: A comma separated list of s3 buckets/prefixes that should not be accessed. e.g "nope/*,wrong/prefex"
     required: false
     default: ""
+  skip_checks:
+    description: A comma separated list of checks to skip
+    required: false
+    default: ""
 runs:
   using: "node12"
   main: "index.js"
