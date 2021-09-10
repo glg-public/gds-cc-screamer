@@ -1,7 +1,7 @@
 require("./typedefs");
 const core = require("@actions/core");
 const github = require("@actions/github");
-const checks = require("./checks").all;
+const checks = require("./checks");
 const path = require("path");
 const log = require("loglevel");
 const {
@@ -133,7 +133,8 @@ async function run() {
     // Run every check against each deployment. Each check can have
     // multiple results. Each result can have multiple problems.
     for (const deployment of deployments) {
-      for (const check of checks) {
+      for (const checkName of Object.keys(checks)) {
+        const check = checks[checkName];
         let results = [];
         try {
           results = await check(deployment, github.context, inputs, httpGet);
