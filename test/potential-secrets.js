@@ -115,6 +115,7 @@ describe("Potential Secrets", () => {
         'export AWS_INFRASTRUCTURE_REPO="git@github.com:glg/aws-infrastructure.git"',
         "export REDIS_EXPERT_CACHE_URI='redis://fkfkf-sdfasdf-cache.jtxypa.0001.use1.cache.amazonaws.com'",
         "export SUCCESS_THRESHOLD=0.85",
+        "export REPORT_GP_SYNC_ERROR_RECIPIENTS='name1@domain.com,name2@domain.com,name3@domain.com,name4@domain.com'",
       ],
     };
 
