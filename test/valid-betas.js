@@ -8,7 +8,7 @@ const inputs = {
   clusterRoot: path.join(fixturesDir, "cc6"),
 };
 
-describe.only("validBetas", () => {
+describe("validBetas", () => {
   it("accepts a valid PATH_OF_NON_BETA_VERSION", async () => {
     const deployment = {
       serviceName: "service",
