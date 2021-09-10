@@ -28,6 +28,21 @@ const allowSecretVars = new Set([
   "BLOCKED_SECRET_NAMESPACES",
 ]);
 
+const isAnEmailList = {
+  test: (txt) => {
+    const list = txt.split(",");
+    if (list.length === 1) {
+      return false;
+    }
+    for (let item of list) {
+      if (!validator.isEmail(item)) {
+        return false;
+      }
+    }
+    return true;
+  },
+};
+
 /**
  * Checks orders file for potential secrets
  * @param {Deployment} deployment An object containing information about a deployment
@@ -75,6 +90,7 @@ async function potentialSecrets(deployment) {
       bashVar,
       gitURL,
       isPlainNumber,
+      isAnEmailList,
     ];
 
     const validators = [
