@@ -1,7 +1,7 @@
 require("./typedefs");
 const core = require("@actions/core");
 const github = require("@actions/github");
-const checks = require("./checks").all;
+const checks = require("./checks");
 const path = require("path");
 const log = require("loglevel");
 const {
@@ -30,6 +30,7 @@ function getInputs() {
   const deployinatorToken = core.getInput("deployinator_token");
   const deployinatorURL = core.getInput("deployinator_url");
   const restrictedBuckets = core.getInput("restricted_buckets");
+  const skipChecks = new Set(core.getInput("skip_checks").split(","));
 
   /** @type {ActionInputs} */
   return {
@@ -44,6 +45,7 @@ function getInputs() {
     deployinatorURL,
     deployinatorToken,
     restrictedBuckets,
+    skipChecks,
   };
 }
 
@@ -133,7 +135,12 @@ async function run() {
     // Run every check against each deployment. Each check can have
     // multiple results. Each result can have multiple problems.
     for (const deployment of deployments) {
-      for (const check of checks) {
+      for (const checkName of Object.keys(checks)) {
+        if (inputs.skipChecks.has(checkName)) {
+          log.info(`Skipping ${checkName}`);
+          continue;
+        }
+        const check = checks[checkName];
         let results = [];
         try {
           results = await check(deployment, github.context, inputs, httpGet);

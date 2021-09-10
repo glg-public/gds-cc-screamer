@@ -292,6 +292,7 @@
  * deployinatorToken: string
  * deployinatorURL: URI
  * restrictedBuckets: string
+ * skipChecks: Set<string>
  * }} ActionInputs
  */
 

@@ -49,58 +49,25 @@ module.exports = {
   noAWSSecrets,
   noOutOfScopeVars,
   useCNAME,
-  policyJsonValid,
   noReservedVars,
   maxServicesPerCluster,
+  validateCron,
   fqdnRequired,
   validTemplatesJson,
   potentialSecrets,
   secretsExist,
-  validateCron,
   ecsScheduledTaskCount,
   jobsOnlyOnJobs,
-  restrictedBuckets,
   doubleQuotes,
 
-  // Also export as an array for use by checksuite
-  all: [
-    serviceName,
-    deploymentLine,
-    healthcheck,
-    validBashSubsitution,
-    httpsOnly,
-    noDuplicateExports,
-    securityMode,
-    noSourcing,
-    accessFlags,
-    noSpacesInExports,
-    noDebugInProd,
-    secretsJsonValid,
-    secretsInOrders,
-    noCarriageReturn,
-    noAWSSecrets,
-    noOutOfScopeVars,
-    useCNAME,
-    noReservedVars,
-    maxServicesPerCluster,
-    validateCron,
-    fqdnRequired,
-    validTemplatesJson,
-    potentialSecrets,
-    secretsExist,
-    ecsScheduledTaskCount,
-    jobsOnlyOnJobs,
-    doubleQuotes,
+  /**
+   *  This should always be after checks for orders and secrets.json, because it verifies that the
+   *  policy includes permissions that are implied by orders and secrets.json
+   * */
+  policyJsonValid,
 
-    /**
-     *  This should always be after checks for orders and secrets.json, because it verifies that the
-     *  policy includes permissions that are implied by orders and secrets.json
-     * */
-    policyJsonValid,
-
-    /**
-     * These checks should be after policyJsonValid, because they depend on a valid policy.json
-     */
-    restrictedBuckets,
-  ],
+  /**
+   * These checks should be after policyJsonValid, because they depend on a valid policy.json
+   */
+  restrictedBuckets,
 };

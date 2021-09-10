@@ -32,6 +32,38 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
+## Checks
+
+### serviceName
+### deploymentLine
+### healthcheck
+### validBashSubsitution
+### httpsOnly
+### noDuplicateExports
+### securityMode
+### noSourcing
+### accessFlags
+### noSpacesInExports
+### noDebugInProd
+### secretsJsonValid
+### secretsInOrders
+### noCarriageReturn
+### noAWSSecrets
+### noOutOfScopeVars
+### useCNAME
+### noReservedVars
+### maxServicesPerCluster
+### validateCron
+### fqdnRequired
+### validTemplatesJson
+### potentialSecrets
+### secretsExist
+### ecsScheduledTaskCount
+### jobsOnlyOnJobs
+### doubleQuotes
+### policyJsonValid
+### restrictedBuckets
+
 ## Adding Checks
 
 - Create a new file in `./checks/`. It should export an `async function` that accepts a `Deployment` object and returns an array of `Result` objects. You can start by copying the template check in `./checks/template.js`.
