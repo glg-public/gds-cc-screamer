@@ -63,6 +63,7 @@ jobs:
 ### doubleQuotes
 ### policyJsonValid
 ### restrictedBuckets
+### validBetas
 
 ## Adding Checks
 

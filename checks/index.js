@@ -27,9 +27,10 @@ const ecsScheduledTaskCount = require("./ecs-scheduled-task-count");
 const jobsOnlyOnJobs = require("./jobs-only-on-jobs");
 const restrictedBuckets = require("./restricted-buckets");
 const doubleQuotes = require("./double-quotes");
+const validBetas = require("./valid-betas");
 
 /**
- * Exports an array of async functions
+ * Exports all checks in an appropriate order
  */
 module.exports = {
   serviceName,
@@ -59,6 +60,7 @@ module.exports = {
   ecsScheduledTaskCount,
   jobsOnlyOnJobs,
   doubleQuotes,
+  validBetas,
 
   /**
    *  This should always be after checks for orders and secrets.json, because it verifies that the
