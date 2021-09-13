@@ -35,7 +35,27 @@ jobs:
 ## Checks
 
 ### serviceName
+
+- Service name must be <= 28 characters
+- Service name must lowercase alphanumeric characters and hyphens
+- Service name must start with a letter
+- Service name cannot include `--`
+
 ### deploymentLine
+
+- orders file must contain a deployment line
+- `dockerdeploy`
+  - should look like `github/<org>/<repo>/<branch>:<tag>`
+- `jobdeploy`
+  - should look like `github/<org>/<repo>/<branch>:<tag>`
+- `autodeploy`
+  - should look like `git@github.com:<org>/<repo>[.git]#<branch>`
+- repository name should only include alphanumeric characters and hyphens
+- repository name should start with a letter
+- branch name should only include alphanumeric characters and hyphens
+- branch name should start with a letter
+- branch name cannot include `--`
+
 ### healthcheck
 ### validBashSubsitution
 ### httpsOnly
