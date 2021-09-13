@@ -202,10 +202,27 @@ jobs:
 - `ECS_SCHEDULED_TASK_COUNT` must be between 1 and 50 inclusive
 
 ### jobsOnlyOnJobs
+
+- jobs can only be deployed on jobs clusters
+
 ### doubleQuotes
+
+- environment variables shouldn't be multi-quoted, as in `""something""`
+
 ### policyJsonValid
+
+- `policy.json` must be a valid IAM policy document
+- services should request specific permissions
+- services are unlikely to need delete permissions
+- policy must provide access to all secrets specified in secrets.json
+
 ### restrictedBuckets
+
+- `policy.json` must not provide permissions to restricted s3 buckets
+
 ### validBetas
+
+- beta declarations must reference services that exist
 
 ## Adding Checks
 
