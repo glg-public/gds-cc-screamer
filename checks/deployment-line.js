@@ -93,13 +93,13 @@ async function validateDeploymentLine(deployment, context, inputs, httpGet) {
   if (deploymentParts) {
     if (!validCharacters.test(deploymentParts.repo)) {
       problems.push(
-        `**${deploymentParts.repo}** - Repository name must be only lowercase alphanumeric characters and hyphens.`
+        `**${deploymentParts.repo}** - Repository name must be only lowercase alphanumeric characters and hyphens. [Reason: AWS Restrictions](https://docs.aws.amazon.com/AmazonECR/latest/APIReference/API_Repository.html)`
       );
     }
 
     if (!validCharacters.test(deploymentParts.branch)) {
       problems.push(
-        `**${deploymentParts.branch}** - Branch name must be only lowercase alphanumeric characters and hyphens.`
+        `**${deploymentParts.branch}** - Branch name must be only lowercase alphanumeric characters and hyphens. [Reason: AWS Restrictions](https://docs.aws.amazon.com/AmazonECR/latest/APIReference/API_Repository.html)`
       );
     }
 
