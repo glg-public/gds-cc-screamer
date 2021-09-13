@@ -121,8 +121,8 @@ describe("Deployment Line Check", () => {
     let results = await deploymentLineCheck(deployment);
 
     expect(results[0].problems.length).to.equal(1);
-    expect(results[0].problems[0]).to.equal(
-      "**PriceService** - Repository name must be only lowercase alphanumeric characters and hyphens."
+    expect(results[0].problems[0]).to.match(
+      /repository name must be only lowercase alphanumeric characters and hyphens/i
     );
     expect(results[0].level).to.equal("failure");
 
@@ -136,8 +136,8 @@ describe("Deployment Line Check", () => {
     results = await deploymentLineCheck(deployment);
 
     expect(results[0].problems.length).to.equal(1);
-    expect(results[0].problems[0]).to.equal(
-      "**PriceService** - Repository name must be only lowercase alphanumeric characters and hyphens."
+    expect(results[0].problems[0]).to.match(
+      /repository name must be only lowercase alphanumeric characters and hyphens/i
     );
     expect(results[0].level).to.equal("failure");
   });
@@ -155,8 +155,8 @@ describe("Deployment Line Check", () => {
     let results = await deploymentLineCheck(deployment);
 
     expect(results[0].problems.length).to.equal(1);
-    expect(results[0].problems[0]).to.equal(
-      "**Wrong_Branch!** - Branch name must be only lowercase alphanumeric characters and hyphens."
+    expect(results[0].problems[0]).to.match(
+      /branch name must be only lowercase alphanumeric characters and hyphens/i
     );
     expect(results[0].level).to.equal("failure");
 
@@ -172,8 +172,8 @@ describe("Deployment Line Check", () => {
     results = await deploymentLineCheck(deployment);
 
     expect(results[0].problems.length).to.equal(1);
-    expect(results[0].problems[0]).to.equal(
-      "**Wrong_Branch!** - Branch name must be only lowercase alphanumeric characters and hyphens."
+    expect(results[0].problems[0]).to.match(
+      /branch name must be only lowercase alphanumeric characters and hyphens/i
     );
     expect(results[0].level).to.equal("failure");
   });
