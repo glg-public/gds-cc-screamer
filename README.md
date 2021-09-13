@@ -121,10 +121,29 @@ jobs:
 - non-jobs must declare a security mode
 
 ### noSourcing
+
+- services cannot source their environment from other deployments
+
 ### accessFlags
+
+- if security mode is `jwt` or `verifiedSession`, orders must declare access flags
+- combining access flags should be done by bitwise-or-ing them together with `|`.
+- declared access flags must match existing roles and claims
+
 ### noSpacesInExports
+
+- exported variables cannot have whitespace around the `=`
+
 ### noDebugInProd
+
+- services should not use debug logging in production
+
 ### secretsJsonValid
+
+- secrets.json must be valid JSON
+- secrets.json must be an array of objects like `{name: string, valueFrom: string}` (case-sensitive)
+- `valueFrom` must be a valid AWS Secret ARN
+
 ### secretsInOrders
 ### noCarriageReturn
 ### noAWSSecrets
