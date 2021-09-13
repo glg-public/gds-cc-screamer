@@ -48,19 +48,40 @@ jobs:
   - should look like `github/<org>/<repo>/<branch>:<tag>`
 - `jobdeploy`
   - should look like `github/<org>/<repo>/<branch>:<tag>`
-- `autodeploy`
+- `autodeploy`(legacy)
   - should look like `git@github.com:<org>/<repo>[.git]#<branch>`
 - repository name should only include alphanumeric characters and hyphens
 - repository name should start with a letter
 - branch name should only include alphanumeric characters and hyphens
 - branch name should start with a letter
 - branch name cannot include `--`
+- repository must exist
+- branch must exist
+- docker image and tag must exist (except for `autodeploy`)
 
 ### healthcheck
+
+- non-jobs must specify a healthcheck
+- healthcheck cannot be `/`
+
 ### validBashSubsitution
+
+- must use double-quotes when using bash substitution
+
 ### httpsOnly
+
+- All requests to GLG owned domains must be made over https
+
 ### noDuplicateExports
+
+- No environment variable can be declared twice in the same orders file
+
 ### securityMode
+
+- services on internal clusters be `public`
+- services on secure clusters may be `jwt`(legacy),`verifiedSession`, or `htpasswd`(rare cases)
+- non-jobs must declare a security mode
+
 ### noSourcing
 ### accessFlags
 ### noSpacesInExports
