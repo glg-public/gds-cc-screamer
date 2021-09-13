@@ -145,18 +145,62 @@ jobs:
 - `valueFrom` must be a valid AWS Secret ARN
 
 ### secretsInOrders
+
+- services must use `secrets.json`, not legacy `glg/secrets` binary
+
 ### noCarriageReturn
+
+- Must only use unix-type newlines, not windows-type carriage returns
+
 ### noAWSSecrets
+
+- services should not declare aws credentials in their orders, but instead use `policy.json`
+
 ### noOutOfScopeVars
+
+- All bash variables references in an orders file must be declared in the same orders file
+
 ### useCNAME
+
+- services should use a friendly cname instead of the default cluster dns
+- cnames used must be assigned to the cluster
+
 ### noReservedVars
+
+- Certain variables may not be declared in orders files
+- Certain variables may not be declared in secrets.json
+
 ### maxServicesPerCluster
+
+- non-jobs clusters may only contain 100 services
+
 ### validateCron
+
+- cron statements must be valid
+- cron statements should include a comment
+
 ### fqdnRequired
+
+- services must declare their preferred domain name
+- preferrred domain name must be associated with the cluster
+
 ### validTemplatesJson
+
+- `templates.json` must be valid json
+- templates name in `templates.json` must have compatible access flags with the service
+
 ### potentialSecrets
+
+- flags values that are perceived to be secrets
+
 ### secretsExist
+
+- all secrets in `secrets.json` exist in the aws account where the cluster is deployed
+
 ### ecsScheduledTaskCount
+
+- `ECS_SCHEDULED_TASK_COUNT` must be between 1 and 50 inclusive
+
 ### jobsOnlyOnJobs
 ### doubleQuotes
 ### policyJsonValid
