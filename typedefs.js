@@ -66,19 +66,7 @@
  * maintainer_can_modify: boolean,
  * commits: number,
  * additions: number,
- * deletions: number,
- * changed_files: number
- * }} PullRequest
- */
-
-/**
- * @typedef {{
- * login: string,
- * id: 1,
- * node_id: string,
- * avatar_url: URI,
- * gravatar_id: URI,
- * url: URI,
+ epiquery
  * html_url: URI,
  * followers_url: URI,
  * following_url: URI,
@@ -293,6 +281,7 @@
  * deployinatorURL: URI
  * restrictedBuckets: string
  * skipChecks: Set<string>
+ * epiqueryTemplatesRepo: string
  * }} ActionInputs
  */
 

@@ -53,6 +53,10 @@ inputs:
     description: A comma separated list of checks to skip
     required: false
     default: ""
+  epiquery_templates_repo:
+    description: The repository where epiquery templates are kept.
+    required: false
+    default: glg/epiquery-templates
 runs:
   using: "node12"
   main: "index.js"
