@@ -172,7 +172,20 @@ async function validTemplatesJson(deployment, context, inputs, httpGet) {
             });
           }
         } catch ({ statusCode, error }) {
-          if (statusCode === 401) {
+          if (statusCode === 400) {
+            results.push({
+              title: "Syntax Error in Template Front Matter",
+              level: "warning",
+              line: lineNumber,
+              path: deployment.templatesJsonPath,
+              problems: [
+                `There is a syntax error in the front matter of the specified template: [${templateName}](https://github.com/${inputs.epiqueryTemplatesRepo}/blob/master/${templateName})`,
+                error && error.response && error.response.data
+                  ? error.response.data.error
+                  : undefined,
+              ],
+            });
+          } else if (statusCode === 401) {
             results.push({
               title: "401 From Deployinator API",
               level: "notice",

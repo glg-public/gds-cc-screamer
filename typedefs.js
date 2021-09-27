@@ -293,6 +293,7 @@
  * deployinatorURL: URI
  * restrictedBuckets: string
  * skipChecks: Set<string>
+ * epiqueryTemplatesRepo: string
  * }} ActionInputs
  */
 

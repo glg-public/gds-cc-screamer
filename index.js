@@ -31,6 +31,7 @@ function getInputs() {
   const deployinatorURL = core.getInput("deployinator_url");
   const restrictedBuckets = core.getInput("restricted_buckets");
   const skipChecks = new Set(core.getInput("skip_checks").split(","));
+  const epiqueryTemplatesRepo = core.getInput("epiquery_templates_repo");
 
   /** @type {ActionInputs} */
   return {
@@ -46,6 +47,7 @@ function getInputs() {
     deployinatorToken,
     restrictedBuckets,
     skipChecks,
+    epiqueryTemplatesRepo,
   };
 }
 
