@@ -180,7 +180,7 @@ async function validTemplatesJson(deployment, context, inputs, httpGet) {
               path: deployment.templatesJsonPath,
               problems: [
                 `There is a syntax error in the front matter of the specified template: [${templateName}](https://github.com/${inputs.epiqueryTemplatesRepo}/blob/master/${templateName})`,
-                error.body.error,
+                error.response?.data?.error,
               ],
             });
           } else if (statusCode === 401) {
