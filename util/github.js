@@ -135,8 +135,10 @@ async function leaveComment(
           ].includes(err.field)
       ).length > 0
     ) {
+      const line =
+        typeof result.line === "number" ? line : `${line.start} - ${line.end}`;
       result.problems.unshift(
-        `Problem existed outside of diff at \`${result.path}\`, line **${result.line}**`
+        `Problem existed outside of diff at \`${result.path}\`, line **${line}**`
       );
       result.line = 0;
       await leaveComment(octokit, deployment, result, {
