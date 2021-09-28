@@ -46,10 +46,13 @@ async function shellcheck(deployment, context, inputs, httpGet) {
     results = probs.map((problem) => ({
       title: "Bash Syntax",
       path: deployment.ordersPath,
-      line: {
-        start: problem.line,
-        end: problem.endLine,
-      },
+      line:
+        problem.line === problem.endline
+          ? problem.line
+          : {
+              start: problem.line,
+              end: problem.endLine,
+            },
       level: levelsMap[problem.level],
       problems: [problem.message],
     }));
