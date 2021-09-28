@@ -40,6 +40,7 @@ This is a github action for validating PRs to GDS Cluster Configs. It evaluates 
     - [policyJsonValid](#policyjsonvalid)
     - [restrictedBuckets](#restrictedbuckets)
     - [validBetas](#validbetas)
+    - [shellcheck](#shellcheck)
   - [Adding Checks](#adding-checks)
   - [Who's the goat?](#whos-the-goat)
 
@@ -223,6 +224,10 @@ jobs:
 ### validBetas
 
 - beta declarations must reference services that exist
+
+### shellcheck
+
+Runs the [shellcheck](https://github.com/koalaman/shellcheck) utility on the orders file to check for valid bash
 
 ## Adding Checks
 
