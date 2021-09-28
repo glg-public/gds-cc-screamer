@@ -1,7 +1,7 @@
 const { expect } = require("chai");
-const noCarriageReturn = require("../checks/no-carriage-return");
+const noForbiddenCharacters = require("../checks/no-forbidden-characters");
 
-describe("No Carriage Return", () => {
+describe("No Forbidden Characters", () => {
   it("accepts a file with no carriage returns", async () => {
     const deployment = {
       serviceName: "streamliner",
@@ -9,7 +9,7 @@ describe("No Carriage Return", () => {
       ordersContents: ["export VAR=value", "# A comment", "export VARZ=valuez"],
     };
 
-    const results = await noCarriageReturn(deployment);
+    const results = await noForbiddenCharacters(deployment);
     expect(results.length).to.equal(0);
   });
 
@@ -24,17 +24,10 @@ describe("No Carriage Return", () => {
       ],
     };
 
-    const results = await noCarriageReturn(deployment);
-    expect(results.length).to.equal(1);
-    expect(results[0]).to.deep.equal({
-      title: "No Carriage Return Characters",
-      problems: [
-        `\`${deployment.ordersPath}\` contains invalid newline characters.`,
-        "You must use Unix-type newlines (`LF`). Windows-type newlines (`CRLF`) are not permitted.",
-      ],
-      line: 0,
-      level: "failure",
-      path: deployment.ordersPath,
+    const results = await noForbiddenCharacters(deployment);
+    expect(results.length).to.equal(3);
+    results.forEach((result) => {
+      expect(result.problems[0]).to.match(/invalid newline/);
     });
   });
 
@@ -58,17 +51,10 @@ describe("No Carriage Return", () => {
       secretsJsonContents: secretsJson.split("\n"),
     };
 
-    const results = await noCarriageReturn(deployment);
-    expect(results.length).to.equal(1);
-    expect(results[0]).to.deep.equal({
-      title: "No Carriage Return Characters",
-      problems: [
-        `\`${deployment.secretsJsonPath}\` contains invalid newline characters.`,
-        "You must use Unix-type newlines (`LF`). Windows-type newlines (`CRLF`) are not permitted.",
-      ],
-      line: 0,
-      level: "failure",
-      path: deployment.secretsJsonPath,
+    const results = await noForbiddenCharacters(deployment);
+    expect(results.length).to.equal(9);
+    results.forEach((result) => {
+      expect(result.problems[0]).to.match(/invalid newline/);
     });
   });
 
@@ -105,17 +91,26 @@ describe("No Carriage Return", () => {
       policyJsonContents: policyJson.split("\n"),
     };
 
-    const results = await noCarriageReturn(deployment);
-    expect(results.length).to.equal(1);
-    expect(results[0]).to.deep.equal({
-      title: "No Carriage Return Characters",
-      problems: [
-        `\`${deployment.policyJsonPath}\` contains invalid newline characters.`,
-        "You must use Unix-type newlines (`LF`). Windows-type newlines (`CRLF`) are not permitted.",
-      ],
-      line: 0,
-      level: "failure",
-      path: deployment.policyJsonPath,
+    const results = await noForbiddenCharacters(deployment);
+    expect(results.length).to.equal(17);
+    results.forEach((result) => {
+      expect(result.problems[0]).to.match(/invalid newline/);
     });
+  });
+
+  it("rejects files with a null character", async () => {
+    const orders = `export SECURITY_MODE="public"
+    export HEALTHCHECK="/diagnostic"
+    export AUTH_BOUNCE_URL="https://session.glgresearch.com/bounce/bounceme"
+    ￼
+    dockerdeploy github/glg-public/bounce/master:latest`;
+
+    const deployment = {
+      ordersContents: orders.split("\n"),
+      ordersPath: "bounce/orders",
+    };
+    const results = await noForbiddenCharacters(deployment);
+    expect(results.length).to.equal(1);
+    expect(results[0].problems[0]).to.match(/null character/);
   });
 });

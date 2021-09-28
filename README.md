@@ -23,7 +23,7 @@ This is a github action for validating PRs to GDS Cluster Configs. It evaluates 
     - [noDebugInProd](#nodebuginprod)
     - [secretsJsonValid](#secretsjsonvalid)
     - [secretsInOrders](#secretsinorders)
-    - [noCarriageReturn](#nocarriagereturn)
+    - [noForbiddenCharacters](#noforbiddencharacters)
     - [noAWSSecrets](#noawssecrets)
     - [noOutOfScopeVars](#nooutofscopevars)
     - [useCNAME](#usecname)
@@ -149,9 +149,10 @@ jobs:
 
 - services must use `secrets.json`, not legacy `glg/secrets` binary
 
-### noCarriageReturn
+### noForbiddenCharacters
 
 - Must only use unix-type newlines, not windows-type carriage returns
+- Must not use null characters
 
 ### noAWSSecrets
 
