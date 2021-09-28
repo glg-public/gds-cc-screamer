@@ -1,0 +1,8 @@
+# For the REACT
+export REACT_APP_API_BASE="https://search.glgresearch.com/ai-pipelines/api/"
+export REACT_APP_EPIQUERY_SERVER=https://epiphleet-internal.glgresearch.com/epistream-ht/epiquery1/glglive/
+
+# overwrite the nginx upload limit
+export NGINX_LOCATION_CONFIGS=$(cat <<-EOL
+  client_max_body_size 200M;
+EOL)
