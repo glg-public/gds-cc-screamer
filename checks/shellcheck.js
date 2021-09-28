@@ -47,7 +47,7 @@ async function shellcheck(deployment, context, inputs, httpGet) {
       title: "Bash Syntax",
       path: deployment.ordersPath,
       line:
-        problem.line === problem.endline
+        problem.line === problem.endLine
           ? problem.line
           : {
               start: problem.line,
