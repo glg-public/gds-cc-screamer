@@ -136,7 +136,9 @@ async function leaveComment(
       ).length > 0
     ) {
       const line =
-        typeof result.line === "number" ? line : `${line.start} - ${line.end}`;
+        typeof result.line === "number"
+          ? result.line
+          : `${result.line.start} - ${result.line.end}`;
       result.problems.unshift(
         `Problem existed outside of diff at \`${result.path}\`, line **${line}**`
       );
