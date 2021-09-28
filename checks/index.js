@@ -11,7 +11,7 @@ const noSpacesInExports = require("./no-spaces-in-exports");
 const noDebugInProd = require("./no-debug-in-prod");
 const secretsJsonValid = require("./secrets-json-valid");
 const secretsInOrders = require("./secrets-in-orders");
-const noCarriageReturn = require("./no-carriage-return");
+const noForbiddenCharacters = require("./no-forbidden-characters");
 const noAWSSecrets = require("./no-aws-secrets");
 const noOutOfScopeVars = require("./no-out-of-scope-vars");
 const useCNAME = require("./use-cname");
@@ -47,7 +47,7 @@ module.exports = {
   noDebugInProd,
   secretsJsonValid,
   secretsInOrders,
-  noCarriageReturn,
+  noForbiddenCharacters,
   noAWSSecrets,
   noOutOfScopeVars,
   useCNAME,
