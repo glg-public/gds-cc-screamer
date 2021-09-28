@@ -3,6 +3,9 @@ const log = require("loglevel");
 const { execFile: execFileCallback } = require("child_process");
 const { promisify } = require("util");
 const execFile = promisify(execFileCallback);
+const path = require("path");
+const os = require("os");
+const fs = require("fs").promises;
 
 /**
  * Accepts a deployment object, and does some kind of check
@@ -31,15 +34,27 @@ async function shellcheck(deployment, context, inputs, httpGet) {
     warning: "warning",
   };
 
+  const cleanedPath = path.join(
+    os.tmpdir(),
+    `${deployment.serviceName}-orders-cleaned`
+  );
+
+  await fs.writeFile(
+    cleanedPath,
+    deployment.ordersContents.join("\n").replace(/export /g, ""),
+    "utf8"
+  );
+
   try {
     await execFile("shellcheck", [
-      deployment.ordersPath,
+      cleanedPath,
       "--format",
       "json",
       "--severity",
-      "warning",
+      "error",
       "--shell",
       "bash",
+      "--enable=all",
     ]);
   } catch (e) {
     const probs = JSON.parse(e.stdout);
