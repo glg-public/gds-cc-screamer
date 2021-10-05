@@ -4,8 +4,7 @@ const { camelCaseFileName } = require("./text");
 const fs = require("fs").promises;
 const https = require("https");
 
-const jobdeploy =
-  /^jobdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>.+?):(?<tag>\w+)/;
+const jobdeploy = /^jobdeploy\s+(\w+)\/([\w-]+)\/(.+?)\/([^:]+):?(\w*)/;
 
 /**
  *
