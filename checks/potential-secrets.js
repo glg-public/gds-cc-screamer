@@ -43,6 +43,10 @@ const isAnEmailList = {
   },
 };
 
+const isAnEpiTemplate = {
+  test: (txt) => txt.endsWith(".sql") || txt.endsWith(".mustache"),
+};
+
 /**
  * Checks orders file for potential secrets
  * @param {Deployment} deployment An object containing information about a deployment
@@ -91,6 +95,7 @@ async function potentialSecrets(deployment) {
       gitURL,
       isPlainNumber,
       isAnEmailList,
+      isAnEpiTemplate,
     ];
 
     const validators = [
