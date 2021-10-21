@@ -19,6 +19,7 @@ const reservedVars = new Set([
   "JWT_ACCESS_FLAGS",
   "CMD",
   "ECS_SCHEDULED_TASK_CRON",
+  "PRIVATE_SECRET_NAMESPACES",
 ]);
 const allowSecretVars = new Set([
   "SECRETS_AWS_REGION",
@@ -26,7 +27,7 @@ const allowSecretVars = new Set([
   "SECRETS_LOG_LEVEL",
   "SECRETS_NAMESPACE",
   "BLOCKED_SECRET_NAMESPACES",
-  "PRIVATE_SECRET_NAMESPACES"
+  "PRIVATE_SECRET_NAMESPACES",
 ]);
 
 const isAnEmailList = {
