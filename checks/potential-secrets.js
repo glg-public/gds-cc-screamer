@@ -26,6 +26,7 @@ const allowSecretVars = new Set([
   "SECRETS_LOG_LEVEL",
   "SECRETS_NAMESPACE",
   "BLOCKED_SECRET_NAMESPACES",
+  "PRIVATE_SECRET_NAMESPACES"
 ]);
 
 const isAnEmailList = {
