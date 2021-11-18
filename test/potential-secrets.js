@@ -118,6 +118,7 @@ describe("Potential Secrets", () => {
         "export REPORT_GP_SYNC_ERROR_RECIPIENTS='name1@domain.com,name2@domain.com,name3@domain.com,name4@domain.com'",
         'export EPI_TEMPLATE="/zendesk-project-scheduling/getUnfinalizedZoomScheduledCalls.sql"',
         "export PRIVATE_SECRET_NAMESPACES='devopsonly:DevOps|dbadmin:DevOps,DRE|/^production/EPISTREAM_CONNECTION_/:DRE,DevOps'",
+        "export REDIRECT_MATCHERS='*=>https://session.glgresearch.com/auth0-cm/logout'",
       ],
     };
 
