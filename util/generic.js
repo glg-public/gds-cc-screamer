@@ -296,6 +296,10 @@ function getAccess(orders, roles) {
             access["Allow All"] = true;
             return;
           }
+          if (claim === "role-glg" && mask === "2147483647") {
+            access["Allow All"] = true;
+            return;
+          }
           const { mask: interpretedMask } = legacyRoleMap[suffix];
           mask = interpretedMask;
         }
@@ -304,7 +308,10 @@ function getAccess(orders, roles) {
             allClaims.push(`${claim}:${maskComponent}`);
             const claimSet = getRoleByClaim(roles, claim, maskComponent);
             if (!claimSet) {
-              unknownRoles.push(`${claim}:${maskComponent}`);
+              // handle the special case of legacy role-glg:2147483647
+              if (claim !== "role-glg" || mask !== "2147483647") {
+                unknownRoles.push(`${claim}:${maskComponent}`);
+              }
             }
             return claimSet;
           })
@@ -319,7 +326,9 @@ function getAccess(orders, roles) {
           allClaims.push(`role-glg:${maskComponent}`);
           const claimSet = getRoleByClaim(roles, "role-glg", maskComponent);
           if (!claimSet) {
-            unknownRoles.push(`role-glg:${maskComponent}`);
+            if (accessFlags !== "2147483647") {
+              unknownRoles.push(`role-glg:${maskComponent}`);
+            }
           }
           return claimSet;
         })

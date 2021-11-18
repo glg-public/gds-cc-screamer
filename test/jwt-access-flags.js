@@ -212,7 +212,31 @@ export SESSION_ACCESS_FLAGS=$(($SESSION_ROLE_GLG_USER | $SESSION_ROLE_GLG_CLIENT
         serviceName: "streamliner",
         ordersPath: "streamliner/orders",
         ordersContents: [
-          "export SESSION_ACCESS_FLAGS='role-glg:2147483647",
+          "export SESSION_ACCESS_FLAGS='role-glg:2147483647'",
+        ],
+      };
+
+      const inputs = {
+        deployinatorToken: "token",
+        deployinatorURL: "deployinator.glgresearch.com/deployinator",
+      };
+
+      const localGet = async (url, opts) => {
+        if (/roles/.test(url)) {
+          return { data: roles };
+        }
+      };
+
+      const results = await jwtAccessFlags(deployment, {}, inputs, localGet);
+      expect(results.length).to.equal(0);
+    });
+
+    it("accepts '2147483647'", async () => {
+      const deployment = {
+        serviceName: "streamliner",
+        ordersPath: "streamliner/orders",
+        ordersContents: [
+          "export SESSION_ACCESS_FLAGS=2147483647",
         ],
       };
 
