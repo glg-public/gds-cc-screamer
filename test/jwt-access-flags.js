@@ -207,6 +207,54 @@ export SESSION_ACCESS_FLAGS=$(($SESSION_ROLE_GLG_USER | $SESSION_ROLE_GLG_CLIENT
       expect(/role-glg:64/.test(results[0].problems[1])).to.be.true;
     });
 
+    it("accepts role-glg:2147483647", async () => {
+      const deployment = {
+        serviceName: "streamliner",
+        ordersPath: "streamliner/orders",
+        ordersContents: [
+          "export SESSION_ACCESS_FLAGS='role-glg:2147483647'",
+        ],
+      };
+
+      const inputs = {
+        deployinatorToken: "token",
+        deployinatorURL: "deployinator.glgresearch.com/deployinator",
+      };
+
+      const localGet = async (url, opts) => {
+        if (/roles/.test(url)) {
+          return { data: roles };
+        }
+      };
+
+      const results = await jwtAccessFlags(deployment, {}, inputs, localGet);
+      expect(results.length).to.equal(0);
+    });
+
+    it("accepts '2147483647'", async () => {
+      const deployment = {
+        serviceName: "streamliner",
+        ordersPath: "streamliner/orders",
+        ordersContents: [
+          "export SESSION_ACCESS_FLAGS=2147483647",
+        ],
+      };
+
+      const inputs = {
+        deployinatorToken: "token",
+        deployinatorURL: "deployinator.glgresearch.com/deployinator",
+      };
+
+      const localGet = async (url, opts) => {
+        if (/roles/.test(url)) {
+          return { data: roles };
+        }
+      };
+
+      const results = await jwtAccessFlags(deployment, {}, inputs, localGet);
+      expect(results.length).to.equal(0);
+    });
+
     it("does not flag public services with no access flags", async () => {
       const orders = await fs.readFile(
         path.join(process.cwd(), "test", "fixtures", "public-orders"),
