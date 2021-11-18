@@ -12,6 +12,8 @@ const autodeploy =
 const bashVar = /\$\{?(?<variable>\w+)\}?/;
 const gitURL = /git@github\.com:\w+\/[\w\d\-]+/;
 const isPlainNumber = /^[\d\.]+$/;
+const containsURL =
+  /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
 const reservedVars = new Set([
   "GDS_FQDN",
   "SESSION_ACCESS_FLAGS",
@@ -98,6 +100,7 @@ async function potentialSecrets(deployment) {
       isPlainNumber,
       isAnEmailList,
       isAnEpiTemplate,
+      containsURL,
     ];
 
     const validators = [
