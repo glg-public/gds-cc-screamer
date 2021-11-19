@@ -36,7 +36,10 @@ async function secretsExist(deployment, context, inputs, httpGet) {
       Authorization: `Bearer ${inputs.deployinatorToken}`,
     },
   };
-  const secretsURL = `${inputs.deployinatorURL}/enumerate/secrets`;
+  let secretsURL = `${inputs.deployinatorURL}/enumerate/secrets`;
+  if (inputs.awsAccount && inputs.awsAccount !== "*") {
+    secretsURL += `?account=${inputs.awsAccount}`;
+  }
   let secretNames;
   try {
     const { data: allSecrets } = await httpGet(secretsURL, httpOpts);
@@ -109,7 +112,9 @@ async function secretsExist(deployment, context, inputs, httpGet) {
           path: deployment.secretsJsonPath,
           problems: [
             `The following secret could not be found: \`${value}\``,
-            `Sometimes this happens because of a stale cache. You can try [refreshing the cache](${secretsURL}?bust=true), and then re-running this check suite.`,
+            `Sometimes this happens because of a stale cache. You can try [refreshing the cache](${secretsURL}${
+              /\?account=/.test(secretsURL) ? "&" : "?"
+            }bust=true), and then re-running this check suite.`,
           ],
         });
       }
