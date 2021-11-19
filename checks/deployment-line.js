@@ -166,7 +166,10 @@ async function validateDeploymentLine(deployment, context, inputs, httpGet) {
       }
     } else {
       const image = `github/${owner}/${repo}/${branch}`;
-      const url = `${inputs.deployinatorURL}/enumerate/ecr/tags?image=${image}`;
+      let url = `${inputs.deployinatorURL}/enumerate/ecr/tags?image=${image}`;
+      if (inputs.awsAccount && inputs.awsAccount !== "*") {
+        url += `&account=${inputs.awsAccount}`;
+      }
       try {
         const { data: tags } = await httpGet(url, httpOpts);
         if (!tags.includes(tag)) {

@@ -83,6 +83,7 @@ describe("Secrets Exist", () => {
     const inputs = {
       deployinatorURL: "someurl",
       deployinatorToken: "abcdefg",
+      awsAccount: "12345678",
     };
 
     const localGet = async () => {
@@ -115,7 +116,7 @@ describe("Secrets Exist", () => {
       path: "streamliner/secrets.json",
       problems: [
         "The following secret could not be found: `prod/deployanator/github_token`",
-        `Sometimes this happens because of a stale cache. You can try [refreshing the cache](${inputs.deployinatorURL}/enumerate/secrets?bust=true), and then re-running this check suite.`,
+        `Sometimes this happens because of a stale cache. You can try [refreshing the cache](${inputs.deployinatorURL}/enumerate/secrets?account=12345678&bust=true), and then re-running this check suite.`,
       ],
     });
   });
