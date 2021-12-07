@@ -90,7 +90,7 @@ describe("Security Mode Check", () => {
     );
   });
 
-  it('allows public for "i" clusters', async () => {
+  it('allows public or verifiedSession for "i" clusters', async () => {
     const context = {
       payload: {
         pull_request: {
@@ -133,6 +133,15 @@ describe("Security Mode Check", () => {
     results = await securityMode(deployment, context);
     expect(results.length).to.equal(0);
 
+    // verifiedSession is also acceptable
+    deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: ["export SECURITY_MODE=verifiedSession"],
+    };
+    results = await securityMode(deployment, context);
+    expect(results.length).to.equal(0);
+
     // And this fails as an invalid security mode
     deployment = {
       serviceName: "streamliner",
@@ -144,7 +153,7 @@ describe("Security Mode Check", () => {
     expect(results.length).to.equal(1);
     expect(results[0].level).to.equal("failure");
     expect(results[0].problems[0]).to.equal(
-      "This cluster only supports the following security modes: **public**"
+      "This cluster only supports the following security modes: **public, verifiedSession**"
     );
   });
 
