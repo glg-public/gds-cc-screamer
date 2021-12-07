@@ -63,7 +63,7 @@ async function templateCheck(deployment, context) {
 function getExpectedModes(context) {
   const clusterType = getClusterType(context);
   const modes = {
-    internal: ["public"], // this is for internal-only clusters
+    internal: ["public", "verifiedSession"], // this is for internal-only clusters
     secure: ["jwt", "verifiedSession", "htpasswd"], // this is for secured clusters
     public: ["public"], // this is for public, unsecured clusters
   };
