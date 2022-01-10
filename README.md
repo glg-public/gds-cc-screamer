@@ -234,11 +234,12 @@ Runs the [shellcheck](https://github.com/koalaman/shellcheck) utility on the ord
 
 ### validJsonArraysInBash
 
-Makes sure CMD and ENTRYPOINT in your orders are structured correctly
+- CMD, if present, must be a valid stringified JSON Array a bash variable.
+- ENTRYPOINT, if present, must be a valid stringified JSON Array a bash variable.
 
 ### entrypointRequiresCmd
 
-Makes sure if you have ENTRYPOINT in your orders, you also have CMD
+- If ENTRYPOINT is defined, then CMD must also be defined.
 
 ## Adding Checks
 
