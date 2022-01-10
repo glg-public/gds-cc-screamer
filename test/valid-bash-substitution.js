@@ -38,6 +38,18 @@ describe("Valid Bash Substitution Checker", async () => {
     expect(result).to.have.lengthOf(0);
   });
 
+  it("ignores ENTRYPOINT bash subsitutions", async () => {
+    const result = await validSubstitutionCheck({
+      serviceName: "catpants",
+      ordersPath: "catpants/orders",
+      ordersContents: [
+        'export ENTRYPOINT=\'["bash", "-c", "source /catpants; echo $CAT + $PANTS" = glorious"]\''
+      ],
+    });
+
+    expect(result).to.have.lengthOf(0);
+  });
+
   it("rejects bash subsitutions contained in single quotes", async () => {
     let deployment = {
       serviceName: "streamliner",
