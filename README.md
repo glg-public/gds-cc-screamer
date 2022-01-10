@@ -41,6 +41,8 @@ This is a github action for validating PRs to GDS Cluster Configs. It evaluates 
     - [restrictedBuckets](#restrictedbuckets)
     - [validBetas](#validbetas)
     - [shellcheck](#shellcheck)
+    - [validJsonArraysInBash](#validJsonarraysinbash)
+    - [entrypointRequiresCmd](#entrypointrequirescmd)
   - [Adding Checks](#adding-checks)
   - [Who's the goat?](#whos-the-goat)
 
@@ -229,6 +231,14 @@ jobs:
 ### shellcheck
 
 Runs the [shellcheck](https://github.com/koalaman/shellcheck) utility on the orders file to check for valid bash
+
+### validJsonArraysInBash
+
+Makes sure CMD and ENTRYPOINT in your orders are structured correctly
+
+### entrypointRequiresCmd
+
+Makes sure if you have ENTRYPOINT in your orders, you also have CMD
 
 ## Adding Checks
 
