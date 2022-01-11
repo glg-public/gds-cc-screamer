@@ -90,6 +90,25 @@ async function potentialSecrets(deployment) {
     );
   }
 
+  /**
+   * Returns true for comma-separated lists
+   * which do not contain secrets within them.
+   */
+  const isListOfNonSecrets = {
+    test: (txt) => {
+      const list = txt.split(",");
+      if (list.length === 1) {
+        return false;
+      }
+      for (const item of list) {
+        if (!_isAnException(item) && _isProblem(item)) {
+          return false;
+        }
+      }
+      return true;
+    },
+  };
+
   function _isAnException(str) {
     str = str.trim();
     const regex = [
@@ -103,6 +122,7 @@ async function potentialSecrets(deployment) {
       isAnEpiTemplate,
       containsURL,
       isAFile,
+      isListOfNonSecrets,
     ];
 
     const validators = [
