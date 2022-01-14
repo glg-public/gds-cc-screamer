@@ -211,7 +211,7 @@ describe("Security Mode Check", () => {
     expect(results.length).to.equal(1);
     expect(results[0].level).to.equal("failure");
     expect(results[0].problems[0]).to.equal(
-      "This cluster only supports the following security modes: **public**"
+      "This cluster only supports the following security modes: **public, htpasswd**"
     );
   });
 

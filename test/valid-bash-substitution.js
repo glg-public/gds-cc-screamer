@@ -4,7 +4,7 @@ const validSubstitutionCheck = require("../checks/valid-bash-substitution");
 describe("Valid Bash Substitution Checker", async () => {
   it("skips if there is no orders file", async () => {
     const deployment = {
-      serviceName: "streamliner"
+      serviceName: "streamliner",
     };
 
     const results = await validSubstitutionCheck(deployment);
@@ -31,7 +31,7 @@ describe("Valid Bash Substitution Checker", async () => {
       serviceName: "catpants",
       ordersPath: "catpants/orders",
       ordersContents: [
-        'export CMD=\'["bash", "-c", "source /catpants; echo $CAT + $PANTS" = glorious"]\''
+        'export CMD=\'["bash", "-c", "source /catpants; echo $CAT + $PANTS" = glorious"]\'',
       ],
     });
 
@@ -57,6 +57,7 @@ describe("Valid Bash Substitution Checker", async () => {
       ordersContents: [
         "export SOME_VAR='first-${SOME_OTHER_VALUE}-and-more-text'",
         "export SOME_VAR='first-$SOME_OTHER_VALUE-and-more-text'",
+        "export HTPASSWD='glgtmf:$gtf6$WjuFiDn4$sadfadfsadfasdfsadf/dfgkljasdg8'",
       ],
     };
 

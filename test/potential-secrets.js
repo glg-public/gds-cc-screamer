@@ -120,6 +120,8 @@ describe("Potential Secrets", () => {
         "export PRIVATE_SECRET_NAMESPACES='devopsonly:DevOps|dbadmin:DevOps,DRE|/^production/EPISTREAM_CONNECTION_/:DRE,DevOps'",
         "export REDIRECT_MATCHERS='*=>https://session.glgresearch.com/auth0-cm/logout'",
         'export JOBS_STATUS_FILE="job_statuses.ini"',
+        "export GRANT_DEV_MODE_DEV='sbazli, patelkr, cmcculloch, mastover, twise, dhunt'",
+        "export GRANT_CREATE_MODE_OTHERS='ltran, agiurea, jsmall, aagrawal1, akapoor, ychopra, poorva.verma, mmalik, jvarghese, asis.chadha, smondal, arathore, rpahadia, vkrishna, asheorain'",
       ],
     };
 

@@ -65,7 +65,7 @@ function getExpectedModes(context) {
   const modes = {
     internal: ["public", "verifiedSession"], // this is for internal-only clusters
     secure: ["jwt", "verifiedSession", "htpasswd"], // this is for secured clusters
-    public: ["public"], // this is for public, unsecured clusters
+    public: ["public", "htpasswd"], // this is for public, unsecured clusters
   };
 
   return modes[clusterType] || [];

@@ -1,10 +1,10 @@
-const { expect } = require('chai');
-const noOutOfScopeVars = require('../checks/no-out-of-scope-vars');
+const { expect } = require("chai");
+const noOutOfScopeVars = require("../checks/no-out-of-scope-vars");
 
 describe("No Out Of Scope Variables", () => {
   it("skips if there is no orders file", async () => {
     const deployment = {
-      serviceName: "streamliner"
+      serviceName: "streamliner",
     };
 
     const results = await noOutOfScopeVars(deployment);
@@ -19,8 +19,9 @@ describe("No Out Of Scope Variables", () => {
         "export SOMETHING=hello",
         'MORE="You had me at $SOMETHING"',
         'echo "${MORE}"',
-      ]
-    }
+        "export HTPASSWD='glgtmf:$gtf6$WjuFiDn4$sadfadfsadfasdfsadf/dfgkljasdg8'",
+      ],
+    };
 
     const results = await noOutOfScopeVars(deployment);
     expect(results.length).to.equal(0);
@@ -34,9 +35,9 @@ describe("No Out Of Scope Variables", () => {
         "export SOMETHING=hello",
         'MORE="You had me at $SOMETHING"',
         'echo "${MORE}"',
-        `export CMD='["bash", "-c", "source /home/ubuntu/start; $HEADQUARTERS_LOCAL/consultation-outreach-etl-stats-emailer/cadences.sh"]`
-      ]
-    }
+        `export CMD='["bash", "-c", "source /home/ubuntu/start; $HEADQUARTERS_LOCAL/consultation-outreach-etl-stats-emailer/cadences.sh"]`,
+      ],
+    };
 
     expect(await noOutOfScopeVars(deployment)).to.have.lengthOf(0);
   });
@@ -49,9 +50,9 @@ describe("No Out Of Scope Variables", () => {
         "export SOMETHING=hello",
         'MORE="You had me at $SOMETHING"',
         'echo "${MORE}"',
-        "export JWT_ACCESS_FLAGS=$(($JWT_ROLE_GLG_USER | $JWT_ROLE_GLG_CLIENT))"
-      ]
-    }
+        "export JWT_ACCESS_FLAGS=$(($JWT_ROLE_GLG_USER | $JWT_ROLE_GLG_CLIENT))",
+      ],
+    };
 
     const results = await noOutOfScopeVars(deployment);
     expect(results.length).to.equal(1);
@@ -64,7 +65,7 @@ describe("No Out Of Scope Variables", () => {
         "GDS requires that all referenced variables be defined within the `orders` file. `.starphleet` has been deprecated.",
         "**Undefined Variable:** `JWT_ROLE_GLG_USER`",
         "**Undefined Variable:** `JWT_ROLE_GLG_CLIENT`",
-      ]
-    })
+      ],
+    });
   });
-})
+});
