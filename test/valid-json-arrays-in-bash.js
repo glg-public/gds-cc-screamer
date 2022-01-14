@@ -47,7 +47,7 @@ const validJsonArrayInBashCheck = require("../checks/valid-json-arrays-in-bash")
 
       expect(results.length).to.equal(1);
       expect(results[0].problems[0]).to.equal(
-        `The contents of the ${varName} variable must contain valid JSON.`
+        `The contents of the ${varName} variable must contain valid stringified JSON.`
       );
 
     });

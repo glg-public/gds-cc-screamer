@@ -66,7 +66,7 @@ export ${variableName}='[${tokens}]'
           results.push({
             title: `${variableName} does not parse`,
             problems: [
-              `The contents of the ${variableName} variable must contain valid JSON.`
+              `The contents of the ${variableName} variable must contain valid stringified JSON.`
             ],
             line: lineNumber,
             level: "failure",
