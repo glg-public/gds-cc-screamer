@@ -18,7 +18,7 @@ async function entrypointRequiresCmd(deployment, context, inputs, httpGet) {
     log.info(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
-  log.info(`Template Check - ${deployment.ordersPath}`);
+  log.info(`ENTRYPOINT Requires CMD - ${deployment.ordersPath}`);
 
   /** @type {Array<Result>} */
   const results = [];
