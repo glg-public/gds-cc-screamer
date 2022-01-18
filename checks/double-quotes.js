@@ -2,6 +2,8 @@ require("../typedefs");
 const log = require("loglevel");
 const { suggest } = require("../util");
 
+// another check provides better guidance for these variables
+const EXCLUDED_VARIABLE_NAMES = ["CMD", "ENTRYPOINT"];
 const doubleQuoted = /^["']{2}.*["']{2}$/;
 const envvar = /^(export |)(?<variable>\w+)=(?<value>.+)$/;
 const bashSubstitution = /\${?[\w\-]+}?/;
@@ -35,7 +37,7 @@ async function doubleQuotes(deployment, context, inputs, httpGet) {
     const match = envvar.exec(line);
     if (match) {
       const { value } = match.groups;
-      if (doubleQuoted.test(value)) {
+      if (doubleQuoted.test(value) && !EXCLUDED_VARIABLE_NAMES.includes(match.groups.variable)) {
         const result = {
           title: "Double Quoted Value",
           level: "notice",
