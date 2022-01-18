@@ -19,7 +19,7 @@ async function validJsonArrayInBash(deployment, context, inputs, httpGet) {
     log.info(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
-  log.info(`Template Check - ${deployment.ordersPath}`);
+  log.info(`CMD/ENTRYPOINT are valid JSON - ${deployment.ordersPath}`);
 
   /** @type {Array<Result>} */
   const results = [];
