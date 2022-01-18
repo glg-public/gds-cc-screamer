@@ -31,9 +31,8 @@ async function validJsonArrayInBash(deployment, context, inputs, httpGet) {
     const r = line.match(/export\s+(CMD|ENTRYPOINT)=(['"])(.*)\2/);
 
     if (r) {
-      // get value of CMD variable
+      // get value and name of the variable
       const variableName = r[1];
-      //const quoteStyle = (r[2] == '\'' ? 'single' : 'double');
       const value = r[3];
 
       try {
@@ -41,14 +40,14 @@ async function validJsonArrayInBash(deployment, context, inputs, httpGet) {
         const obj = JSON.parse(value);
 
         // it is JSON, but is it an array?
-        if (obj.constructor.name !== "Array") {
+        if (!Array.isArray(obj)) {
           let suggestion = "";
 
-          if (obj.constructor.name === "String") {
+          if (typeof obj === "string") {
             // Try to convert string into valid json array
-            const tokens = obj.split(/\s+/).map(s=>`"${s}"`).join(",");
+            const newArray = JSON.stringify(obj.split(/\s+/));
             suggestion = `\`\`\`suggestion
-export ${variableName}='[${tokens}]'
+export ${variableName}='${newArray}'
 \`\`\``;
           }
 
