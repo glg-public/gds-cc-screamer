@@ -45,7 +45,7 @@ async function validJsonArrayInBash(deployment, context, inputs, httpGet) {
           let suggestion = "";
 
           if (obj.constructor.name === "String") {
-            // attempt a solution for them.
+            // Try to convert string into valid json array
             const tokens = obj.split(/\s+/).map(s=>`"${s}"`).join(",");
             suggestion = `\`\`\`suggestion
 export ${variableName}='[${tokens}]'
