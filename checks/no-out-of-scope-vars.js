@@ -3,6 +3,7 @@ const log = require("loglevel");
 
 const exported = /^(export |)(?<variable>\w+)=.+/;
 const singleQuoted = /^(export |)(?<variable>\w+)='(?<value>.+)'/;
+const singleQuotedInASubShell = /(`|\$\().*?'.*?\${?\w+}?.*'(`|)/;
 // we expect these to match the regex, but they should not be flagged
 const EXCLUDED_VARIABLE_NAMES = ["CMD", "ENTRYPOINT"];
 
@@ -48,7 +49,7 @@ async function noOutOfScopeVars(deployment) {
       ],
     };
     const bashVar = /\$\{?(?<variable>\w+)\}?/g;
-    if (singleQuoted.test(line)) return;
+    if (singleQuoted.test(line) || singleQuotedInASubShell.test(line)) return;
     match = bashVar.exec(line);
     while (match) {
       const { variable } = match.groups;
