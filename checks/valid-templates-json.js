@@ -183,7 +183,7 @@ async function validTemplatesJson(deployment, context, inputs, httpGet) {
                 error && error.response && error.response.data
                   ? error.response.data.error
                   : undefined,
-              ],
+              ].filter((item) => item),
             });
           } else if (statusCode === 401) {
             results.push({
