@@ -42,6 +42,18 @@ describe("No Out Of Scope Variables", () => {
     expect(await noOutOfScopeVars(deployment)).to.have.lengthOf(0);
   });
 
+  it("should ignore variables in singlequotes in a shell", async () => {
+    const deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: [
+        "export ENVIRONMENT_VERSION=`git log -1 --oneline | awk '{ print $1 }'`",
+      ],
+    };
+
+    expect(await noOutOfScopeVars(deployment)).to.have.lengthOf(0);
+  });
+
   it("rejects orders that reference undefined variables.", async () => {
     const deployment = {
       serviceName: "streamliner",
