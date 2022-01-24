@@ -252,3 +252,9 @@ Runs the [shellcheck](https://github.com/koalaman/shellcheck) utility on the ord
 ## Who's the goat?
 
 That's Screamy, the GLGoat.
+
+
+## Clean up later
+```
+docker run -it --rm gds-cc-screamer:latest
+```
