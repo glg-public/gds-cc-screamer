@@ -61,7 +61,7 @@ async function noDuplicateExports(deployment) {
           ].join(", ")}**`,
         ],
         line: i + 1,
-        level: "failure",
+        level: "warning",
       };
 
       results.push(result);
