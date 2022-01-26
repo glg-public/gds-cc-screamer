@@ -249,12 +249,9 @@ Runs the [shellcheck](https://github.com/koalaman/shellcheck) utility on the ord
 - There are JSDoc type definitions in `./typedefs.js` that facilitate working with some of complex objects you get from GitHub.
 - There are some helpful utilities in `./util`.
 
+### Testing locally
+This app runs within a GitHub Action environment (ubuntu-20.04). Some of the npm packages (namely shellcheck) will not run in a Mac environment, so a Dockerfile has been created, along with some developer scripts that are stored in the .dev directory.
+
 ## Who's the goat?
 
 That's Screamy, the GLGoat.
-
-
-## Clean up later
-```
-docker run -it --rm gds-cc-screamer:latest
-```
