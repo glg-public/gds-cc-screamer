@@ -252,6 +252,10 @@ Runs the [shellcheck](https://github.com/koalaman/shellcheck) utility on the ord
 ### Testing locally
 This app runs within a GitHub Action environment (ubuntu-20.04). Some of the npm packages (namely shellcheck) will not run in a Mac environment, so a Dockerfile has been created, along with some developer scripts that are stored in the .dev directory.
 
+While working on new tests (that might not involve shellcheck), you can tell mocha to target specific tests with the .only argument - [AKA Exclusive tests](https://mochajs.org/#exclusive-tests).
+
+To get the expected logging that you've setup, you can run the tests with this environment variable to have more useful logging: `LOG_LEVEL=info npm run test`. For tests that you run locally, the default logging level is set in the `./test.env.js` file.
+
 ## Who's the goat?
 
 That's Screamy, the GLGoat.
