@@ -1,5 +1,9 @@
 const { expect } = require("chai");
+const fs = require("fs").promises;
+const path = require("path");
 const potentialSecrets = require("../checks/potential-secrets");
+
+const fixtures = path.join(process.cwd(), "test", "fixtures");
 
 describe("Potential Secrets", () => {
   it("skips if no orderes", async () => {
@@ -100,6 +104,10 @@ describe("Potential Secrets", () => {
   });
 
   it("ignores values that are probably not secrets", async () => {
+    const json = await (
+      await fs.readFile(path.join(fixtures, "not-a-secret1"), "utf-8")
+    ).split("\n");
+
     const deployment = {
       serviceName: "streamliner",
       ordersPath: "streamliner/orders",
@@ -122,6 +130,7 @@ describe("Potential Secrets", () => {
         'export JOBS_STATUS_FILE="job_statuses.ini"',
         "export GRANT_DEV_MODE_DEV='sbazli, patelkr, cmcculloch, mastover, twise, dhunt'",
         "export GRANT_CREATE_MODE_OTHERS='ltran, agiurea, jsmall, aagrawal1, akapoor, ychopra, poorva.verma, mmalik, jvarghese, asis.chadha, smondal, arathore, rpahadia, vkrishna, asheorain'",
+        ...json,
       ],
     };
 
