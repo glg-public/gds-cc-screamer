@@ -44,7 +44,7 @@ async function noDuplicateForwardHostHeaders(deployment, context, inputs, httpGe
     return [];
   }
 
-  //TODO: I dont love this being here or at least how the info is written at the moment
+  //TODO: I dont love this being here or at least how the info is written at the moment - its confusing
   // Inform people we are now at the meat of what check we are running
   log.info(`No Duplicate Forward Host Headers - ${deployment.ordersPath}`);
 

@@ -39,11 +39,34 @@ describe.only("No Duplicate Host Header Check", () => {
     expect(results.length).to.equal(0);
   });
 
-  it("fails if duplicate host header value is detected in a cluster", async () => {
+  it("fails if a single duplicate host header value is detected in a cluster", async () => {
+    const deployment = {
+      serviceName: "streamliner",
+      ordersContents: ['export FORWARD_HOST_HEADERS="single.glgroup.com'],
+      ordersPath: "streamliner/orders"
+    };
+
+    const inputs = {
+      clusterRoot: path.join(process.cwd(), "test", "fixtures", "cc7"),
+    };
+
+    const results = await noDupeHostHeaders(deployment,context,inputs);
+    expect(results.length).to.equal(1);
+    expect(results[0]).to.deep.equal({
+      title: "Duplicate host header value",
+      problems: [
+        "No more than one unique FORWARD HOST HEADER value can be set per cluster config. The following value(s) are not unique for this cluster: single.glgroup.com"
+      ],
+      level: 'failure',
+      line: 0,
+      path: deployment.ordersPath
+    })
+  });
+
+  it("fails if multiple duplicate host header values are detected in a cluster", async () => {
     const deployment = {
       serviceName: "streamliner",
       ordersContents: ['export FORWARD_HOST_HEADERS="examplething.glgroup.com,mikes-really-long-name.glgroup.com"'],
-      // ordersContents: ['export FORWARD_HOST_HEADERS="tom.dog'],
       ordersPath: "streamliner/orders"
     };
 
