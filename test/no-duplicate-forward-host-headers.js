@@ -20,12 +20,29 @@ describe.only("No Duplicate Host Header Check", () => {
     },
   };
 
+  it("skips if jobs cluster", async () => {
+    const context = {
+      payload: {
+        pull_request: {
+          base: {
+            repo: {
+              name: "gds.clusterconfig.j99",
+            },
+          },
+        },
+      },
+    };
+
+    const results = await noDupeHostHeaders(deployment, context);
+    expect(results.length).to.equal(0);
+  });
+
   it("skips if there is no orders file", async () => {
     const deployment = {
       serviceName: "streamliner"
     };
 
-    const results = await noDupeHostHeaders(deployment);
+    const results = await noDupeHostHeaders(deployment, context);
     expect(results.length).to.equal(0);
   });
 
@@ -35,7 +52,7 @@ describe.only("No Duplicate Host Header Check", () => {
       ordersContents: ["export TOM=pants"]
     };
 
-    const results = await noDupeHostHeaders(deployment);
+    const results = await noDupeHostHeaders(deployment, context);
     expect(results.length).to.equal(0);
   });
 

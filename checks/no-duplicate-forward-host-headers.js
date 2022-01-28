@@ -2,9 +2,7 @@ require("../typedefs");
 const log = require("loglevel");
 const path = require("path");
 const fs = require("fs").promises;
-//TODO: why doesnt this work?
-// const { getClusterType } = require("../util/generic");
-const { getExportValue } = require("../util/generic");
+const { getClusterType, getExportValue } = require("../util/generic");
 
 /**
  * Rejects orders that export a duplicate forward host header value
@@ -21,12 +19,12 @@ const { getExportValue } = require("../util/generic");
 // The main function that runs
 async function noDuplicateForwardHostHeaders(deployment, context, inputs, httpGet) {
 
-  //TODO: why doesnt this work?
-  // const clusterType = getClusterType(context);
-  // if (clusterType === "jobs") {
-  //   log.info(`Jobs Cluster - Skipping Check: Max Services Per Cluster`);
-  //   return [];
-  // }
+  // Check if this is a jobs cluster
+  const clusterType = getClusterType(context);
+  if (clusterType === "jobs") {
+    log.info('Jobs Cluster - Skipping Check: No Duplicate Forward Host Headers');
+    return [];
+  }
 
   // Check the existence of orders file
   if (!deployment.ordersContents) {
