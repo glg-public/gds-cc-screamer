@@ -79,7 +79,7 @@ describe.only("No Duplicate Host Header Check", () => {
     expect(results[0]).to.deep.equal({
       title: "Duplicate host header value",
       problems: [
-        "No more than one unique FORWARD HOST HEADER value can be set per cluster config. The following value(s) are not unique for this cluster: mikes-really-long-name.glgroup.com,examplething.glgroup.com"
+        "No more than one unique FORWARD HOST HEADER value can be set per cluster config. The following value(s) are not unique for this cluster: examplething.glgroup.com,mikes-really-long-name.glgroup.com"
       ],
       level: 'failure',
       line: 0,

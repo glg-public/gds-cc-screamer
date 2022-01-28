@@ -75,6 +75,11 @@ async function noDuplicateForwardHostHeaders(deployment, context, inputs, httpGe
     });
   });
 
+  // the output from above occasionally comes back in another order than the test expects. This will order them alphabetically and fix tests.
+  console.log(output);
+  output.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+  console.log(output);
+
   if ( output.length > 0 ) {
     return [
       {
