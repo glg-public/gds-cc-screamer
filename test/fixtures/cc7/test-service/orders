@@ -1,4 +1,4 @@
-export FORWARD_HOST_HEADERS="mikes-really-long-name.glgroup.com"
+export FORWARD_HOST_HEADERS="mikes-really-long-name.glgroup.com,second.glgroup.com"
 
 export SECURITY_MODE=verifiedSession
 export SESSION_ACCESS_FLAGS=1

@@ -2,7 +2,7 @@ require("../typedefs");
 const log = require("loglevel");
 const path = require("path");
 const fs = require("fs").promises;
-const { getClusterType, getExportValue } = require("../util/generic");
+const { isAJob, getClusterType, getExportValue, getLineNumber } = require("../util");
 
 /**
  * Rejects orders that export a duplicate forward host header value
@@ -19,16 +19,16 @@ const { getClusterType, getExportValue } = require("../util/generic");
 // The main function that runs
 async function noDuplicateForwardHostHeaders(deployment, context, inputs, httpGet) {
 
-  // Check if this is a jobs cluster
-  const clusterType = getClusterType(context);
-  if (clusterType === "jobs") {
-    log.info('Jobs Cluster - Skipping Check: No Duplicate Forward Host Headers');
-    return [];
-  }
-
   // Check the existence of orders file
   if (!deployment.ordersContents) {
     log.info(`No Orders Present - Skipping ${deployment.serviceName}`);
+    return [];
+  }
+
+  // Check if this is a jobs cluster
+  const clusterType = getClusterType(context);
+  if ( clusterType === "jobs" || isAJob(deployment.ordersContents) ) {
+    log.info('Jobs Cluster - Skipping Check: No Duplicate Forward Host Headers');
     return [];
   }
 
@@ -42,96 +42,73 @@ async function noDuplicateForwardHostHeaders(deployment, context, inputs, httpGe
     return [];
   }
 
-  //TODO: I dont love this being here or at least how the info is written at the moment - its confusing. Maybe remove it? It was also part of the template...
   // Inform people we are now at the meat of what check we are running
-  log.info(`No Duplicate Forward Host Headers - ${deployment.ordersPath}`);
+  log.info(`Running Check: No Duplicate Forward Host Headers - ${deployment.ordersPath}`);
 
   /** @type {Array<Result>} */
   const results = [];
 
   // split the list of domain names in the variable by the , that separates them
   const forwardHostHeaderValueSplit = forwardHostHeaderValue.split(",");
-  // console.log(forwardHostHeaderValueSplit);
 
   // the root path that will be used later to walk the tree
   const { clusterRoot } = inputs;
 
   // grab any existing forwardHostHeader values that already exist
   const otherForwardHostHeaderValues = await getOtherHostHeaderValuesFromCluster(clusterRoot);
-  // console.log(clusterRoot)
-  // console.log(otherForwardHostHeaderValues);
 
-  //compare the two arrays and return any matches. This tells us that its
-  // already in use and should not be allowed to proceed.
-  const output = await otherForwardHostHeaderValues.filter(function (o1) {
-    return forwardHostHeaderValueSplit.some(function (o2) {
-      // console.log("start")
-      // console.log(o1)
-      // console.log(o2)
-      // console.log("finish")
-      return o1 === o2; // return the ones with equal id
-    });
-  });
+  // Determine if there are any duplicates coming in from the new orders file
+  const output = await otherForwardHostHeaderValues.filter(obj => forwardHostHeaderValueSplit.includes(obj.host));
 
   // the output from above occasionally comes back in another order than the test expects. This will order them alphabetically and fix tests.
-  // console.log(output);
-  output.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
-  // console.log(output);
+  output.sort((a, b) => a.host.toLowerCase().localeCompare(b.host.toLowerCase()));
 
   if ( output.length > 0 ) {
     return [
       {
         title: "Duplicate host header value",
         problems: [
-          `No more than one unique FORWARD HOST HEADER value can be set per cluster config. The following value(s) are not unique for this cluster: ${output}`,
+          'No more than one unique FORWARD HOST HEADER value can be set per cluster config. The following value(s) are not unique for this cluster:',
+          ...output.map(obj => `**${obj.host}** was found in the **${obj.serviceName}** orders file.`)
         ],
         level: "failure",
-        line: 0,
+        line: getLineNumber(deployment.ordersContents, /export FORWARD_HOST_HEADERS=/),
         path: deployment.ordersPath
       },
     ];
   }
-
-
-  // TODO: this can likely be removed - it was part of the template.
-  // deployment.ordersContents.forEach((line, i) => {
-  //   // GitHub lines are 1-indexed
-  //   const lineNumber = i + 1;
-  //   // do something
-  // });
-
   return results;
 }
 
 // go through all of the orders files and find the header im looking for
 async function getOtherHostHeaderValuesFromCluster(clusterRoot) {
+  const forwardHostHeadersFromOtherOrders = [];
   try {
     const files = await fs.readdir(clusterRoot, { withFileTypes: true });
     const directories = files.filter((file) => file.isDirectory());
-    let forwardHostHeadersFromOtherOrders = [];
     await Promise.all(
       directories.map(async (dir) => {
         const ordersPath = path.join(clusterRoot, dir.name, "orders");
         try {
-          await fs.readFile(ordersPath)
-          .then(function(result) {
-            const forwardHostHeaderValue = getExportValue(
+          const result = await fs.readFile(ordersPath)
+          const forwardHostHeaderValue = getExportValue(
             result,
             "FORWARD_HOST_HEADERS"
             );
-            forwardHostHeadersFromOtherOrders.push(forwardHostHeaderValue);
-          })
+            const hosts = forwardHostHeaderValue.split(",")
+            forwardHostHeadersFromOtherOrders.push(...hosts.map(host => ({
+              host,
+              serviceName: dir.name
+            })));
         } catch (err) {
           // not important
         }
       })
     );
-    return forwardHostHeadersFromOtherOrders;
   } catch (e) {
     console.error(e);
   }
-  // why is this here? If all above fails, just return -1?
-  return -1;
+  return forwardHostHeadersFromOtherOrders;
 }
 
 module.exports = noDuplicateForwardHostHeaders;

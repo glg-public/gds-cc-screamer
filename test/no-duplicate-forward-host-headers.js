@@ -2,8 +2,7 @@ const { expect } = require("chai");
 const noDupeHostHeaders = require("../checks/no-duplicate-forward-host-headers");
 const path = require("path");
 
-//TODO: remove this only thing when I'm done
-describe.only("No Duplicate Host Header Check", () => {
+describe("No Duplicate Host Header Check", () => {
   const deployment = {
     serviceName: "streamliner",
   };
@@ -72,10 +71,11 @@ describe.only("No Duplicate Host Header Check", () => {
     expect(results[0]).to.deep.equal({
       title: "Duplicate host header value",
       problems: [
-        "No more than one unique FORWARD HOST HEADER value can be set per cluster config. The following value(s) are not unique for this cluster: single.glgroup.com"
+        "No more than one unique FORWARD HOST HEADER value can be set per cluster config. The following value(s) are not unique for this cluster:",
+        "**single.glgroup.com** was found in the **test-service3** orders file."
       ],
       level: 'failure',
-      line: 0,
+      line: 1,
       path: deployment.ordersPath
     })
   });
@@ -96,10 +96,12 @@ describe.only("No Duplicate Host Header Check", () => {
     expect(results[0]).to.deep.equal({
       title: "Duplicate host header value",
       problems: [
-        "No more than one unique FORWARD HOST HEADER value can be set per cluster config. The following value(s) are not unique for this cluster: examplething.glgroup.com,mikes-really-long-name.glgroup.com"
+        "No more than one unique FORWARD HOST HEADER value can be set per cluster config. The following value(s) are not unique for this cluster:",
+        "**examplething.glgroup.com** was found in the **test-service2** orders file.",
+        "**mikes-really-long-name.glgroup.com** was found in the **test-service** orders file."
       ],
       level: 'failure',
-      line: 0,
+      line: 1,
       path: deployment.ordersPath
     })
   });
