@@ -6,18 +6,16 @@ const { isAJob, getClusterType, getExportValue, getLineNumber } = require("../ut
 
 /**
  * Rejects orders that export a duplicate forward host header value
- * TODO: some of these may be able to be removed!
  * Accepts a deployment object, and does some kind of check
  * @param {Deployment} deployment An object containing information about a deployment
  * @param {GitHubContext} context The context object provided by github
  * @param {ActionInputs} inputs The inputs (excluding the token) from the github action
- * @param {function(string, (object | undefined)):Promise} httpGet
  *
  * @returns {Array<Result>}
  */
 
 // The main function that runs
-async function noDuplicateForwardHostHeaders(deployment, context, inputs, httpGet) {
+async function noDuplicateForwardHostHeaders(deployment, context, inputs) {
 
   // Check the existence of orders file
   if (!deployment.ordersContents) {
