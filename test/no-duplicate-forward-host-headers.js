@@ -87,18 +87,18 @@ describe.only("No Duplicate Host Header Check", () => {
     })
   });
 
-  // it("it passes if forward host header is unique", async () => {
-  //   const deployment = {
-  //     serviceName: "streamliner",
-  //     ordersContents: ['export FORWARD_HOST_HEADERS="unique.glgroup.com"'],
-  //     ordersPath: "streamliner/orders"
-  //   };
+  it("it passes if forward host header is unique", async () => {
+    const deployment = {
+      serviceName: "streamliner",
+      ordersContents: ['export FORWARD_HOST_HEADERS="unique.glgroup.com"'],
+      ordersPath: "streamliner/orders"
+    };
 
-  //   const inputs = {
-  //     clusterRoot: path.join(process.cwd(), "test", "fixtures", "cc7"),
-  //   };
+    const inputs = {
+      clusterRoot: path.join(process.cwd(), "test", "fixtures", "cc7"),
+    };
 
-  //   const results = await noDupeHostHeaders(deployment);
-  //   expect(results.length).to.equal(0);
-  // });
+    const results = await noDupeHostHeaders(deployment,context,inputs);
+    expect(results.length).to.equal(0);
+  });
 });

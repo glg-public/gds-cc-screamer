@@ -44,7 +44,7 @@ async function noDuplicateForwardHostHeaders(deployment, context, inputs, httpGe
     return [];
   }
 
-  //TODO: I dont love this being here or at least how the info is written at the moment - its confusing
+  //TODO: I dont love this being here or at least how the info is written at the moment - its confusing. Maybe remove it? It was also part of the template...
   // Inform people we are now at the meat of what check we are running
   log.info(`No Duplicate Forward Host Headers - ${deployment.ordersPath}`);
 
@@ -67,8 +67,10 @@ async function noDuplicateForwardHostHeaders(deployment, context, inputs, httpGe
   // already in use and should not be allowed to proceed.
   const output = await otherForwardHostHeaderValues.filter(function (o1) {
     return forwardHostHeaderValueSplit.some(function (o2) {
+      // console.log("start")
       // console.log(o1)
       // console.log(o2)
+      // console.log("finish")
       return o1 === o2; // return the ones with equal id
     });
   });
