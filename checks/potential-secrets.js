@@ -52,6 +52,18 @@ const isAnEpiTemplate = {
   test: (txt) => txt.endsWith(".sql") || txt.endsWith(".mustache"),
 };
 
+const isEscapedJson = {
+  test: (txt) => {
+    const unescaped = txt.replace(/\\"/g, '"');
+    try {
+      JSON.parse(unescaped);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  },
+};
+
 /**
  * Checks orders file for potential secrets
  * @param {Deployment} deployment An object containing information about a deployment
@@ -123,6 +135,7 @@ async function potentialSecrets(deployment) {
       containsURL,
       isAFile,
       isListOfNonSecrets,
+      isEscapedJson,
     ];
 
     const validators = [
@@ -190,6 +203,7 @@ async function potentialSecrets(deployment) {
     const match = envvar.exec(line);
     if (match) {
       const [, exported, name, value] = match;
+
       const result = {
         level: "warning",
         path: deployment.ordersPath,
