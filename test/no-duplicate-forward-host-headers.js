@@ -108,9 +108,9 @@ describe("No Duplicate Host Header Check", () => {
 
   it("it passes if forward host header is unique", async () => {
     const deployment = {
-      serviceName: "streamliner",
+      serviceName: "test-service4",
       ordersContents: ['export FORWARD_HOST_HEADERS="unique.glgroup.com"'],
-      ordersPath: "streamliner/orders"
+      ordersPath: "test-service4/orders"
     };
 
     const inputs = {

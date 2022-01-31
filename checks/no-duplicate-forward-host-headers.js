@@ -53,7 +53,7 @@ async function noDuplicateForwardHostHeaders(deployment, context, inputs) {
   const { clusterRoot } = inputs;
 
   // grab any existing forwardHostHeader values that already exist
-  const otherForwardHostHeaderValues = await getOtherHostHeaderValuesFromCluster(clusterRoot);
+  const otherForwardHostHeaderValues = await getOtherHostHeaderValuesFromCluster(clusterRoot,deployment.serviceName);
 
   // Determine if there are any duplicates coming in from the new orders file
   const output = await otherForwardHostHeaderValues.filter(obj => forwardHostHeaderValueSplit.includes(obj.host));
@@ -78,14 +78,16 @@ async function noDuplicateForwardHostHeaders(deployment, context, inputs) {
   return results;
 }
 
-// go through all of the orders files and find the header im looking for
-async function getOtherHostHeaderValuesFromCluster(clusterRoot) {
+// go through all of the orders files EXCEPT for the current orders file and find the header im looking for
+async function getOtherHostHeaderValuesFromCluster(clusterRoot,currentService) {
   const forwardHostHeadersFromOtherOrders = [];
   try {
     const files = await fs.readdir(clusterRoot, { withFileTypes: true });
     const directories = files.filter((file) => file.isDirectory());
+    // remove the service that is part of the deployment
+    const directoriesLessCurrentService = directories.filter((dir) => dir.name != currentService)
     await Promise.all(
-      directories.map(async (dir) => {
+      directoriesLessCurrentService.map(async (dir) => {
         const ordersPath = path.join(clusterRoot, dir.name, "orders");
         try {
           const result = await fs.readFile(ordersPath)
