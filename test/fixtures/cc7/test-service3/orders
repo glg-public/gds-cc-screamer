@@ -1,0 +1,8 @@
+export FORWARD_HOST_HEADERS="single.glgroup.com"
+
+export SECURITY_MODE=verifiedSession
+export SESSION_ACCESS_FLAGS=1
+export HEALTHCHECK='/'
+export SOMETHING=what
+
+dockerdeploy github/glg/echo/gds:latest

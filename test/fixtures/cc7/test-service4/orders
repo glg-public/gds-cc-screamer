@@ -1,0 +1,9 @@
+# This file represents an orders file that IS the file being changed in the PR. When the no-duplicate-forward-host-headers.js check runs, it is pulling the FORWARD_HOST_HEADERS environment variable out of the deployment parameter that comes from GitHub. `const deployments = await getAllDeployments(files, filesToCheck);` This means that all files, including the modified file in the PR is included. This would normall flag as a duplicate, but we are instead going to ignore this in the check to simulate an order
+export FORWARD_HOST_HEADERS="unique.glgroup.com"
+
+export SECURITY_MODE=verifiedSession
+export SESSION_ACCESS_FLAGS=1
+export HEALTHCHECK='/'
+export SOMETHING=what
+
+dockerdeploy github/glg/echo/gds:latest
