@@ -9,6 +9,7 @@ This is a github action for validating PRs to GDS Cluster Configs. It evaluates 
   - [Why are node_modules checked in?](#why-are-node_modules-checked-in)
   - [Why review comments and not checks api?](#why-review-comments-and-not-checks-api)
   - [Example Usage:](#example-usage)
+  - [Configuration](#configuration)
   - [Checks](#checks)
     - [serviceName](#servicename)
     - [deploymentLine](#deploymentline)
@@ -74,6 +75,30 @@ jobs:
       - uses: glg-public/gds-cc-screamer@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+## Configuration
+
+You can add further, more granular configuration through the use of `.ccscreamer.json`. This file lives at the root of a cluster config repository, and provides a mechanism to customize behavior on a per-service and per-check level.
+
+Currently supported overrides are:
+- `maxLevel`: Defines the maximum level a specific check can return for a specific service: "success", "notice", "warning", "failure"
+- `skip`: Ignore results for this check for this service
+
+The file looks like
+```json
+{
+  "service-name": {
+    "checkName": {
+      "skip": true
+    }
+  },
+  "service-name2": {
+    "checkName": {
+      "maxLevel": "warning"
+    }
+  }
+}
 ```
 
 ## Checks
