@@ -43,6 +43,7 @@ This is a github action for validating PRs to GDS Cluster Configs. It evaluates 
     - [shellcheck](#shellcheck)
     - [validJsonArraysInBash](#validJsonarraysinbash)
     - [entrypointRequiresCmd](#entrypointrequirescmd)
+    - [noDuplicateForwardHostHeaders](#noduplicateforwardhostheaders)
   - [Adding Checks](#adding-checks)
   - [Who's the goat?](#whos-the-goat)
 
@@ -241,6 +242,10 @@ Runs the [shellcheck](https://github.com/koalaman/shellcheck) utility on the ord
 
 - If ENTRYPOINT is defined, then CMD must also be defined.
 
+### noDuplicateForwardHostHeaders
+
+- Each FORWARD_HOST_HEADERS value must be unique for a cluster config. Otherwise, AWS will throw errors about the duplicates and possibly leave your load balancer in a broken state.
+
 ## Adding Checks
 
 - Create a new file in `./checks/`. It should export an `async function` that accepts a `Deployment` object and returns an array of `Result` objects. You can start by copying the template check in `./checks/template.js`.
@@ -248,6 +253,13 @@ Runs the [shellcheck](https://github.com/koalaman/shellcheck) utility on the ord
 - Provide test coverage for your check in `./test/`. Your test file should share a name with the file it is testing. i.e. `./checks/service-name.js` should have an accompanying `./test/service-name.js`. This project currently has >90% test coverage, and you should strive to keep it in that range.
 - There are JSDoc type definitions in `./typedefs.js` that facilitate working with some of complex objects you get from GitHub.
 - There are some helpful utilities in `./util`.
+
+### Testing locally
+This app runs within a GitHub Action environment (ubuntu-20.04). Some of the npm packages (namely shellcheck) will not run in a Mac environment, so a Dockerfile has been created, along with some developer scripts that are stored in the .dev directory.
+
+While working on new tests (that might not involve shellcheck), you can tell mocha to target specific tests with the .only argument - [AKA Exclusive tests](https://mochajs.org/#exclusive-tests).
+
+To get the expected logging that you've setup, you can run the tests with this environment variable to have more useful logging: `LOG_LEVEL=info npm run test`. For tests that you run locally, the default logging level is set in the `./test.env.js` file.
 
 ## Who's the goat?
 
