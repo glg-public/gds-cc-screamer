@@ -43,6 +43,7 @@ This is a github action for validating PRs to GDS Cluster Configs. It evaluates 
     - [shellcheck](#shellcheck)
     - [validJsonArraysInBash](#validJsonarraysinbash)
     - [entrypointRequiresCmd](#entrypointrequirescmd)
+    - [noDuplicateForwardHostHeaders](#noduplicateforwardhostheaders)
   - [Adding Checks](#adding-checks)
   - [Who's the goat?](#whos-the-goat)
 
@@ -240,6 +241,10 @@ Runs the [shellcheck](https://github.com/koalaman/shellcheck) utility on the ord
 ### entrypointRequiresCmd
 
 - If ENTRYPOINT is defined, then CMD must also be defined.
+
+### noDuplicateForwardHostHeaders
+
+- Each FORWARD_HOST_HEADERS value must be unique for a cluster config. Otherwise, AWS will throw errors about the duplicates and possibly leave your load balancer in a broken state.
 
 ## Adding Checks
 
