@@ -41,10 +41,12 @@ This is a github action for validating PRs to GDS Cluster Configs. It evaluates 
     - [restrictedBuckets](#restrictedbuckets)
     - [validBetas](#validbetas)
     - [shellcheck](#shellcheck)
-    - [validJsonArraysInBash](#validJsonarraysinbash)
+    - [validJsonArraysInBash](#validjsonarraysinbash)
     - [entrypointRequiresCmd](#entrypointrequirescmd)
     - [noDuplicateForwardHostHeaders](#noduplicateforwardhostheaders)
+    - [JobsShouldUseBulkMail](#jobsshouldusebulkmail)
   - [Adding Checks](#adding-checks)
+    - [Testing locally](#testing-locally)
   - [Who's the goat?](#whos-the-goat)
 
 ## Why are node_modules checked in?
@@ -245,6 +247,9 @@ Runs the [shellcheck](https://github.com/koalaman/shellcheck) utility on the ord
 ### noDuplicateForwardHostHeaders
 
 - Each FORWARD_HOST_HEADERS value must be unique for a cluster config. Otherwise, AWS will throw errors about the duplicates and possibly leave your load balancer in a broken state.
+
+### JobsShouldUseBulkMail
+- jobs should prefer bulkmail-internal to email-internal
 
 ## Adding Checks
 
