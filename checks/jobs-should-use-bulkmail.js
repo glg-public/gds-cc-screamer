@@ -1,5 +1,6 @@
 require("../typedefs");
 const log = require("loglevel");
+const { suggest, isAJob, parseEnvVar } = require("../util");
 
 /**
  * Accepts a deployment object, and does some kind of check
@@ -18,6 +19,10 @@ async function jobsShouldUseBulkMail(deployment, context, inputs, httpGet) {
     log.info(`No Orders Present - Skipping ${deployment.serviceName}`);
     return [];
   }
+  if (!isAJob(deployment.ordersContents)) {
+    log.info(`Not A Job - Skipping ${deployment.serviceName}`);
+    return [];
+  }
   log.info(`Jobs Should Use Bulkmail - ${deployment.ordersPath}`);
 
   /** @type {Array<Result>} */
@@ -26,7 +31,22 @@ async function jobsShouldUseBulkMail(deployment, context, inputs, httpGet) {
   deployment.ordersContents.forEach((line, i) => {
     // GitHub lines are 1-indexed
     const lineNumber = i + 1;
-    // do something
+
+    const { value } = parseEnvVar(line);
+    if (value && /email-internal\.glgresearch\.com/.test(value)) {
+      results.push({
+        title: "Jobs Should Use The Bulk Mail Server",
+        level: "failure",
+        line: lineNumber,
+        path: deployment.ordersPath,
+        problems: [
+          suggest(
+            "Use bulkmail-internal",
+            line.replace("email-internal", "bulkmail-internal")
+          ),
+        ],
+      });
+    }
   });
 
   return results;

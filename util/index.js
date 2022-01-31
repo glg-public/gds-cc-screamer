@@ -36,6 +36,7 @@ const {
   getRoleByClaim,
   getClusterType,
   applyConfig,
+  parseEnvVar,
 } = require("./generic");
 
 module.exports = {
@@ -70,4 +71,5 @@ module.exports = {
   getRoleByClaim,
   getClusterType,
   applyConfig,
+  parseEnvVar,
 };

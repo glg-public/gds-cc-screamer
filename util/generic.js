@@ -428,6 +428,20 @@ function applyConfig({ config, serviceName, checkName, results }) {
   }
 }
 
+const envvar = /^(export\s+|)(\w+)=['"](.+)['"]/;
+function parseEnvVar(line) {
+  const match = envvar.exec(line);
+  if (match) {
+    const [, exported, name, value] = match;
+    return {
+      exported: !!exported,
+      name,
+      value,
+    };
+  }
+  return {};
+}
+
 module.exports = {
   isAJob,
   getContents,
@@ -443,4 +457,5 @@ module.exports = {
   getAccess,
   getClusterType,
   applyConfig,
+  parseEnvVar,
 };

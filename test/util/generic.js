@@ -10,9 +10,11 @@ const {
   getMaskComponents,
   getSimpleSecret,
   applyConfig,
+  parseEnvVar,
 } = require("../../util/generic");
 const roles = require("../fixtures/roles");
 const ccConfig = require("../fixtures/jobs-cc1/.ccscreamer.json");
+const { env } = require("process");
 
 describe("isAJob", () => {
   it("takes file lines, and determines if it is a job deployment", () => {
@@ -255,5 +257,43 @@ describe("applyConfig", () => {
         level: "warning",
       },
     ]);
+  });
+});
+
+describe("parseEnvVar", () => {
+  it("returns an empty object if a line doesn't define an environment variable", () => {
+    const obj = parseEnvVar("# this line is just a comment");
+
+    expect(obj).to.deep.equal({});
+  });
+
+  it("works with single quoted", () => {
+    const envvar = parseEnvVar("export CAT='pants'");
+
+    expect(envvar).to.deep.equal({
+      exported: true,
+      name: "CAT",
+      value: "pants",
+    });
+  });
+
+  it("works with double quoted", () => {
+    const envvar = parseEnvVar('export CAT="pants"');
+
+    expect(envvar).to.deep.equal({
+      exported: true,
+      name: "CAT",
+      value: "pants",
+    });
+  });
+
+  it("works with unexported", () => {
+    const envvar = parseEnvVar('CAT="pants"');
+
+    expect(envvar).to.deep.equal({
+      exported: false,
+      name: "CAT",
+      value: "pants",
+    });
   });
 });
