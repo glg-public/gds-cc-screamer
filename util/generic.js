@@ -305,7 +305,10 @@ function getAccess(orders, roles) {
             const claimSet = getRoleByClaim(roles, claim, maskComponent);
             if (!claimSet) {
               // handle the special case of legacy role-glg:2147483647
-              if (claim !== legacyRoleMap.GLG_ALLOW_ALL.claim || mask !== legacyRoleMap.GLG_ALLOW_ALL.mask.toString()) {
+              if (
+                claim !== legacyRoleMap.GLG_ALLOW_ALL.claim ||
+                mask !== legacyRoleMap.GLG_ALLOW_ALL.mask.toString()
+              ) {
                 unknownRoles.push(`${claim}:${maskComponent}`);
               }
             }
@@ -398,6 +401,33 @@ function getRoleByClaim(roles, claim, mask) {
   return null;
 }
 
+function applyConfig({ config, serviceName, checkName, results }) {
+  // If no overrides are configured, return the unmodified results
+  if (!config || !config[serviceName] || !config[serviceName][checkName]) {
+    return results;
+  }
+
+  // If the check is configured to be skipped for this service, return an empty array
+  if (config[serviceName][checkName].skip) {
+    return [];
+  }
+
+  // If a max level is configured for the check, enforce that
+  // and return a modified results array
+  const levels = ["success", "notice", "warning", "failure"];
+  if (config[serviceName][checkName].maxLevel) {
+    return results.map((result) => {
+      if (
+        levels.indexOf(result.level) >
+        levels.indexOf(config[serviceName][checkName].maxLevel)
+      ) {
+        result.level = config[serviceName][checkName].maxLevel;
+      }
+      return result;
+    });
+  }
+}
+
 module.exports = {
   isAJob,
   getContents,
@@ -412,4 +442,5 @@ module.exports = {
   getRoleByClaim,
   getAccess,
   getClusterType,
+  applyConfig,
 };

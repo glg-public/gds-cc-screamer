@@ -1,0 +1,10 @@
+{
+  "service1": {
+    "check-name1": {
+      "maxLevel": "warning"
+    },
+    "check-name2": {
+      "skip": true
+    }
+  }
+}
