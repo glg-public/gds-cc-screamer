@@ -3,6 +3,7 @@ const core = require("@actions/core");
 const github = require("@actions/github");
 const checks = require("./checks");
 const path = require("path");
+const fs = require("fs").promises;
 const log = require("loglevel");
 const {
   clearPreviousRunComments,
@@ -10,6 +11,7 @@ const {
   suggestBugReport,
   leaveComment,
   httpGet,
+  applyConfig,
 } = require("./util");
 
 log.setLevel(process.env.LOG_LEVEL || "info");
@@ -57,6 +59,20 @@ function getInputs() {
 async function run() {
   const token = core.getInput("token", { required: true });
   const inputs = getInputs();
+  let config = {};
+  try {
+    config = await JSON.parse(
+      fs.readFile(path.join(inputs.clusterRoot, ".ccscreamer.json"), "utf-8")
+    );
+  } catch (e) {
+    if (e.name === "SyntaxError") {
+      log.error(".ccscreamer.json was unparsable. Ignoring.");
+    } else if (e.code === "ENOENT") {
+      log.error(
+        ".ccscreamer.json not found. Proceeding with default configuration"
+      );
+    }
+  }
 
   const octokit = github.getOctokit(token);
 
@@ -146,6 +162,12 @@ async function run() {
         let results = [];
         try {
           results = await check(deployment, github.context, inputs, httpGet);
+          results = applyConfig({
+            config,
+            serviceName: deployment.serviceName,
+            checkName,
+            results,
+          });
         } catch (e) {
           await suggestBugReport(octokit, e, "Error running check", {
             owner,
