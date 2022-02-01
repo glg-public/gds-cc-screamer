@@ -29,8 +29,9 @@ const restrictedBuckets = require("./restricted-buckets");
 const doubleQuotes = require("./double-quotes");
 const validBetas = require("./valid-betas");
 const shellcheck = require("./shellcheck");
-const validJsonArraysInBashCheck = require("./valid-json-arrays-in-bash")
+const validJsonArraysInBashCheck = require("./valid-json-arrays-in-bash");
 const entrypointRequiresCmdCheck = require("./entrypoint-requires-cmd");
+const jobsShouldUseBulkMail = require("./jobs-should-use-bulkmail");
 const noDuplicateForwardHostHeaders = require("./no-duplicate-forward-host-headers");
 
 /**
@@ -68,6 +69,7 @@ module.exports = {
   shellcheck,
   validJsonArraysInBashCheck,
   entrypointRequiresCmdCheck,
+  jobsShouldUseBulkMail,
   noDuplicateForwardHostHeaders,
 
   /**

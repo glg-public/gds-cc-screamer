@@ -9,8 +9,12 @@ const {
   getMasks,
   getMaskComponents,
   getSimpleSecret,
+  applyConfig,
+  parseEnvVar,
 } = require("../../util/generic");
 const roles = require("../fixtures/roles");
+const ccConfig = require("../fixtures/jobs-cc1/.ccscreamer.json");
+const { env } = require("process");
 
 describe("isAJob", () => {
   it("takes file lines, and determines if it is a job deployment", () => {
@@ -149,5 +153,147 @@ describe("getSimpleSecret", () => {
     const simpleSecret =
       "arn:aws:secretsmanager:us-east-1:111111111111:secret:us-east-1/production/MY_SECRET-??????";
     expect(getSimpleSecret(arn)).to.equal(simpleSecret);
+  });
+});
+
+describe("applyConfig", () => {
+  it("does nothing if there is no configuration for a service", () => {
+    const results = [
+      {
+        title: "secrets.json is not valid JSON",
+        path: "notconfigured/secrets.json",
+        problems: [
+          "An error was encountered while trying to JSON parse notconfigured/secrets.json",
+        ],
+        line: 0,
+        level: "failure",
+      },
+    ];
+
+    const configuredResults = applyConfig({
+      config: ccConfig,
+      serviceName: "notconfigured",
+      checkName: "secretsJsonValid",
+      results,
+    });
+
+    expect(results).to.deep.equal(configuredResults);
+  });
+
+  it("does nothing if there is no configuration for a check for a service", () => {
+    const results = [
+      {
+        title: "secrets.json is not valid JSON",
+        path: "service1/secrets.json",
+        problems: [
+          "An error was encountered while trying to JSON parse service1/secrets.json",
+        ],
+        line: 0,
+        level: "failure",
+      },
+    ];
+
+    const configuredResults = applyConfig({
+      config: ccConfig,
+      serviceName: "service1",
+      checkName: "secretsJsonValid",
+      results,
+    });
+
+    expect(results).to.deep.equal(configuredResults);
+  });
+
+  it("skips a check for a service if configured", () => {
+    const results = [
+      {
+        title: "secrets.json is not valid JSON",
+        path: "service1/secrets.json",
+        problems: [
+          "An error was encountered while trying to JSON parse service1/secrets.json",
+        ],
+        line: 0,
+        level: "failure",
+      },
+    ];
+
+    const configuredResults = applyConfig({
+      config: ccConfig,
+      serviceName: "service1",
+      checkName: "check-name2",
+      results,
+    });
+
+    expect(configuredResults).to.deep.equal([]);
+  });
+
+  it("enforces a max level for a check for a service if configured", () => {
+    const results = [
+      {
+        title: "secrets.json is not valid JSON",
+        path: "service1/secrets.json",
+        problems: [
+          "An error was encountered while trying to JSON parse service1/secrets.json",
+        ],
+        line: 0,
+        level: "failure",
+      },
+    ];
+
+    const configuredResults = applyConfig({
+      config: ccConfig,
+      serviceName: "service1",
+      checkName: "check-name1",
+      results,
+    });
+
+    expect(configuredResults).to.deep.equal([
+      {
+        title: "secrets.json is not valid JSON",
+        path: "service1/secrets.json",
+        problems: [
+          "An error was encountered while trying to JSON parse service1/secrets.json",
+        ],
+        line: 0,
+        level: "warning",
+      },
+    ]);
+  });
+});
+
+describe("parseEnvVar", () => {
+  it("returns an empty object if a line doesn't define an environment variable", () => {
+    const obj = parseEnvVar("# this line is just a comment");
+
+    expect(obj).to.deep.equal({});
+  });
+
+  it("works with single quoted", () => {
+    const envvar = parseEnvVar("export CAT='pants'");
+
+    expect(envvar).to.deep.equal({
+      exported: true,
+      name: "CAT",
+      value: "pants",
+    });
+  });
+
+  it("works with double quoted", () => {
+    const envvar = parseEnvVar('export CAT="pants"');
+
+    expect(envvar).to.deep.equal({
+      exported: true,
+      name: "CAT",
+      value: "pants",
+    });
+  });
+
+  it("works with unexported", () => {
+    const envvar = parseEnvVar('CAT="pants"');
+
+    expect(envvar).to.deep.equal({
+      exported: false,
+      name: "CAT",
+      value: "pants",
+    });
   });
 });

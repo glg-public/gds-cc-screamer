@@ -3,6 +3,7 @@ const core = require("@actions/core");
 const github = require("@actions/github");
 const checks = require("./checks");
 const path = require("path");
+const fs = require("fs").promises;
 const log = require("loglevel");
 const {
   clearPreviousRunComments,
@@ -10,6 +11,7 @@ const {
   suggestBugReport,
   leaveComment,
   httpGet,
+  applyConfig,
 } = require("./util");
 
 log.setLevel(process.env.LOG_LEVEL || "info");
@@ -57,6 +59,22 @@ function getInputs() {
 async function run() {
   const token = core.getInput("token", { required: true });
   const inputs = getInputs();
+  let config = {};
+  let brokenConfig = false;
+  try {
+    config = await JSON.parse(
+      fs.readFile(path.join(inputs.clusterRoot, ".ccscreamer.json"), "utf-8")
+    );
+  } catch (e) {
+    if (e.name === "SyntaxError") {
+      log.error(".ccscreamer.json was unparsable. Ignoring.");
+      brokenConfig = true;
+    } else if (e.code === "ENOENT") {
+      log.error(
+        ".ccscreamer.json not found. Proceeding with default configuration"
+      );
+    }
+  }
 
   const octokit = github.getOctokit(token);
 
@@ -92,6 +110,28 @@ async function run() {
       warning: 0,
       notice: 0,
     };
+
+    if (brokenConfig) {
+      await leaveComment(
+        octokit,
+        deployments[0],
+        {
+          title: "Broken Config",
+          level: "warning",
+          line: 0,
+          path: deployments[0].ordersPath,
+          problems: [
+            "`.ccscreamer.json` is unparsable, so some features may be unavailable. [More Info](https://github.com/glg-public/gds-cc-screamer#configuration)",
+          ],
+        },
+        {
+          owner,
+          repo,
+          pull_number,
+          sha,
+        }
+      );
+    }
 
     if (
       inputs.deployinatorToken &&
@@ -146,6 +186,12 @@ async function run() {
         let results = [];
         try {
           results = await check(deployment, github.context, inputs, httpGet);
+          results = applyConfig({
+            config,
+            serviceName: deployment.serviceName,
+            checkName,
+            results,
+          });
         } catch (e) {
           await suggestBugReport(octokit, e, "Error running check", {
             owner,
