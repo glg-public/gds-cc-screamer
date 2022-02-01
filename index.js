@@ -61,10 +61,10 @@ async function run() {
   const inputs = getInputs();
   let config = {};
   let brokenConfig = false;
+  const configPath = path.join(inputs.clusterRoot, ".ccscreamer.json");
   try {
-    config = await JSON.parse(
-      fs.readFile(path.join(inputs.clusterRoot, ".ccscreamer.json"), "utf-8")
-    );
+    const txt = await fs.readFile(configPath, "utf-8");
+    config = JSON.parse(txt);
   } catch (e) {
     if (e.name === "SyntaxError") {
       log.error(".ccscreamer.json was unparsable. Ignoring.");
