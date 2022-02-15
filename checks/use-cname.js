@@ -31,6 +31,7 @@ async function useCNAME(deployment, context, inputs, httpGet) {
   const splitName = repo.split(".");
   const repoCluster = splitName.pop();
 
+  let lineNumber;
   try {
     const httpOpts = {
       headers: {
@@ -49,7 +50,7 @@ async function useCNAME(deployment, context, inputs, httpGet) {
     }
 
     deployment.ordersContents.forEach((line, i) => {
-      const lineNumber = i + 1;
+      lineNumber = i + 1;
       const envvarMatch = envvar.exec(line);
       if (envvarMatch) {
         const { value } = envvarMatch.groups;
