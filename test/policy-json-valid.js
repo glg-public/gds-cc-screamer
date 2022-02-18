@@ -735,7 +735,7 @@ describe("policy.json is valid", () => {
       title: 'Invalid value for "Sid"',
       path: "streamliner/policy.json",
       problems: [
-        "Statement IDs (SID) must be alpha-numeric. Check that your input satisfies the regular expression /^[0-9A-Za-z]*$/",
+        "Statement IDs (SID) must be alpha-numeric. Check that your input satisfies the regular expression `/^[0-9A-Za-z]*$/`",
       ],
       line: 5,
       level: "failure",
