@@ -680,6 +680,26 @@ function validateGenericIamPolicy(file, filePath) {
       });
     }
 
+    /**
+     * Sid is not actually required, but
+     * if you include one, there are rules
+     */
+    const sid = statement.Sid || statement.sid;
+    if (sid && !/^[0-9A-Za-z]*$/.test(sid)) {
+      const problem =
+        "Statement IDs (SID) must be alpha-numeric. Check that your input satisfies the regular expression `/^[0-9A-Za-z]*$/`";
+      const lineRegex = new RegExp(`"Sid":\\s*"${escapeRegExp(sid)}"`, "i");
+      const line = getLineWithinObject(fileLines, statement, lineRegex);
+
+      results.push({
+        title: 'Invalid value for "Sid"',
+        path: filePath,
+        problems: [problem],
+        line,
+        level: "failure",
+      });
+    }
+
     // Validate Action Block
     const action =
       statement.Action ||
