@@ -687,7 +687,7 @@ function validateGenericIamPolicy(file, filePath) {
     const sid = statement.Sid || statement.sid;
     if (sid && !/^[0-9A-Za-z]*$/.test(sid)) {
       const problem =
-        "Statement IDs (SID) must be alpha-numeric. Check that your input satisfies the regular expression /^[0-9A-Za-z]*$/";
+        "Statement IDs (SID) must be alpha-numeric. Check that your input satisfies the regular expression `/^[0-9A-Za-z]*$/`";
       const lineRegex = new RegExp(`"Sid":\\s*"${escapeRegExp(sid)}"`, "i");
       const line = getLineWithinObject(fileLines, statement, lineRegex);
 
