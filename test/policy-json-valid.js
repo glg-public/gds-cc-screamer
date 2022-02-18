@@ -694,6 +694,54 @@ describe("policy.json is valid", () => {
     });
   });
 
+  it("rejects policy.json where any statement block has an invalid Sid", async () => {
+    const policyJson = JSON.stringify(
+      {
+        Version: "2012-10-17",
+        Statement: [
+          {
+            Sid: "no-hyphens",
+            Effect: "Allow",
+            Action: [
+              "ecr:GetAuthorizationToken",
+              "ecr:BatchCheckLayerAvailability",
+              "ecr:GetDownloadUrlForLayer",
+              "ecr:BatchGetImage",
+              "logs:CreateLogStream",
+              "logs:PutLogEvents",
+              "secretsmanager:GetSecretValue",
+            ],
+            Resource: [
+              "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret-??????",
+              "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/something_else-??????",
+            ],
+          },
+        ],
+      },
+      null,
+      2
+    );
+    let deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
+      policyJsonPath: "streamliner/policy.json",
+      policyJsonContents: policyJson.split("\n"),
+    };
+
+    let results = await policyJsonIsValid(deployment);
+    expect(results.length).to.equal(1);
+    expect(results[0]).to.deep.equal({
+      title: 'Invalid value for "Sid"',
+      path: "streamliner/policy.json",
+      problems: [
+        "Statement IDs (SID) must be alpha-numeric. Check that your input satisfies the regular expression /^[0-9A-Za-z]*$/",
+      ],
+      line: 5,
+      level: "failure",
+    });
+  });
+
   it('requires the "secretsmanager:GetSecretValue" action if a secrets.json is present', async () => {
     let policyJson = JSON.stringify(
       {
