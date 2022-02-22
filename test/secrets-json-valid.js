@@ -14,20 +14,22 @@ describe("secrets.json is valid check", () => {
   });
 
   it("accepts valid secrets.json files", async () => {
-    const secretsJson = `[
-      {
-        "name": "JSON_SECRET",
-        "valueFrom": "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret:example::"
-      },
-      {
-        "name": "OTHER_VALUE",
-        "valueFrom": "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret:newkey::"
-      },
-      {
-        "name": "MORE_PLAIN",
-        "valueFrom": "arn:aws:secretsmanager:us-east-1:988857891049:secret:us-east-1/prototype/GDS_INSTANCES_PRIVATE_KEY-46S5sl"
-      }
-    ]`;
+    const secretsJson = JSON.stringify(
+      [
+        {
+          name: "JSON_SECRET",
+          valueFrom:
+            "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret:example::",
+        },
+        {
+          name: "OTHER_VALUE",
+          valueFrom:
+            "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret:newkey::",
+        },
+      ],
+      null,
+      2
+    );
 
     const deployment = {
       serviceName: "streamliner",
@@ -231,5 +233,41 @@ describe("secrets.json is valid check", () => {
       },
       level: "failure",
     });
+  });
+
+  it("rejects a secrets.json if a secret name ends in /-[a-zA-Z0-9]{6}/", async () => {
+    const secretsJson = JSON.stringify(
+      [
+        {
+          name: "JSON_SECRET",
+          valueFrom:
+            "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret:example::",
+        },
+        {
+          name: "OTHER_VALUE",
+          valueFrom:
+            "arn:aws:secretsmanager:us-east-1:111111111111:secret:dev/json_secret:newkey::",
+        },
+        {
+          name: "MORE_PLAIN",
+          valueFrom:
+            "arn:aws:secretsmanager:us-east-1:988857891049:secret:us-east-1/prototype/GDS_INSTANCES_PRIVATE_KEY-46S5sl",
+        },
+      ],
+      null,
+      2
+    );
+
+    const deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
+      secretsJsonPath: "streamliner/secrets.json",
+      secretsJsonContents: secretsJson.split("\n"),
+    };
+
+    const results = await secretsJsonIsValid(deployment);
+    expect(results.length).to.equal(1);
+    expect(results[0].level).to.equal("failure");
   });
 });

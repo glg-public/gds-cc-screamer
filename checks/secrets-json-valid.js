@@ -2,7 +2,10 @@ require("../typedefs");
 const log = require("loglevel");
 const { getLinesForJSON, suggest, getLineWithinObject } = require("../util");
 
-const secretArn = /arn:([\w\*\-]*):secretsmanager:([\w-]*):(\d*):secret:([\w-\/]*):?(\S*?):?(\S*?):?(\w*)/;
+const secretArn =
+  /arn:([\w\*\-]*):secretsmanager:([\w-]*):(\d*):secret:([\w-\/]*):?(\S*?):?(\S*?):?(\w*)/;
+
+const versionSuffix = /-[a-zA-Z0-9]{6}/;
 
 /**
  * Checks the validity of a secrets.json
@@ -175,6 +178,18 @@ async function secretsJsonIsValid(deployment) {
     ) {
       result.problems.push(`Invalid secret ARN: ${standardSecret.valueFrom}`);
       result.title = `Invalid Secret: ${standardSecret.name}`;
+    }
+
+    if (
+      standardSecret.valueFrom &&
+      standardSecret.name &&
+      secretArn.test(standardSecret.valueFrom) &&
+      versionSuffix.test(standardSecret.valueFrom)
+    ) {
+      result.problems.push(
+        `Having your secret name end in ${versionSuffix} causes problems because this is also an accepted syntax for specifying secret version. If your intention is to specify a version, please use format: \`arn:aws:secretsmanager:region:aws_account_id:secret:secret-name:json-key:version-stage:version-id\`.  If this is not your intention, please rename your secret, possibly using underscore instead of hyphen.`
+      );
+      result.title = `Secret Name or Secret Version?`;
     }
 
     if (result.problems.length > 0) {
