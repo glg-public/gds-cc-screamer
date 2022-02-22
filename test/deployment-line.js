@@ -34,11 +34,31 @@ describe("Deployment Line Check", () => {
 
     expect(results[0].problems.length).to.equal(0);
 
+    deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: ["dockerdeploy github/glg/price-service/main:job-node16-alpine"],
+    };
+
+    results = await deploymentLineCheck(deployment, {}, {});
+
+    expect(results[0].problems.length).to.equal(0);
+
     // works with jobdeploy
     deployment = {
       serviceName: "streamliner",
       ordersPath: "streamliner/orders",
       ordersContents: ["jobdeploy github/glg/price-service/main:latest"],
+    };
+
+    results = await deploymentLineCheck(deployment, {}, {});
+
+    expect(results[0].problems.length).to.equal(0);
+
+    deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: ["jobdeploy github/glg/price-service/main:job-node16-alpine"],
     };
 
     results = await deploymentLineCheck(deployment, {}, {});
