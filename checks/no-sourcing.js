@@ -23,6 +23,7 @@ async function noSourcing(deployment) {
     if (sourceUse.test(line)) {
       results.push({
         title: "No Use of `source`",
+        path: deployment.ordersPath,
         problems: [
           "You should not source any other files in your orders files.",
         ],

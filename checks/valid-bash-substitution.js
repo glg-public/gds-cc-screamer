@@ -25,6 +25,7 @@ async function validBashSubsitutions(deployment) {
     if (match && !EXCLUDED_VARIABLE_NAMES.includes(match.groups.variable)) {
       results.push({
         title: "Bad Substitution",
+        path: deployment.ordersPath,
         problems: [
           `You must use double quotes for bash subsitutions.\n\`\`\`suggestion
 ${line.replace(/'/g, '"')}

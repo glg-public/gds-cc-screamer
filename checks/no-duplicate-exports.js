@@ -55,6 +55,7 @@ async function noDuplicateExports(deployment) {
     if (counts[variable] && counts[variable] > 1) {
       const result = {
         title: "Duplicate Export",
+        path: deployment.ordersPath,
         problems: [
           `The variable \`${variable}\` is exported on multiple lines: **${lines[
             variable

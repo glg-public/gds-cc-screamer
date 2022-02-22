@@ -61,6 +61,7 @@ async function validateHealthcheck(deployment) {
   return [
     {
       title: "Invalid Healthcheck",
+      path: deployment.ordersPath,
       problems,
       line: lineNumber,
       level: "failure",

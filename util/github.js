@@ -140,7 +140,7 @@ async function leaveComment(
           ? result.line
           : `${result.line.start} - ${result.line.end}`;
       result.problems.unshift(
-        `Problem existed outside of diff at \`${result.path}\`, line **${line}**`
+        `Problem existed outside of diff at \`${resultPath}\`, line **${line}**`
       );
       result.line = 0;
       await leaveComment(octokit, deployment, result, {

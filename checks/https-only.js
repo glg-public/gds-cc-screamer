@@ -30,6 +30,7 @@ async function httpsOnly(deployment) {
     if (reBadURLs.test(line)) {
       const result = {
         title: "HTTPS Only",
+        path: deployment.ordersPath,
         problems: [
           `Use HTTPS for all requests to GLG domains\n\`\`\`suggestion
 ${line.replace(/http:/i, "https:")}
