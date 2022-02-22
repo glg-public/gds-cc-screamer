@@ -20,4 +20,15 @@ describe("All Checks Are Mounted", () => {
 
     expect(mountedChecks.length).to.deep.equal(allChecks.length);
   });
+
+  it("all checks are included in readme", async () => {
+    const readme = await fs.readFile(
+      path.join(process.cwd(), "README.md"),
+      "utf8"
+    );
+
+    for (let checkName in checks) {
+      expect(readme).to.include(checkName);
+    }
+  });
 });
