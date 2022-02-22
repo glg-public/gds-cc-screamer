@@ -57,6 +57,10 @@ inputs:
     description: The repository where epiquery templates are kept.
     required: false
     default: glg/epiquery-templates
+  fqdn_locks:
+    description: A comma separated list of FQDNs that should be blocked from deploying
+    required: false
+    default: ""
 runs:
   using: "node16"
   main: "index.js"

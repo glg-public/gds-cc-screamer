@@ -33,6 +33,7 @@ const validJsonArraysInBashCheck = require("./valid-json-arrays-in-bash");
 const entrypointRequiresCmdCheck = require("./entrypoint-requires-cmd");
 const jobsShouldUseBulkMail = require("./jobs-should-use-bulkmail");
 const noDuplicateForwardHostHeaders = require("./no-duplicate-forward-host-headers");
+const fqdnLock = require("./fqdn-lock");
 
 /**
  * Exports all checks in an appropriate order
@@ -71,6 +72,7 @@ module.exports = {
   entrypointRequiresCmdCheck,
   jobsShouldUseBulkMail,
   noDuplicateForwardHostHeaders,
+  fqdnLock,
 
   /**
    *  This should always be after checks for orders and secrets.json, because it verifies that the
