@@ -209,6 +209,7 @@ async function validateDeploymentLine(deployment, context, inputs, httpGet) {
   return [
     {
       title,
+      path: deployment.ordersPath,
       problems,
       line: lineNumber,
       level,

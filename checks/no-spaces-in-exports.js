@@ -30,6 +30,7 @@ async function noSpacesInExports(deployment) {
       const { variable, value } = match.groups;
       results.push({
         title: "No Spaces in Exports",
+        path: deployment.ordersPath,
         problems: [
           `Trim out this whitespace\n\`\`\`suggestion
 export ${variable}=${value}

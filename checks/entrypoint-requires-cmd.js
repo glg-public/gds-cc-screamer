@@ -31,19 +31,19 @@ async function entrypointRequiresCmd(deployment, context, inputs, httpGet) {
     const lineNumber = i + 1;
     // this test only checks CMD and ENTRYPOINT values
     hasCmd = /export\s+CMD/.test(line) || hasCmd;
-    const thisLineHasEntrypoint = /export\s+ENTRYPOINT/.test(line)
+    const thisLineHasEntrypoint = /export\s+ENTRYPOINT/.test(line);
     hasEntrypoint = thisLineHasEntrypoint || hasEntrypoint;
     if (thisLineHasEntrypoint) {
       entrypointLineNo = lineNumber;
     }
-
   });
 
   if (hasEntrypoint && !hasCmd) {
     results.push({
       title: `ENTRYPOINT requires CMD`,
+      path: deployment.ordersPath,
       problems: [
-        `Using ENTRYPOINT to override the docker image requires that you also override CMD.\nSee https://docs.docker.com/engine/reference/run/#entrypoint-default-command-to-execute-at-runtime`
+        `Using ENTRYPOINT to override the docker image requires that you also override CMD.\nSee https://docs.docker.com/engine/reference/run/#entrypoint-default-command-to-execute-at-runtime`,
       ],
       line: entrypointLineNo,
       level: "failure",
