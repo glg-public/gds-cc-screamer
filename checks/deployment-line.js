@@ -2,9 +2,9 @@ require("../typedefs");
 const log = require("loglevel");
 
 const dockerdeploy =
-  /^dockerdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>[^:]+):?(?<tag>[\w-]+)/;
+  /^dockerdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>[^:]+):?(?<tag>[\w-]*)/;
 const jobdeploy =
-  /^jobdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>[^:]+):?(?<tag>[\w-]+)/;
+  /^jobdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>[^:]+):?(?<tag>[\w-]*)/;
 const autodeploy =
   /^autodeploy\s+(git@github.com:|https:\/\/github\.com\/)(?<org>[\w-]+)\/(?<repo>[^#\.]+)(\.git|)#?(?<branch>.*)/;
 const validCharacters = /^[a-z][a-z0-9-]*$/;
