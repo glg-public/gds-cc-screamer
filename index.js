@@ -34,6 +34,7 @@ function getInputs() {
   const restrictedBuckets = core.getInput("restricted_buckets");
   const skipChecks = new Set(core.getInput("skip_checks").split(","));
   const epiqueryTemplatesRepo = core.getInput("epiquery_templates_repo");
+  const fqdnLocks = new Set(core.getInput("fqdn_locks").split(","));
 
   /** @type {ActionInputs} */
   return {
@@ -50,6 +51,7 @@ function getInputs() {
     restrictedBuckets,
     skipChecks,
     epiqueryTemplatesRepo,
+    fqdnLocks,
   };
 }
 

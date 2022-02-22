@@ -45,7 +45,8 @@ This is a github action for validating PRs to GDS Cluster Configs. It evaluates 
     - [validJsonArraysInBash](#validjsonarraysinbash)
     - [entrypointRequiresCmd](#entrypointrequirescmd)
     - [noDuplicateForwardHostHeaders](#noduplicateforwardhostheaders)
-    - [JobsShouldUseBulkMail](#jobsshouldusebulkmail)
+    - [jobsShouldUseBulkMail](#jobsshouldusebulkmail)
+    - [fqdnLock](#fqdnlock)
   - [Adding Checks](#adding-checks)
     - [Testing locally](#testing-locally)
   - [Who's the goat?](#whos-the-goat)
@@ -273,8 +274,12 @@ Runs the [shellcheck](https://github.com/koalaman/shellcheck) utility on the ord
 
 - Each FORWARD_HOST_HEADERS value must be unique for a cluster config. Otherwise, AWS will throw errors about the duplicates and possibly leave your load balancer in a broken state.
 
-### JobsShouldUseBulkMail
+### jobsShouldUseBulkMail
 - jobs should prefer bulkmail-internal to email-internal
+
+
+### fqdnLock
+- if `fqdn_locks` is configured and the deployment references that fqdn, it will be blocked
 
 ## Adding Checks
 

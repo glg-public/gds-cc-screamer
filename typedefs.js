@@ -294,6 +294,7 @@
  * restrictedBuckets: string
  * skipChecks: Set<string>
  * epiqueryTemplatesRepo: string
+ * fqdnLocks: Set<string>
  * }} ActionInputs
  */
 
