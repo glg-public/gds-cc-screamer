@@ -34,6 +34,7 @@ const entrypointRequiresCmd = require("./entrypoint-requires-cmd");
 const jobsShouldUseBulkMail = require("./jobs-should-use-bulkmail");
 const noDuplicateForwardHostHeaders = require("./no-duplicate-forward-host-headers");
 const fqdnLock = require("./fqdn-lock");
+const chinaForwardHostHeaders = require("./china-forward-host-headers");
 
 /**
  * Exports all checks in an appropriate order
@@ -73,11 +74,12 @@ module.exports = {
   jobsShouldUseBulkMail,
   noDuplicateForwardHostHeaders,
   fqdnLock,
+  chinaForwardHostHeaders,
 
   /**
-   *  This should always be after checks for orders and secrets.json, because it verifies that the
-   *  policy includes permissions that are implied by orders and secrets.json
-   * */
+   *  This should always be after checks for orders and secrets.json, because it verifies
+   *  that the policy includes permissions that are implied by orders and secrets.json
+   */
   policyJsonValid,
 
   /**

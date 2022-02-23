@@ -21,6 +21,11 @@ function isAJob(fileLines) {
   return isJobDeploy || isUnpublished;
 }
 
+function isChinaClusterConfig(context) {
+  const repo = context.payload.pull_request.base.repo.name;
+  return repo.startsWith("gds.china.");
+}
+
 /**
  * Read orders, secrets.json, and policy.json from the directory,
  * and split them by \n.
@@ -458,4 +463,5 @@ module.exports = {
   getClusterType,
   applyConfig,
   parseEnvVar,
+  isChinaClusterConfig,
 };

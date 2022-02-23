@@ -61,6 +61,10 @@ inputs:
     description: A comma separated list of FQDNs that should be blocked from deploying
     required: false
     default: ""
+  icp_domains:
+    description: a comma separated list of domains that are acceptable in china
+    required: false
+    default: glginc.cn
 runs:
   using: "node16"
   main: "index.js"

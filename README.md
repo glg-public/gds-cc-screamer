@@ -47,6 +47,7 @@ This is a github action for validating PRs to GDS Cluster Configs. It evaluates 
     - [noDuplicateForwardHostHeaders](#noduplicateforwardhostheaders)
     - [jobsShouldUseBulkMail](#jobsshouldusebulkmail)
     - [fqdnLock](#fqdnlock)
+    - [chinaForwardHostHeaders](#chinaforwardhostheaders)
   - [Adding Checks](#adding-checks)
     - [Testing locally](#testing-locally)
   - [Who's the goat?](#whos-the-goat)
@@ -280,6 +281,11 @@ Runs the [shellcheck](https://github.com/koalaman/shellcheck) utility on the ord
 
 ### fqdnLock
 - if `fqdn_locks` is configured and the deployment references that fqdn, it will be blocked
+
+
+### chinaForwardHostHeaders
+
+- GDS China is physically hosted in Mainland China, according to China regulations, websites' hosts physically located in Mainland China MUST have an ICP licensed domain to publish the website, so to use any domain related the feature in GDS China, we have to restrict our user to use ICP licensed domain.
 
 ## Adding Checks
 
