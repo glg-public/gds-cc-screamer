@@ -5,7 +5,7 @@ const { getLinesForJSON, suggest, getLineWithinObject } = require("../util");
 const secretArn =
   /arn:([\w\*\-]*):secretsmanager:([\w-]*):(\d*):secret:([\w-\/]*):?(\S*?):?(\S*?):?(\w*)/;
 
-const versionSuffix = /-[a-zA-Z0-9]{6}/;
+const versionSuffix = /-[a-zA-Z0-9]{6}$/;
 
 /**
  * Checks the validity of a secrets.json
