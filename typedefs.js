@@ -295,6 +295,7 @@
  * skipChecks: Set<string>
  * epiqueryTemplatesRepo: string
  * fqdnLocks: Set<string>
+ * icpDomains: Array<string>
  * }} ActionInputs
  */
 

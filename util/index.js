@@ -37,6 +37,7 @@ const {
   getClusterType,
   applyConfig,
   parseEnvVar,
+  isChinaClusterConfig,
 } = require("./generic");
 
 module.exports = {
@@ -72,4 +73,5 @@ module.exports = {
   getClusterType,
   applyConfig,
   parseEnvVar,
+  isChinaClusterConfig,
 };

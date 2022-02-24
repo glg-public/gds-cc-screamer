@@ -30,7 +30,6 @@ describe("Secrets Exist", () => {
 
     const results = await secretsExist(deployment, context, inputs);
 
-    console.log(results);
     expect(results.length).to.equal(0);
   });
 

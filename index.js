@@ -35,6 +35,7 @@ function getInputs() {
   const skipChecks = new Set(core.getInput("skip_checks").split(","));
   const epiqueryTemplatesRepo = core.getInput("epiquery_templates_repo");
   const fqdnLocks = new Set(core.getInput("fqdn_locks").split(","));
+  const icpDomains = core.getInput("icp_domains").split(",");
 
   /** @type {ActionInputs} */
   return {
@@ -52,6 +53,7 @@ function getInputs() {
     skipChecks,
     epiqueryTemplatesRepo,
     fqdnLocks,
+    icpDomains,
   };
 }
 
