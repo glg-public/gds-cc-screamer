@@ -258,6 +258,11 @@ describe("secrets.json is valid check", () => {
           valueFrom:
             "arn:aws:secretsmanager:us-east-1:988857891049:secret:us-east-1/prototype/GDS_INSTANCES_PRIVATE_KEY-46S5sl",
         },
+        {
+          name: "GDS_SESSION_GENERATOR_APP_TOKEN",
+          valueFrom:
+            "arn:aws:secretsmanager:us-east-1:868468680417:secret:dev/GDS_APP_TOKEN_APOLLO-GIVE-FASTER:::",
+        },
       ],
       null,
       2
@@ -272,7 +277,7 @@ describe("secrets.json is valid check", () => {
     };
 
     const results = await secretsJsonIsValid(deployment);
-    expect(results.length).to.equal(1);
+    expect(results.length).to.equal(2);
     expect(results[0].level).to.equal("failure");
   });
 });

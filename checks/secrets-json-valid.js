@@ -180,14 +180,15 @@ async function secretsJsonIsValid(deployment) {
       result.title = `Invalid Secret: ${standardSecret.name}`;
     }
 
+    const arnMatch = secretArn.exec(standardSecret.valueFrom);
     if (
       standardSecret.valueFrom &&
       standardSecret.name &&
-      secretArn.test(standardSecret.valueFrom) &&
-      versionSuffix.test(standardSecret.valueFrom)
+      arnMatch &&
+      versionSuffix.test(arnMatch[4]) // secret name
     ) {
       result.problems.push(
-        `Having your secret name end in ${versionSuffix} causes problems because this is also an accepted syntax for specifying secret version. If your intention is to specify a version, please use format: \`arn:aws:secretsmanager:region:aws_account_id:secret:secret-name:json-key:version-stage:version-id\`.  If this is not your intention, please rename your secret, possibly using underscore instead of hyphen.`
+        `Having your secret name end in ${versionSuffix} causes problems because this is also an accepted syntax for specifying secret version. You will need to rename your secret.`
       );
       result.title = `Secret Name or Secret Version?`;
     }
