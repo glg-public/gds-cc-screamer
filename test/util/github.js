@@ -10,9 +10,11 @@ describe("suggestBugReport", () => {
   it("creates an issue comment that contains a link to open an issue on this repo", async () => {
     let commentPayload;
     const moctokit = {
-      issues: {
-        createComment: (input) => {
-          commentPayload = input;
+      rest: {
+        issues: {
+          createComment: (input) => {
+            commentPayload = input;
+          },
         },
       },
     };
@@ -45,10 +47,10 @@ describe("suggestBugReport", () => {
 describe("getOwnerRepoBranch", () => {
   const pr = require("../fixtures/pull-request.json");
   it("extracts the owner, repo, and branch from the pull request context", () => {
-    const context = { payload: { pull_request: pr }};
+    const context = { payload: { pull_request: pr } };
     let { owner, repo, branch } = getOwnerRepoBranch(context);
     expect(owner).to.equal("octocat");
     expect(repo).to.equal("Hello-World");
     expect(branch).to.equal("new-topic");
-  })
-})
+  });
+});
