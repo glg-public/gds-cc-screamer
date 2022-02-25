@@ -125,9 +125,10 @@ async function leaveComment(
   } catch (e) {
     // If the error is due to the problem existing outside the diff,
     // we still want to alert the user, so make a generic issue comment
-    console.log(e);
+    console.log(e.errors);
     if (
-      e.data.errors.filter(
+      e.errors &&
+      e.errors.filter(
         (err) =>
           err.resource === "PullRequestReviewComment" &&
           [
