@@ -126,7 +126,7 @@ async function leaveComment(
     // If the error is due to the problem existing outside the diff,
     // we still want to alert the user, so make a generic issue comment
     if (
-      e.errors.filter(
+      e?.response?.data?.errors.filter(
         (err) =>
           err.resource === "PullRequestReviewComment" &&
           [
