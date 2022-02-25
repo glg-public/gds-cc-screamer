@@ -92,7 +92,7 @@ async function run() {
   try {
     await clearPreviousRunComments(octokit, { owner, repo, pull_number });
 
-    const { data: files } = await octokit.pulls.listFiles({
+    const { data: files } = await octokit.rest.pulls.listFiles({
       owner,
       repo,
       pull_number,

@@ -82,7 +82,7 @@ async function leaveComment(
   try {
     // Line 0 means a general comment, not a line-specific comment
     if (result.line === 0) {
-      await octokit.issues.createComment({
+      await octokit.rest.issues.createComment({
         owner,
         repo,
         issue_number: pull_number,
@@ -96,7 +96,7 @@ async function leaveComment(
       result.line.hasOwnProperty("start") &&
       result.line.hasOwnProperty("end")
     ) {
-      await octokit.pulls.createReviewComment({
+      await octokit.rest.pulls.createReviewComment({
         owner,
         repo,
         pull_number,
@@ -111,7 +111,7 @@ async function leaveComment(
 
     // If line number is anything but 0, or a range object, we make a line-specific comment
     else {
-      await octokit.pulls.createReviewComment({
+      await octokit.rest.pulls.createReviewComment({
         owner,
         repo,
         pull_number,
@@ -196,7 +196,7 @@ async function suggestBugReport(
   });
 
   const body = `## An error was encountered. Please submit a bug report\n${errorText}\n\n${issueLink}\n`;
-  await octokit.issues.createComment({
+  await octokit.rest.issues.createComment({
     owner,
     repo,
     issue_number,
@@ -270,13 +270,14 @@ function getOwnerRepoBranch(context) {
  */
 async function clearPreviousRunComments(octokit, { owner, repo, pull_number }) {
   try {
-    const { data: reviewComments } = await octokit.pulls.listReviewComments({
-      owner,
-      repo,
-      pull_number,
-    });
+    const { data: reviewComments } =
+      await octokit.rest.pulls.listReviewComments({
+        owner,
+        repo,
+        pull_number,
+      });
 
-    const { data: issueComments } = await octokit.issues.listComments({
+    const { data: issueComments } = await octokit.rest.issues.listComments({
       owner,
       repo,
       issue_number: pull_number,
@@ -290,7 +291,7 @@ async function clearPreviousRunComments(octokit, { owner, repo, pull_number }) {
       )
       .forEach((comment) => {
         allDeletions.push(
-          octokit.pulls.deleteReviewComment({
+          octokit.rest.pulls.deleteReviewComment({
             owner,
             repo,
             comment_id: comment.id,
@@ -304,7 +305,7 @@ async function clearPreviousRunComments(octokit, { owner, repo, pull_number }) {
       )
       .forEach((comment) => {
         allDeletions.push(
-          octokit.issues.deleteComment({
+          octokit.rest.issues.deleteComment({
             owner,
             repo,
             comment_id: comment.id,
