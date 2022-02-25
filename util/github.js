@@ -125,6 +125,7 @@ async function leaveComment(
   } catch (e) {
     // If the error is due to the problem existing outside the diff,
     // we still want to alert the user, so make a generic issue comment
+    console.log(e);
     if (
       e.errors.filter(
         (err) =>
