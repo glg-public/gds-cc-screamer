@@ -23,7 +23,7 @@
     "@actions/github": "^5.0.0",
     "cronstrue": "^1.111.0",
     "loglevel": "^1.7.1",
-    "shellcheck": "^1.0.0",
+    "shellcheck": "^1.1.0",
     "validator": "^13.5.2"
   },
   "devDependencies": {
