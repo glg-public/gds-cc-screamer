@@ -127,7 +127,7 @@ async function leaveComment(
     // we still want to alert the user, so make a generic issue comment
     console.log(e);
     if (
-      e.errors.filter(
+      e.data.errors.filter(
         (err) =>
           err.resource === "PullRequestReviewComment" &&
           [
