@@ -1,6 +1,6 @@
 require("../typedefs");
 const log = require("loglevel");
-const { getExportValue, getLineNumber, suggest } = require("../util");
+const { getExportValue, getLineNumber, suggest, isAJob } = require("../util");
 const cronstrue = require("cronstrue");
 
 /**
@@ -21,11 +21,24 @@ async function validateCron(deployment) {
     deployment.ordersContents.join("\n"),
     "ECS_SCHEDULED_TASK_CRON"
   );
-  if (!cronStatement) {
+  if (!cronStatement && !isAJob(deployment.ordersContents)) {
     log.info(`No Cron Statement - Skipping ${deployment.serviceName}`);
     return [];
   }
   log.info(`Validate Cron Statement - ${deployment.ordersPath}`);
+  if (!cronStatement && isAJob(deployment.ordersContents)) {
+    return [
+      {
+        title: "Jobs must define a cron statement",
+        level: "failure",
+        line: 0,
+        path: deployment.ordersContents,
+        problems: [
+          "Your job must define a valid cron schedule in the environment variable `ECS_SCHEDULED_TASK_CRON`",
+        ],
+      },
+    ];
+  }
 
   /** @type {Array<Result>} */
   const results = [];
