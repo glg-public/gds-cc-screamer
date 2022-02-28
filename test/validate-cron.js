@@ -6,7 +6,7 @@ const { suggest } = require("../util");
 
 const fixturesDir = path.join(process.cwd(), "test", "fixtures");
 
-describe.only("Validate Cron", () => {
+describe("Validate Cron", () => {
   it("skips if there are no orders", async () => {
     const deployment = {
       serviceName: "somejob",

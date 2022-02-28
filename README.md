@@ -212,6 +212,7 @@ The file looks like
 
 - cron statements must be valid
 - cron statements should include a comment
+- cron statements are required for jobs
 
 ### fqdnRequired
 
