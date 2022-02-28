@@ -1,0 +1,7 @@
+
+# Env vars
+export INSERT_RECORDS="True"
+export ENV="prod"
+export LOGLEVEL="debug"
+
+jobdeploy github/owner/repo/test:latest
