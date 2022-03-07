@@ -132,4 +132,27 @@ describe("Validate Cron", () => {
       problems: ["Error: hours part must be >= 0 and <= 23"],
     });
   });
+
+  it("rejects invalid cron statements 2", async () => {
+    const orders = await fs.readFile(
+      path.join(fixturesDir, "cron-orders-invalid-2"),
+      "utf8"
+    );
+    const deployment = {
+      serviceName: "somejob",
+      ordersContents: orders.split("\n"),
+      ordersPath: "somejob/orders",
+    };
+
+    const results = await validateCron(deployment);
+    expect(results.length).to.equal(1);
+    expect(results[0]).to.deep.equal({
+      title: "Invalid Cron Statement",
+      level: "failure",
+      path: "somejob/orders",
+      line: 8,
+      problems: ["Error: Cron statement does not parse. See: https://crontab.guru/#0_11:30_*_*_*"],
+    });
+  });
+
 });

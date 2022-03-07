@@ -2,6 +2,7 @@ require("../typedefs");
 const log = require("loglevel");
 const { getExportValue, getLineNumber, suggest, isAJob } = require("../util");
 const cronstrue = require("cronstrue");
+const cronValidator = require("cron-validator");
 
 /**
  * Accepts a deployment object, and does some kind of check
@@ -45,6 +46,18 @@ async function validateCron(deployment) {
 
   const lineRegex = /^export ECS_SCHEDULED_TASK_CRON=/;
   const line = getLineNumber(deployment.ordersContents, lineRegex);
+
+  // Does it even parse, at all?
+  if (!cronValidator.isValidCron(cronStatement)) {
+    results.push({
+      title: "Invalid Cron Statement",
+      level: "failure",
+      path: deployment.ordersPath,
+      line,
+      problems: [`Error: Cron statement does not parse. See: https://crontab.guru/#${cronStatement.replaceAll(" ","_")}`],
+    });
+    return results;
+  }
 
   let comment;
   try {
