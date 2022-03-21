@@ -21,7 +21,7 @@
   "dependencies": {
     "@actions/core": "^1.6.0",
     "@actions/github": "^5.0.0",
-    "cronstrue": "^1.125.0",
+    "cronstrue": "^2.2.0",
     "loglevel": "^1.7.1",
     "shellcheck": "^1.1.0",
     "validator": "^13.5.2"
