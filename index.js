@@ -83,8 +83,6 @@ async function run() {
 
   const octokit = github.getOctokit(token);
 
-  console.log(JSON.stringify(github.context, null, 2));
-
   /** @type {PullRequest} */
   const pr = github.context.payload.pull_request;
 

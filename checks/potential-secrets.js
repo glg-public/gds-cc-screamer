@@ -1,6 +1,7 @@
 require("../typedefs");
 const log = require("loglevel");
 const validator = require("validator");
+const { codeBlock } = require("../util");
 
 const envvar = /^(export +|)(\w+)=['"]?([^\n\r]+?)['"]?$/;
 const dockerdeploy =
@@ -242,9 +243,23 @@ async function potentialSecrets(deployment, context, inputs) {
       } else if (!reservedVars.has(name) && !_isAnException(value)) {
         const reason = _isProblem(value);
         if (reason) {
+          const update = codeBlock(
+            JSON.stringify(
+              {
+                [deployment.serviceName]: {
+                  potentialSecrets: {
+                    exclusions: [name],
+                  },
+                },
+              },
+              null,
+              2
+            ),
+            "json"
+          );
           result.title = "Possible Secret?";
           result.problems.push(
-            `This was flagged as \`${reason}\`. If this is definitely not a secret, disregard.`
+            `This was flagged as \`${reason}\`. If this is definitely not a secret, update \`.ccscreamer.json\` to include the following:\n${update}`
           );
         }
       }

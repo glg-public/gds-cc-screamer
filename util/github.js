@@ -359,8 +359,6 @@ async function proposeConfig(inputs, context, newConfig) {
   }
 }
 
-async function setConfigInThisBranch(inputs, context, newConfig) {}
-
 module.exports = {
   getAllDeployments,
   leaveComment,
