@@ -245,6 +245,12 @@ function getNewFileLink({ owner, repo, branch, filename, value }) {
   )}&value=${encodeURIComponent(value)}`;
 }
 
+function getEditFileLink({ owner, repo, branch, filename, value }) {
+  return `https://github.com/${owner}/${repo}/edit/${branch}/${filename}?value=${encodeURIComponent(
+    value
+  )}`;
+}
+
 /**
  * Get the owner, repo, and branch for this PR
  * @param {GitHubContext} context The Github Pull Request Context Object
@@ -327,6 +333,7 @@ module.exports = {
   prLink,
   getNewIssueLink,
   getNewFileLink,
+  getEditFileLink,
   getOwnerRepoBranch,
   clearPreviousRunComments,
 };

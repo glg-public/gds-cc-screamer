@@ -274,6 +274,7 @@
 /**
  * @typedef {{
  * payload: {
+ *  after: string
  *  pull_request: PullRequest
  * }
  * }} GitHubContext

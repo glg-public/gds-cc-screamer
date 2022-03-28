@@ -87,16 +87,31 @@ describe("Potential Secrets", () => {
     };
 
     const results = await potentialSecrets(deployment);
+    const exclusionVars = ["CATS", "PANTS", "SANDWICH", "CHICKEN", "DOG"];
 
     expect(results.length).to.equal(deployment.ordersContents.length);
     results.forEach((result, i) => {
+      const problem = `This was flagged as \`isStrongPassword\`. If this is definitely not a secret, update \`.ccscreamer.json\` to include the following:
+\`\`\`json
+{
+  "streamliner": {
+    "potentialSecrets": {
+      "exclusions": [
+        "${exclusionVars[i]}"
+      ]
+    }
+  }
+}
+\`\`\`
+[Documentation](https://github.com/glg-public/gds-cc-screamer#potentialsecretsexclusions)`;
+
       expect(result).to.deep.equal({
         level: "warning",
         path: "streamliner/orders",
         line: i + 1,
         problems: [
           "This looks like it might be a secret. You should probably store this in AWS Secrets Manager.",
-          "This was flagged as `isStrongPassword`. If this is definitely not a secret, disregard.",
+          problem,
         ],
         title: "Possible Secret?",
       });
