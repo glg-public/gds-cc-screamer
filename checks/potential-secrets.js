@@ -259,7 +259,7 @@ async function potentialSecrets(deployment, context, inputs) {
           );
           result.title = "Possible Secret?";
           result.problems.push(
-            `This was flagged as \`${reason}\`. If this is definitely not a secret, update \`.ccscreamer.json\` to include the following:\n${update}`
+            `This was flagged as \`${reason}\`. If this is definitely not a secret, update \`.ccscreamer.json\` to include the following:\n${update}\n[Documentation](https://github.com/glg-public/gds-cc-screamer#potentialsecretsexclusions)`
           );
         }
       }
