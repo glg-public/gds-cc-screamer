@@ -1,6 +1,5 @@
 require("../typedefs");
 const path = require("path");
-const fs = require("fs").promises;
 const { getContents } = require("./generic");
 const { codeBlock } = require("./text");
 const core = require("@actions/core");
@@ -326,39 +325,6 @@ async function clearPreviousRunComments(octokit, { owner, repo, pull_number }) {
   }
 }
 
-/**
- *
- * @param {ActionInputs} inputs
- * @param {*} newConfig
- */
-async function proposeConfig(inputs, context, newConfig) {
-  const { owner, repo, branch } = getOwnerRepoBranch(context);
-  try {
-    await fs.stat(path.join(inputs.clusterRoot, ".ccscreamer.json"));
-    /**
-     * If the file exists already, we want to propose editing it.
-     */
-    return getEditFileLink({
-      owner,
-      repo,
-      branch,
-      filename: ".ccscreamer.json",
-      value: JSON.stringify(newConfig, null, 2),
-    });
-  } catch (e) {
-    /**
-     * If it doesn't exist, we should propose a new file
-     */
-    return getNewFileLink({
-      owner,
-      repo,
-      branch,
-      filename: ".ccscreamer.json",
-      value: JSON.stringify(newConfig, null, 2),
-    });
-  }
-}
-
 module.exports = {
   getAllDeployments,
   leaveComment,
@@ -368,7 +334,6 @@ module.exports = {
   getNewIssueLink,
   getNewFileLink,
   getEditFileLink,
-  proposeConfig,
   getOwnerRepoBranch,
   clearPreviousRunComments,
 };
