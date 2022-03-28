@@ -431,6 +431,8 @@ function applyConfig({ config, serviceName, checkName, results }) {
       return result;
     });
   }
+
+  return results;
 }
 
 const envvar = /^(export\s+|)(\w+)=['"](.+)['"]/;
