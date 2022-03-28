@@ -79,6 +79,7 @@ async function run() {
       );
     }
   }
+  inputs.config = config;
 
   const octokit = github.getOctokit(token);
 

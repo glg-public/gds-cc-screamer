@@ -15,7 +15,7 @@ const isPlainNumber = /^[\d\.]+$/;
 const containsURL =
   /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
 const isAFile = /.+\.\w{2,3}$/;
-const reservedVars = new Set([
+const globalReservedVars = new Set([
   "GDS_FQDN",
   "SESSION_ACCESS_FLAGS",
   "SECURITY_MODE",
@@ -70,7 +70,7 @@ const isEscapedJson = {
  *
  * @returns {Array<Result>}
  */
-async function potentialSecrets(deployment) {
+async function potentialSecrets(deployment, context, inputs) {
   /**
    * You should check the existance of any file you're trying to check
    */
@@ -79,6 +79,32 @@ async function potentialSecrets(deployment) {
     return [];
   }
   log.info(`Potential Secrets - ${deployment.ordersPath}`);
+
+  /** @type {Array<Result>} */
+  const results = [];
+
+  const reservedVars = new Set(globalReservedVars);
+
+  /**
+   * Users can add service-specific exclusions for variables
+   * that are often mistaken as secrets.
+   */
+  const exclusions =
+    inputs?.config?.[deployment.serviceName]?.potentialSecrets?.exclusions;
+  if (exclusions && !Array.isArray(exclusions)) {
+    results.push({
+      title: "Malformed Configuration",
+      level: "warning",
+      line: 0,
+      path: ".ccscreamer.json",
+      problems: [
+        `There is a syntax error in .ccscreamer.json related to the check \`potentialSecrets\` and the service \`${deployment.serviceName}\`. [Reference](https://github.com/glg-public/gds-cc-screamer#configuration)`,
+      ],
+    });
+  }
+  if (exclusions) {
+    exclusions.forEach((envvar) => reservedVars.add(envvar));
+  }
 
   /**
    * Calculates the Shannon Entropy of a string
@@ -193,9 +219,6 @@ async function potentialSecrets(deployment) {
     }
     return false;
   }
-
-  /** @type {Array<Result>} */
-  const results = [];
 
   deployment.ordersContents.forEach((line, i) => {
     const lineNumber = i + 1;
