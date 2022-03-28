@@ -296,6 +296,7 @@
  * epiqueryTemplatesRepo: string
  * fqdnLocks: Set<string>
  * icpDomains: Array<string>
+ * config: Object
  * }} ActionInputs
  */
 

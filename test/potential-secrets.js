@@ -138,4 +138,26 @@ describe("Potential Secrets", () => {
 
     expect(results.length).to.equal(0);
   });
+
+  it("ignores variables that are configured in .ccscreamer.json", async () => {
+    const deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: ["export CATS='RPp{2wTzvG8j4^9Du^r~_e%W'"],
+    };
+
+    const config = {
+      streamliner: {
+        potentialSecrets: {
+          exclusions: ["CATS"],
+        },
+      },
+    };
+
+    const inputs = { config };
+
+    const results = await potentialSecrets(deployment, {}, inputs);
+
+    expect(results.length).to.equal(0);
+  });
 });

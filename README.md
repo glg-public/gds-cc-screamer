@@ -103,6 +103,23 @@ The file looks like
 }
 ```
 
+### Check-Specific Configuration
+
+Some checks may implement configurable features. All checks receive the configuration object via `inputs.config`.
+
+#### potentialSecrets.exclusions
+You may exclude specific environment variables in specific checks from being flagged as secrets. Use this feature only when you are confident the value of that environment variable will never be a secret.
+
+```json
+{
+  "service-name": {
+    "potentialSecrets": {
+      "exclusions": ["DATABASE_GLGLIVE_DRIVER"]
+    }
+  }
+}
+```
+
 ## Checks
 
 ### serviceName
