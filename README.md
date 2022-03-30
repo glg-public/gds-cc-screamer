@@ -163,6 +163,7 @@ You may exclude specific environment variables in specific checks from being fla
 ### noDuplicateExports
 
 - No environment variable can be declared twice in the same orders file
+- No environment variable can be declared in both orders and secrets.json
 
 ### securityMode
 

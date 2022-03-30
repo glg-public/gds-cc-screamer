@@ -1,5 +1,6 @@
 require("../typedefs");
 const log = require("loglevel");
+const { getLineWithinObject } = require("../util");
 
 const exportedVariable = /^export +(?<variable>\w+)=/;
 
@@ -67,6 +68,33 @@ async function noDuplicateExports(deployment) {
 
       results.push(result);
     }
+  }
+
+  if (deployment.secretsJson && deployment.secretsJsonContents) {
+    deployment.secretsJson.forEach((secret) => {
+      const { name } = secret;
+      if (counts[name] && counts[name] > 0) {
+        const regex = new RegExp(`"name"\\s*:\\s*"${name}"`);
+        const line = getLineWithinObject(
+          deployment.secretsJsonContents,
+          secret,
+          regex
+        );
+        const result = {
+          title: "Duplicate Export",
+          path: deployment.secretsJsonPath,
+          line,
+          level: "failure",
+          problems: [
+            `The variable \`${name}\` is already declared in orders on lines: **${lines[
+              name
+            ].join(", ")}**`,
+            "ECS will not allow a deployment where an environment variable is declared in both `orders` (environment config) and in `secrets.json` (secret config).",
+          ],
+        };
+        results.push(result);
+      }
+    });
   }
 
   return results;
