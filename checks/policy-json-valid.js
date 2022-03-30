@@ -663,6 +663,7 @@ function validateGenericIamPolicy(file, filePath) {
     }
   }
 
+  const usedSids = new Set();
   // There is further validation to be done in each statement block
   statementBlock.forEach((statement) => {
     // Validate Effect statement
@@ -685,9 +686,9 @@ function validateGenericIamPolicy(file, filePath) {
      * if you include one, there are rules
      */
     const sid = statement.Sid || statement.sid;
-    if (sid && !/^[0-9A-Za-z]*$/.test(sid)) {
-      const problem =
-        "Statement IDs (SID) must be alpha-numeric. Check that your input satisfies the regular expression `/^[0-9A-Za-z]*$/`";
+    const sidRules = /^[0-9A-Za-z]*$/;
+    if (sid && !sidRules.test(sid)) {
+      const problem = `Statement IDs (SID) must be alpha-numeric. Check that your input satisfies the regular expression \`${sidRules}\``;
       const lineRegex = new RegExp(`"Sid":\\s*"${escapeRegExp(sid)}"`, "i");
       const line = getLineWithinObject(fileLines, statement, lineRegex);
 
@@ -698,6 +699,23 @@ function validateGenericIamPolicy(file, filePath) {
         line,
         level: "failure",
       });
+    }
+
+    if (sid && usedSids.has(sid)) {
+      const lineRegex = new RegExp(`"Sid":\\s*"${escapeRegExp(sid)}"`, "i");
+      const line = getLineWithinObject(fileLines, statement, lineRegex);
+      const result = {
+        title: "`Sid` Must Be Unique",
+        path: filePath,
+        line,
+        level: "failure",
+        problems: ["`Sid` must be unique within each policy."],
+      };
+      results.push(result);
+    }
+
+    if (sid) {
+      usedSids.add(sid);
     }
 
     // Validate Action Block
