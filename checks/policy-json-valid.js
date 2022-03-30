@@ -643,7 +643,7 @@ function validateGenericIamPolicy(file, filePath) {
       statement.notresource ||
       statement.Notresource;
     if (!resource) {
-      results.problems.push(
+      result.problems.push(
         'All policy statements must include a "Resource" field.'
       );
     } else if (typeof resource !== "string" && !Array.isArray(resource)) {
