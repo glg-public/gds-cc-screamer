@@ -1193,4 +1193,58 @@ describe("policy.json is valid", () => {
       ],
     });
   });
+
+  it("rejects a policy.json where there are duplicate Sids", async () => {
+    const policyJson = JSON.stringify(
+      {
+        Version: "2012-10-17",
+        Statement: [
+          {
+            Sid: "AllowSecretsAccess",
+            Effect: "Allow",
+            Action: "secretsmanager:GetSecretValue",
+            Resource: [
+              "arn:aws:secretsmanager:us-east-1:868468680417:secret:prod/gds-betas/github-token-??????",
+            ],
+          },
+          {
+            Sid: "SQS",
+            Effect: "Allow",
+            Action: ["sqs:GetQueueUrl", "sqs:SendMessage"],
+            Resource: [
+              "arn:aws:sqs:us-east-1:868468680417:gds-betas-update-queue.fifo",
+            ],
+          },
+          {
+            Sid: "SQS", // Duplicate Sid
+            Effect: "Allow",
+            Action: ["sqs:GetMessage"],
+            Resource: [
+              "arn:aws:sqs:us-east-1:868468680417:gds-betas-update-queue.fifo",
+            ],
+          },
+        ],
+      },
+      null,
+      2
+    );
+
+    const deployment = {
+      serviceName: "streamliner",
+      ordersPath: "streamliner/orders",
+      ordersContents: [],
+      policyJsonPath: "streamliner/policy.json",
+      policyJsonContents: policyJson.split("\n"),
+    };
+
+    const results = await policyJsonIsValid(deployment);
+    expect(results.length).to.equal(1);
+    expect(results[0]).to.deep.equal({
+      title: "`Sid` Must Be Unique",
+      path: "streamliner/policy.json",
+      line: 24,
+      level: "failure",
+      problems: ["`Sid` must be unique within each policy."],
+    });
+  });
 });
