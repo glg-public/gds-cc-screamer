@@ -76,7 +76,7 @@ async function validateCron(deployment) {
     problems: [suggest("Update This Comment", comment)],
   };
 
-  if (line > 2) {
+  if (line >= 2) {
     const commentLine = deployment.ordersContents[line - 2];
     if (/^\s*$/.test(commentLine) || !commentLine.startsWith("#")) {
       results.push(newComment);
