@@ -47,9 +47,24 @@ describe("Validate Cron", () => {
     expect(results[0].level).to.equal("failure");
   });
 
-  it("accepts orders with an accurate cron comment", async () => {
+  it("accepts orders with an accurate cron comment #1", async () => {
     const orders = await fs.readFile(
       path.join(fixturesDir, "cron-orders-with-comment"),
+      "utf8"
+    );
+    const deployment = {
+      serviceName: "somejob",
+      ordersContents: orders.split("\n"),
+      ordersPath: "somejob/orders",
+    };
+
+    const results = await validateCron(deployment);
+    expect(results.length).to.equal(0);
+  });
+
+  it("accepts orders with an accurate cron comment #2", async () => {
+    const orders = await fs.readFile(
+      path.join(fixturesDir, "cron-orders-comment-at-top"),
       "utf8"
     );
     const deployment = {

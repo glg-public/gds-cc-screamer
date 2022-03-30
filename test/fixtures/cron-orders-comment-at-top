@@ -1,0 +1,6 @@
+# At 06:00 PM (UTC)
+export ECS_SCHEDULED_TASK_CRON="0 18 * * *"
+
+export CMD='["curl", "--max-time", "30", "--output", "/dev/null", "--fail", "--write-out", "{\"code\": %{http_code}}", "-X", "POST", "https://recruiting-internal.glgresearch.com/recruiting-service/api/v1/jobs/", "--header", "Content-Type: application/json", "--data", "{\"job\":\"backfillRoles\"}"]'
+
+jobdeploy github/glg/gds-base-images/main:job-node16-alpine
