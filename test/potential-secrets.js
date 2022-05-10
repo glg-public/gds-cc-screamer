@@ -146,11 +146,11 @@ describe("Potential Secrets", () => {
         "export GRANT_DEV_MODE_DEV='sbazli, patelkr, cmcculloch, mastover, twise, dhunt'",
         "export GRANT_CREATE_MODE_OTHERS='ltran, agiurea, jsmall, aagrawal1, akapoor, ychopra, poorva.verma, mmalik, jvarghese, asis.chadha, smondal, arathore, rpahadia, vkrishna, asheorain'",
         ...json,
+        "export LANG=en_US.UTF-8",
       ],
     };
 
     const results = await potentialSecrets(deployment);
-
     expect(results.length).to.equal(0);
   });
 

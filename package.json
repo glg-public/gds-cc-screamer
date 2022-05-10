@@ -1,6 +1,6 @@
 {
   "name": "gds-cc-screamer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "This is a github action for validating PRs to GDS Cluster Configs",
   "main": "module.js",
   "scripts": {
@@ -19,9 +19,10 @@
   },
   "homepage": "https://github.com/glg-public/gds-cc-screamer#readme",
   "dependencies": {
-    "@actions/core": "^1.7.0",
+    "@actions/core": "^1.8.0",
     "@actions/github": "^5.0.1",
-    "cronstrue": "^2.4.0",
+    "cronstrue": "^2.5.0",
+    "jsonwebtoken": "^8.5.1",
     "loglevel": "^1.8.0",
     "shellcheck": "^1.1.0",
     "validator": "^13.5.2"
