@@ -1,6 +1,7 @@
 require("../typedefs");
 const log = require("loglevel");
 const validator = require("validator");
+const jwt = require("jsonwebtoken");
 const { codeBlock } = require("../util");
 
 const envvar = /^(export +|)(\w+)=['"]?([^\n\r]+?)['"]?$/;
@@ -24,6 +25,7 @@ const globalReservedVars = new Set([
   "CMD",
   "ECS_SCHEDULED_TASK_CRON",
   "PRIVATE_SECRET_NAMESPACES",
+  "LANG",
 ]);
 const allowSecretVars = new Set([
   "SECRETS_AWS_REGION",
@@ -180,6 +182,7 @@ async function potentialSecrets(deployment, context, inputs) {
       { test: "isJSON" },
       { test: "isMD5" },
       { test: "isHash" },
+      { test: "isLocale" },
     ];
 
     for (const test of regex) {
@@ -196,6 +199,15 @@ async function potentialSecrets(deployment, context, inputs) {
     return false;
   }
 
+  function isJWT(str) {
+    try {
+      const decoded = jwt.decode(str);
+      return !!decoded;
+    } catch (e) {
+      return false;
+    }
+  }
+
   function _isProblem(str) {
     str = str.trim();
     const validators = [
@@ -203,7 +215,6 @@ async function potentialSecrets(deployment, context, inputs) {
       "isCreditCard",
       "isEthereumAddress",
       "isIBAN",
-      "isJWT",
       "isStrongPassword",
       "isTaxID",
       "isUUID",
@@ -217,6 +228,10 @@ async function potentialSecrets(deployment, context, inputs) {
 
     if (_entropy(str) > 4) {
       return "highEntropy";
+    }
+
+    if (isJWT(str)) {
+      return "isJWT";
     }
     return false;
   }

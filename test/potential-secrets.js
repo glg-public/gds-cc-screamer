@@ -151,7 +151,6 @@ describe("Potential Secrets", () => {
     };
 
     const results = await potentialSecrets(deployment);
-
     expect(results.length).to.equal(0);
   });
 
