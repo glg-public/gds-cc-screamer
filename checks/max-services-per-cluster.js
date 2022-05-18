@@ -2,7 +2,9 @@ require("../typedefs");
 const log = require("loglevel");
 const path = require("path");
 const fs = require("fs").promises;
-const { getClusterType } = require("../util");
+const { getClusterType, isAJob } = require("../util");
+
+const checkName = "Max Services Per Cluster";
 
 /**
  * Accepts a deployment object, and does some kind of check
@@ -14,27 +16,31 @@ const { getClusterType } = require("../util");
  */
 async function maxServicesPerCluster(deployment, context, inputs) {
   const clusterType = getClusterType(context);
-  if (clusterType === "jobs") {
-    log.info(`Jobs Cluster - Skipping Check: Max Services Per Cluster`);
+  if (!deployment.ordersContents) {
+    log.info(`No Orders File - Skipping ${checkName}`);
     return [];
   }
-  log.info(`Max Services Per Cluster - ${deployment.serviceName}`);
+  if (clusterType === "jobs" || isAJob(deployment.ordersContents)) {
+    log.info(`Job - Skipping Check: ${checkName}`);
+    return [];
+  }
+  log.info(`${checkName} - ${deployment.serviceName}`);
 
   const { numServicesWarnThreshold, numServicesFailThreshold, clusterRoot } =
     inputs;
 
-  const numDeployments = await getNumDeployments(clusterRoot);
+  const numServices = await getNumServices(clusterRoot);
 
-  if (numDeployments < numServicesWarnThreshold) {
+  if (numServices < numServicesWarnThreshold) {
     return [];
   }
 
-  if (numDeployments <= numServicesFailThreshold) {
+  if (numServices <= numServicesFailThreshold) {
     return [
       {
         title: "Approaching Service Number Limit",
         problems: [
-          `Including \`/${deployment.serviceName}\`, this cluster has ${numDeployments} services out of ${numServicesFailThreshold} allowed.  [Reason: AWS Quotas](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-limits.html)`,
+          `Including \`/${deployment.serviceName}\`, this cluster has ${numServices} services out of ${numServicesFailThreshold} allowed.  [Reason: AWS Quotas](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-limits.html)`,
         ],
         level: "warning",
         line: 0,
@@ -46,7 +52,7 @@ async function maxServicesPerCluster(deployment, context, inputs) {
     {
       title: "Too Many Services In This Cluster",
       problems: [
-        `This cluster supports a maximum of ${numServicesFailThreshold} services. (Currently **${numDeployments}** services, including \`/${deployment.serviceName}\`). [Reason: AWS Quotas](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-limits.html)`,
+        `This cluster supports a maximum of ${numServicesFailThreshold} services. (Currently **${numServices}** services, including \`/${deployment.serviceName}\`). [Reason: AWS Quotas](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-limits.html)`,
       ],
       level: "failure",
       line: 0,
@@ -54,7 +60,7 @@ async function maxServicesPerCluster(deployment, context, inputs) {
   ];
 }
 
-async function getNumDeployments(clusterRoot) {
+async function getNumServices(clusterRoot) {
   try {
     const files = await fs.readdir(clusterRoot, { withFileTypes: true });
     const directories = files.filter((file) => file.isDirectory());
@@ -63,8 +69,11 @@ async function getNumDeployments(clusterRoot) {
       directories.map(async (dir) => {
         const ordersPath = path.join(clusterRoot, dir.name, "orders");
         try {
-          await fs.stat(ordersPath);
-          numServices += 1;
+          const orders = await fs.readFile(ordersPath, "utf8");
+          // We don't need to count jobs
+          if (!isAJob(orders.split("\n"))) {
+            numServices += 1;
+          }
         } catch (err) {
           // not important
         }
