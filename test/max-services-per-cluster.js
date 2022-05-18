@@ -5,6 +5,7 @@ const path = require("path");
 describe("Max Services Per Cluster", () => {
   const deployment = {
     serviceName: "streamliner",
+    ordersContents: [],
   };
 
   const context = {
@@ -71,6 +72,37 @@ describe("Max Services Per Cluster", () => {
       numServicesFailThreshold: 4,
       numServicesWarnThreshold: 2,
       clusterRoot: path.join(process.cwd(), "test", "fixtures", "cc5"),
+    };
+
+    const results = await maxServicesPerCluster(deployment, context, inputs);
+    expect(results.length).to.equal(0);
+  });
+
+  it("skips this check for unpublished", async () => {
+    const context = {
+      payload: {
+        pull_request: {
+          base: {
+            repo: {
+              name: "gds.clusterconfig.i99",
+            },
+          },
+        },
+      },
+    };
+
+    const inputs = {
+      numServicesFailThreshold: 4,
+      numServicesWarnThreshold: 2,
+      clusterRoot: path.join(process.cwd(), "test", "fixtures", "cc5"),
+    };
+
+    const deployment = {
+      serviceName: "streamliner",
+      ordersContents: [
+        "dockerdeploy github/glg/bottle-subscribers/main:latest",
+        "unpublished",
+      ],
     };
 
     const results = await maxServicesPerCluster(deployment, context, inputs);

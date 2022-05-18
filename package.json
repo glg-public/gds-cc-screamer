@@ -1,6 +1,6 @@
 {
   "name": "gds-cc-screamer",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "This is a github action for validating PRs to GDS Cluster Configs",
   "main": "module.js",
   "scripts": {
