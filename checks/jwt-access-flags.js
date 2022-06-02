@@ -105,7 +105,7 @@ async function jwtAccessFlags(deployment, context, inputs, httpGet) {
           {
             title: "Internal Server Error",
             level: "notice",
-            line: lineNumber,
+            line: lineNumber ?? 0,
             problems: [
               "An unknown error was encountered while accessing the Deployinator API. Please manually confirm that your access flags are valid",
             ],
