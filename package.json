@@ -20,7 +20,7 @@
   "homepage": "https://github.com/glg-public/gds-cc-screamer#readme",
   "dependencies": {
     "@actions/core": "^1.8.0",
-    "@actions/github": "^5.0.1",
+    "@actions/github": "^5.0.3",
     "cronstrue": "^2.8.0",
     "jsonwebtoken": "^8.5.1",
     "loglevel": "^1.8.0",
