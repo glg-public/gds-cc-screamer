@@ -199,7 +199,7 @@ async function validTemplatesJson(deployment, context, inputs, httpGet) {
             results.push({
               title: `${templateName} could not be found.`,
               level: "warning",
-              line: lineNumber,
+              line: lineNumber ?? 0,
               path: deployment.templatesJsonPath,
               problems: [
                 `The specified template \`${templateName}\` could not be found.`,
@@ -210,7 +210,7 @@ async function validTemplatesJson(deployment, context, inputs, httpGet) {
             results.push({
               title: "Internal Server Error",
               level: "notice",
-              line: lineNumber,
+              line: lineNumber ?? 0,
               problems: [
                 "An unknown error was encountered while accessing the Deployinator API. Please manually confirm that your access flags are valid",
               ],

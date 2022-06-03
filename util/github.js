@@ -80,6 +80,13 @@ async function leaveComment(
     })})\n\n# Result Contents\n\n${comment}`,
   })}`;
   try {
+    /**
+     * If a check fails to include a line number, we just leave a comment on the
+     * pr itself.
+     */
+    if (typeof result.line === "undefined") {
+      result.line = 0;
+    }
     // Line 0 means a general comment, not a line-specific comment
     if (result.line === 0) {
       await octokit.rest.issues.createComment({

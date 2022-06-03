@@ -95,7 +95,7 @@ async function useCNAME(deployment, context, inputs, httpGet) {
         {
           title: "Internal Server Error",
           level: "notice",
-          line: lineNumber,
+          line: lineNumber ?? 0,
           problems: [
             "CC Screamer received a 401 from the Deployinator API. This most likely indicates an expired or invalid app token.",
           ],
@@ -106,7 +106,7 @@ async function useCNAME(deployment, context, inputs, httpGet) {
         {
           title: "Internal Server Error",
           level: "notice",
-          line: lineNumber,
+          line: lineNumber ?? 0,
           problems: [
             "An unknown error was encountered while accessing the Deployinator API. Please manually confirm that your access flags are valid",
           ],
