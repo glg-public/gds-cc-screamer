@@ -66,6 +66,19 @@ describe("Deployment Line Check", () => {
     expect(results[0].problems.length).to.equal(0);
   });
 
+  it("works with nested ECR images", async () => {
+    // works with dockerdeploy
+    deployment = {
+      serviceName: "sl-settings",
+      ordersPath: "sl-settings/orders",
+      ordersContents: ["dockerdeploy github/glg/sl2-mono/apps/settings/main:latest"],
+    };
+
+    results = await deploymentLineCheck(deployment, {}, {});
+
+    expect(results[0].problems.length).to.equal(0);
+  });
+
   it("rejects an improperly formatted dockerdeploy line", async () => {
     const deployment = {
       serviceName: "streamliner",
