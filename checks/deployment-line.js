@@ -4,7 +4,7 @@ const log = require("loglevel");
 const dockerdeploy =
   /^dockerdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/((?<path>[\w\-\/]+)\/)?(?<branch>.+?):(?<tag>\w+)/;
 const jobdeploy =
-  /^jobdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>[^:]+):?(?<tag>[\w-]*)/;
+  /^jobdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/((?<path>[\w\-\/]+)\/)?(?<branch>.+?):(?<tag>\w+)/;
 const autodeploy =
   /^autodeploy\s+(git@github.com:|https:\/\/github\.com\/)(?<org>[\w-]+)\/(?<repo>[^#\.]+)(\.git|)#?(?<branch>.*)/;
 const validCharacters = /^[a-z][a-z0-9-]*$/;
@@ -54,7 +54,7 @@ async function validateDeploymentLine(deployment, context, inputs, httpGet) {
 
       if (!match) {
         problems.push(
-          "Incorrect Formatting: must be `dockerdeploy github/<org>/<repo>/<branch>:<tag>`"
+          "Incorrect Formatting: must be `dockerdeploy github/<org>/<repo>/<?path/><branch>:<tag>`"
         );
         break;
       }
@@ -81,7 +81,7 @@ async function validateDeploymentLine(deployment, context, inputs, httpGet) {
 
       if (!match) {
         problems.push(
-          "Incorrect Formatting: must be `jobdeploy github/<org>/<repo>/<branch>:<tag>`"
+          "Incorrect Formatting: must be `jobdeploy github/<org>/<repo>/<?path/><branch>:<tag>`"
         );
         break;
       }
