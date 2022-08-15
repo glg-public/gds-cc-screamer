@@ -7,7 +7,7 @@ const jobdeploy =
   /^jobdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>[^:]+):?(?<tag>[\w-]*)/;
 const autodeploy =
   /^autodeploy\s+(git@github.com:|https:\/\/github\.com\/)(?<org>[\w-]+)\/(?<repo>[^#\.]+)(\.git|)#?(?<branch>.*)/;
-const validCharacters = /^[a-z][a-z0-9-]*$/;
+const validCharacters = /^[a-z][a-z0-9-\/]*$/;
 
 function getDeployment(match) {
   const { source, org, repo, branch, tag } = match.groups;
