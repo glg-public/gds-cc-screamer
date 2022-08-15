@@ -2,7 +2,7 @@ require("../typedefs");
 const log = require("loglevel");
 
 const dockerdeploy =
-  /^dockerdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repoAndPath>.+?)\/(?=[a-z]+:)(?<branch>.+?):(?<tag>\w+)/;
+  /^dockerdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/((?<path>[\w\-\/]+)\/)?(?<branch>.+?):(?<tag>\w+)/;
 const jobdeploy =
   /^jobdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>[^:]+):?(?<tag>[\w-]*)/;
 const autodeploy =
@@ -10,10 +10,7 @@ const autodeploy =
 const validCharacters = /^[a-z][a-z0-9-]*$/;
 
 function getDeployment(match) {
-  const { source, org, repoAndPath, branch, tag } = match.groups;
-  const hasPath = repoAndPath.includes("/")
-  const repo = hasPath ? repoAndPath.slice(0, repoAndPath.indexOf("/")) : repoAndPath;
-  const path = hasPath ? repoAndPath.slice(repoAndPath.indexOf("/") + 1) : undefined;
+  const { source, org, repo, path, branch, tag } = match.groups;
 
   return {
     source,
