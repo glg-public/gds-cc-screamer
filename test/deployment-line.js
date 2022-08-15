@@ -66,12 +66,25 @@ describe("Deployment Line Check", () => {
     expect(results[0].problems.length).to.equal(0);
   });
 
-  it("works with nested ECR images", async () => {
+  it("works on dockerdeploy with nested ECR images", async () => {
     // works with dockerdeploy
     deployment = {
       serviceName: "sl-settings",
       ordersPath: "sl-settings/orders",
       ordersContents: ["dockerdeploy github/glg/sl2-mono/apps/settings/main:latest"],
+    };
+
+    results = await deploymentLineCheck(deployment, {}, {});
+
+    expect(results[0].problems.length).to.equal(0);
+  });
+
+  it("works on jobdeploy with nested ECR images", async () => {
+    // works with jobdeploy
+    deployment = {
+      serviceName: "sl-settings",
+      ordersPath: "sl-settings/orders",
+      ordersContents: ["jobdeploy github/glg/sl2-mono/apps/settings/main:latest"],
     };
 
     results = await deploymentLineCheck(deployment, {}, {});
@@ -90,7 +103,7 @@ describe("Deployment Line Check", () => {
 
     expect(results[0].problems.length).to.equal(1);
     expect(results[0].problems[0]).to.equal(
-      "Incorrect Formatting: must be `dockerdeploy github/<org>/<repo>/<branch>:<tag>`"
+      "Incorrect Formatting: must be `dockerdeploy github/<org>/<repo>/<?path/><branch>:<tag>`"
     );
     expect(results[0].level).to.equal("failure");
   });
@@ -106,7 +119,7 @@ describe("Deployment Line Check", () => {
 
     expect(results[0].problems.length).to.equal(1);
     expect(results[0].problems[0]).to.equal(
-      "Incorrect Formatting: must be `jobdeploy github/<org>/<repo>/<branch>:<tag>`"
+      "Incorrect Formatting: must be `jobdeploy github/<org>/<repo>/<?path/><branch>:<tag>`"
     );
     expect(results[0].level).to.equal("failure");
   });
