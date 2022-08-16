@@ -133,13 +133,14 @@ You may exclude specific environment variables in specific checks from being fla
 
 - orders file must contain a deployment line
 - `dockerdeploy`
-  - should look like `github/<org>/<repo>/<branch>:<tag>`
+  - should look like `github/<org>/<repo>/<?path/><branch>:<tag>`
 - `jobdeploy`
-  - should look like `github/<org>/<repo>/<branch>:<tag>`
+  - should look like `github/<org>/<repo>/<?path/><branch>:<tag>`
 - `autodeploy`(legacy)
   - should look like `git@github.com:<org>/<repo>[.git]#<branch>`
 - repository name should only include alphanumeric characters and hyphens
 - repository name should start with a letter
+- path is optional
 - branch name should only include alphanumeric characters and hyphens
 - branch name should start with a letter
 - branch name cannot include `--`
