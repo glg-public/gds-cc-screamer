@@ -2,20 +2,21 @@ require("../typedefs");
 const log = require("loglevel");
 
 const dockerdeploy =
-  /^dockerdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>[^:]+):?(?<tag>[\w-]*)/;
+  /^dockerdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/((?<path>[\w\-\/]+)\/)?(?<branch>.+?):(?<tag>\w+)/;
 const jobdeploy =
-  /^jobdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/(?<branch>[^:]+):?(?<tag>[\w-]*)/;
+  /^jobdeploy (?<source>\w+)\/(?<org>[\w-]+)\/(?<repo>.+?)\/((?<path>[\w\-\/]+)\/)?(?<branch>.+?):(?<tag>\w+)/;
 const autodeploy =
   /^autodeploy\s+(git@github.com:|https:\/\/github\.com\/)(?<org>[\w-]+)\/(?<repo>[^#\.]+)(\.git|)#?(?<branch>.*)/;
 const validCharacters = /^[a-z][a-z0-9-]*$/;
 
 function getDeployment(match) {
-  const { source, org, repo, branch, tag } = match.groups;
+  const { source, org, repo, path, branch, tag } = match.groups;
 
   return {
     source,
     org,
     repo,
+    path,
     branch,
     tag: tag || "latest",
   };
@@ -53,7 +54,7 @@ async function validateDeploymentLine(deployment, context, inputs, httpGet) {
 
       if (!match) {
         problems.push(
-          "Incorrect Formatting: must be `dockerdeploy github/<org>/<repo>/<branch>:<tag>`"
+          "Incorrect Formatting: must be `dockerdeploy github/<org>/<repo>/<?path/><branch>:<tag>`"
         );
         break;
       }
@@ -80,7 +81,7 @@ async function validateDeploymentLine(deployment, context, inputs, httpGet) {
 
       if (!match) {
         problems.push(
-          "Incorrect Formatting: must be `jobdeploy github/<org>/<repo>/<branch>:<tag>`"
+          "Incorrect Formatting: must be `jobdeploy github/<org>/<repo>/<?path/><branch>:<tag>`"
         );
         break;
       }
@@ -130,7 +131,7 @@ async function validateDeploymentLine(deployment, context, inputs, httpGet) {
       },
     };
 
-    const { org: owner, repo, branch, tag } = deploymentParts;
+    const { org: owner, repo, path, branch, tag } = deploymentParts;
 
     if (deploymentType === "autodeploy") {
       const url = `${inputs.deployinatorURL}/enumerate/branches?owner=${owner}&repo=${repo}`;
@@ -165,7 +166,7 @@ async function validateDeploymentLine(deployment, context, inputs, httpGet) {
         }
       }
     } else {
-      const image = `github/${owner}/${repo}/${branch}`;
+      const image = `github/${owner}/${repo}/${path ? path + "/" : "" }${branch}`;
       let url = `${inputs.deployinatorURL}/enumerate/ecr/tags?image=${image}`;
       if (inputs.awsAccount && inputs.awsAccount !== "*") {
         url += `&account=${inputs.awsAccount}`;
