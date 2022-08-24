@@ -1,7 +1,7 @@
 const { expect } = require("chai");
 const { validateDeploymentLine: deploymentLineCheck, dockerdeploy, jobdeploy, autodeploy } = require("../checks/deployment-line");
 
-describe.only("Deployment-line regex parsers", () => {
+describe("Deployment-line regex parsers", () => {
   it("parses dockerdeploy", () => {
     const line = "dockerdeploy github/glg/streamliner/main:latest";
     const match = dockerdeploy.exec(line);
