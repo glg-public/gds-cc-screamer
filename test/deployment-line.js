@@ -1,5 +1,93 @@
 const { expect } = require("chai");
-const deploymentLineCheck = require("../checks/deployment-line");
+const { validateDeploymentLine: deploymentLineCheck, dockerdeploy, jobdeploy, autodeploy } = require("../checks/deployment-line");
+
+describe.only("Deployment-line regex parsers", () => {
+  it("parses dockerdeploy", () => {
+    const line = "dockerdeploy github/glg/streamliner/main:latest";
+    const match = dockerdeploy.exec(line);
+
+    expect(match.groups).to.deep.equal({
+      source: "github",
+      org: "glg",
+      repo: "streamliner",
+      path: undefined,
+      branch: "main",
+      tag: "latest"
+    })
+  })
+
+  it("parses dockerdeploy with dashes", () => {
+    const line = "dockerdeploy github/glg/gds-base-images/main:job-node16-alpine";
+    const match = dockerdeploy.exec(line);
+
+    expect(match.groups).to.deep.equal({
+      source: "github",
+      org: "glg",
+      repo: "gds-base-images",
+      path: undefined,
+      branch: "main",
+      tag: "job-node16-alpine"
+    })
+  })
+
+
+  it("parses dockerdeploy with paths", () => {
+    const line = "dockerdeploy github/glg/sl2-mono/apps/sl-home/main:latest";
+    const match = dockerdeploy.exec(line);
+
+    expect(match.groups).to.deep.equal({
+      source: "github",
+      org: "glg",
+      repo: "sl2-mono",
+      path: "apps/sl-home",
+      branch: "main",
+      tag: "latest"
+    })
+  })
+
+  it("parses jobdeploy", () => {
+    const line = "jobdeploy github/glg/streamliner/main:latest";
+    const match = jobdeploy.exec(line);
+
+    expect(match.groups).to.deep.equal({
+      source: "github",
+      org: "glg",
+      repo: "streamliner",
+      path: undefined,
+      branch: "main",
+      tag: "latest"
+    })
+  })
+
+  it("parses jobdeploy with dashes", () => {
+    const line = "jobdeploy github/glg/gds-base-images/main:job-node16-alpine";
+    const match = jobdeploy.exec(line);
+
+    expect(match.groups).to.deep.equal({
+      source: "github",
+      org: "glg",
+      repo: "gds-base-images",
+      path: undefined,
+      branch: "main",
+      tag: "job-node16-alpine"
+    })
+  })
+
+
+  it("parses jobdeploy with paths", () => {
+    const line = "jobdeploy github/glg/sl2-mono/apps/sl-home/main:latest";
+    const match = jobdeploy.exec(line);
+
+    expect(match.groups).to.deep.equal({
+      source: "github",
+      org: "glg",
+      repo: "sl2-mono",
+      path: "apps/sl-home",
+      branch: "main",
+      tag: "latest"
+    })
+  })
+})
 
 describe("Deployment Line Check", () => {
   it("skips if there is no orders file", async () => {
