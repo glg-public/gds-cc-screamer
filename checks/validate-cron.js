@@ -32,7 +32,7 @@ async function validateCron(deployment) {
         title: "Jobs must define a cron statement",
         level: "failure",
         line: 0,
-        path: deployment.ordersContents,
+        path: deployment.ordersPath,
         problems: [
           "Your job must define a valid cron schedule in the environment variable `ECS_SCHEDULED_TASK_CRON`",
         ],

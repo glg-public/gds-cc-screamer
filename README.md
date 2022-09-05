@@ -48,6 +48,7 @@ This is a github action for validating PRs to GDS Cluster Configs. It evaluates 
     - [jobsShouldUseBulkMail](#jobsshouldusebulkmail)
     - [fqdnLock](#fqdnlock)
     - [chinaForwardHostHeaders](#chinaforwardhostheaders)
+    - [validateCapacity](#validateCapacity)
   - [Adding Checks](#adding-checks)
     - [Testing locally](#testing-locally)
   - [Who's the goat?](#whos-the-goat)
@@ -306,6 +307,10 @@ Runs the [shellcheck](https://github.com/koalaman/shellcheck) utility on the ord
 ### chinaForwardHostHeaders
 
 - GDS China is physically hosted in Mainland China, according to China regulations, websites' hosts physically located in Mainland China MUST have an ICP licensed domain to publish the website, so to use any domain related the feature in GDS China, we have to restrict our user to use ICP licensed domain.
+
+### validateCapacity
+
+- The max capacity can not be less than min capacity, check the value and block the merge when it's be detected.
 
 ## Adding Checks
 
