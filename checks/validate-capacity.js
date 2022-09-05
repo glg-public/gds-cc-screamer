@@ -28,15 +28,13 @@ async function validateCapacity(deployment) {
     return [];
   }
 
-  let hasMax = false;
-  let hasMin = false;
   const defaultEcsTaskMaxCapacity = 4;
   const defaultEcsTaskMinCapacity = 2;
 
   const flattenedOrder=deployment.ordersContents.join("\n");
 
-  hasMax = /export\s+ECS_TASK_MAX_CAPACITY=["|']?(\d+)["|']?/.test(flattenedOrder) || hasMax;
-  hasMin = /export\s+ECS_TASK_MIN_CAPACITY=["|']?(\d+)["|']?/.test(flattenedOrder) || hasMin;
+  const hasMax = /export\s+ECS_TASK_MAX_CAPACITY=["|']?(\d+)["|']?/.test(flattenedOrder);
+  const hasMin = /export\s+ECS_TASK_MIN_CAPACITY=["|']?(\d+)["|']?/.test(flattenedOrder);
 
   // when there is no value has been defined, we shall go with default value, we can skip this check.
   if (!hasMax && !hasMin) {
