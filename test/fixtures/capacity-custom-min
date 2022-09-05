@@ -6,4 +6,4 @@ export ENV="prod"
 export LOGLEVEL="debug"
 export ECS_TASK_MIN_CAPACITY="6"
 
-autodeploy github/owner/repo/test:latest
+dockerdeploy github/owner/repo/test:latest

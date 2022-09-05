@@ -88,7 +88,7 @@ async function validateCapcity(deployment) {
       title: checkMsg,
       line,
       level: "failure",
-      path: deployment.ordersContents,
+      path: deployment.ordersPath,
       problems,
     });
   }

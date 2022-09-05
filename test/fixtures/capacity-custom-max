@@ -6,4 +6,4 @@ export ENV="prod"
 export LOGLEVEL="debug"
 export ECS_TASK_MAX_CAPACITY=1
 
-autodeploy github/owner/repo/test:latest
+dockerdeploy github/owner/repo/test:latest
