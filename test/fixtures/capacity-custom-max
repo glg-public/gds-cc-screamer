@@ -1,0 +1,9 @@
+ # THIS IS A TEST BRANCH
+
+# Env vars
+export INSERT_RECORDS="True"
+export ENV="prod"
+export LOGLEVEL="debug"
+export ECS_TASK_MAX_CAPACITY=1
+
+autodeploy github/owner/repo/test:latest

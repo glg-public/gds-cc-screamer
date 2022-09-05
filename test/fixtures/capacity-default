@@ -1,0 +1,8 @@
+ # THIS IS A TEST BRANCH
+
+# Env vars
+export INSERT_RECORDS="True"
+export ENV="prod"
+export LOGLEVEL="debug"
+
+autodeploy github/owner/repo/test:latest
