@@ -34,6 +34,7 @@ describe("Validate Capacity numbers", () => {
     const results = await validateCapcity(deployment);
     expect(results.length).to.equal(1);
     expect(results[0].level).to.equal("failure");
+    expect(results[0].path).to.equal(deployment.ordersPath);
   });
 
   it("rejects when custom value of ECS_TASK_MIN_CAPACITY is greater equal default value of ECS_TASK_MAX_CAPACITY", async () => {
@@ -50,6 +51,7 @@ describe("Validate Capacity numbers", () => {
     const results = await validateCapcity(deployment);
     expect(results.length).to.equal(1);
     expect(results[0].level).to.equal("failure");
+    expect(results[0].path).to.equal(deployment.ordersPath);
   });
 
   it("rejects when custom value of ECS_TASK_MAX_CAPACITY less than custom value of ECS_TASK_MAX_CAPACITY", async () => {
@@ -66,5 +68,6 @@ describe("Validate Capacity numbers", () => {
     const results = await validateCapcity(deployment);
     expect(results.length).to.equal(1);
     expect(results[0].level).to.equal("failure");
+    expect(results[0].path).to.equal(deployment.ordersPath);
   });
 });
