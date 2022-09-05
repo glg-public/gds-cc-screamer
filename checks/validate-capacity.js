@@ -21,7 +21,7 @@ const checkMsg = "Maximum capacity cannot be less than minimum capacity.";
  * @returns {Array<Result>}
 */
 
-async function validateCapcity(deployment) {
+async function validateCapacity(deployment) {
 
   if (!deployment.ordersContents) {
     log.info(`No Orders Present - Skipping ${deployment.serviceName}`);
@@ -30,8 +30,8 @@ async function validateCapcity(deployment) {
 
   let hasMax = false;
   let hasMin = false;
-  const defaultEcsTaskMaxCapcity = 4;
-  const defaultEcsTaskMinCapcity = 2;
+  const defaultEcsTaskMaxCapacity = 4;
+  const defaultEcsTaskMinCapacity = 2;
 
   const flattenedOrder=deployment.ordersContents.join("\n");
 
@@ -45,15 +45,15 @@ async function validateCapcity(deployment) {
   };
 
 
-  const ecsTaskMaxCapcity = !hasMax ? defaultEcsTaskMaxCapcity : parseInt(flattenedOrder.match(/export\s+ECS_TASK_MAX_CAPACITY=["|']?(\d+)["|']?/)[1]);
-  const ecsTaskMinCapcity = !hasMin ? defaultEcsTaskMinCapcity : parseInt(flattenedOrder.match(/export\s+ECS_TASK_MIN_CAPACITY=["|']?(\d+)["|']?/)[1]);
+  const ecsTaskMaxCapacity = !hasMax ? defaultEcsTaskMaxCapacity : parseInt(flattenedOrder.match(/export\s+ECS_TASK_MAX_CAPACITY=["|']?(\d+)["|']?/)[1]);
+  const ecsTaskMinCapacity = !hasMin ? defaultEcsTaskMinCapacity : parseInt(flattenedOrder.match(/export\s+ECS_TASK_MIN_CAPACITY=["|']?(\d+)["|']?/)[1]);
 
   /** @type {Array<Result>} */
   const results = [];
   const problems = [];
   let allowed = false;
   
-  if (ecsTaskMaxCapcity >= ecsTaskMinCapcity) {
+  if (ecsTaskMaxCapacity >= ecsTaskMinCapacity) {
     allowed = true;
   }
 
@@ -96,4 +96,4 @@ async function validateCapcity(deployment) {
   return results;
 }
 
-module.exports = validateCapcity;
+module.exports = validateCapacity;

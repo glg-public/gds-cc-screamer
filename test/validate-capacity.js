@@ -1,5 +1,5 @@
 const { expect } = require("chai");
-const { validateCapcity } = require("../checks");
+const { validateCapacity } = require("../checks");
 const fs = require("fs").promises;
 const path = require("path");
 const fixturesDir = path.join(process.cwd(), "test", "fixtures");
@@ -16,7 +16,7 @@ describe("Validate Capacity numbers", () => {
       ordersPath: "something/orders",
     };
 
-    const results = await validateCapcity(deployment);
+    const results = await validateCapacity(deployment);
     expect(results.length).to.equal(0);
   });
 
@@ -31,7 +31,7 @@ describe("Validate Capacity numbers", () => {
       ordersPath: "something/orders",
     };
 
-    const results = await validateCapcity(deployment);
+    const results = await validateCapacity(deployment);
     expect(results.length).to.equal(1);
     expect(results[0].level).to.equal("failure");
     expect(results[0].path).to.equal(deployment.ordersPath);
@@ -48,7 +48,7 @@ describe("Validate Capacity numbers", () => {
       ordersPath: "something/orders",
     };
 
-    const results = await validateCapcity(deployment);
+    const results = await validateCapacity(deployment);
     expect(results.length).to.equal(1);
     expect(results[0].level).to.equal("failure");
     expect(results[0].path).to.equal(deployment.ordersPath);
@@ -65,7 +65,7 @@ describe("Validate Capacity numbers", () => {
       ordersPath: "something/orders",
     };
 
-    const results = await validateCapcity(deployment);
+    const results = await validateCapacity(deployment);
     expect(results.length).to.equal(1);
     expect(results[0].level).to.equal("failure");
     expect(results[0].path).to.equal(deployment.ordersPath);
