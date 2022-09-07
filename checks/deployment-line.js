@@ -218,9 +218,4 @@ async function validateDeploymentLine(deployment, context, inputs, httpGet) {
   ];
 }
 
-module.exports = {
-  validateDeploymentLine,
-  dockerdeploy,
-  jobdeploy,
-  autodeploy,
-}
+module.exports = validateDeploymentLine;
