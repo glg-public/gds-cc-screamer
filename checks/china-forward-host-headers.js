@@ -76,7 +76,7 @@ async function chinaForwardHostHeaders(deployment, context, inputs, httpGet) {
       title: checkMsg,
       line,
       level: "failure",
-      path: deployment.ordersContents,
+      path: deployment.ordersPath,
       problems,
     });
   }

@@ -35,6 +35,7 @@ const jobsShouldUseBulkMail = require("./jobs-should-use-bulkmail");
 const noDuplicateForwardHostHeaders = require("./no-duplicate-forward-host-headers");
 const fqdnLock = require("./fqdn-lock");
 const chinaForwardHostHeaders = require("./china-forward-host-headers");
+const validateCapacity = require("./validate-capacity.js");
 
 /**
  * Exports all checks in an appropriate order
@@ -75,6 +76,7 @@ module.exports = {
   noDuplicateForwardHostHeaders,
   fqdnLock,
   chinaForwardHostHeaders,
+  validateCapacity,
 
   /**
    *  This should always be after checks for orders and secrets.json, because it verifies
